@@ -17,7 +17,8 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 users = {
     "ahmed": {"password": "2811", "role": "Admin"},
-    "david": {"password": "1234", "role": "User"}
+    "david": {"password": "1234", "role": "User"},
+    "nahla": {"password": "0000", "role": "User"}
 }
 
 # ----------------------------
