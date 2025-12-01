@@ -2,7 +2,8 @@ import streamlit as st
 import warnings
 import logging
 import os
-import sys
+import pandas as pd
+from datetime import datetime
 
 # ----------------------------
 # Hide Warnings and Streamlit Logs
@@ -49,6 +50,12 @@ def logout():
     st.session_state.username = None
 
 # ----------------------------
+# File storage path
+# ----------------------------
+BASE_PATH = "data/uploads"  # فولدر داخل المشروع
+os.makedirs(BASE_PATH, exist_ok=True)
+
+# ----------------------------
 # UI
 # ----------------------------
 st.title("🔐 Login Page")
@@ -68,17 +75,52 @@ else:
     st.success(f"Welcome {st.session_state.username.upper()} 👋")
     st.info(f"Your Role: {st.session_state.user_role}")
 
-    # Role-Based Pages
+    # ----------------------------
+    # Admin Dashboard
+    # ----------------------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
         st.write("✅ You can see ALL data")
         st.write("✅ You can manage users")
         st.write("✅ Full control")
 
+        # Upload Excel File
+        uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx", "xls"])
+        if uploaded_file is not None:
+            today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
+            os.makedirs(today_folder, exist_ok=True)
+
+            file_path = os.path.join(today_folder, uploaded_file.name)
+            df = pd.read_excel(uploaded_file)
+            df.to_excel(file_path, index=False)
+
+            st.success(f"File uploaded successfully to {today_folder}!")
+            st.dataframe(df)
+
+    # ----------------------------
+    # User Dashboard
+    # ----------------------------
     elif st.session_state.user_role == "User":
         st.subheader("👤 User Dashboard")
-        st.write("✅ You can see only your data")
-        st.write("✅ Limited access")
+        st.write("✅ You can see all uploaded data")
+
+        # Display all uploaded files
+        all_data = []
+        if os.path.exists(BASE_PATH):
+            all_dates = sorted(os.listdir(BASE_PATH), reverse=True)
+            for folder in all_dates:
+                folder_path = os.path.join(BASE_PATH, folder)
+                files = os.listdir(folder_path)
+                for file in files:
+                    file_path = os.path.join(folder_path, file)
+                    try:
+                        df = pd.read_excel(file_path)
+                        st.markdown(f"**{folder}/{file}**")
+                        st.dataframe(df)
+                    except Exception as e:
+                        st.warning(f"Could not read {file}: {e}")
+        else:
+            st.warning("No data folder found yet.")
 
     if st.button("Logout"):
         logout()
