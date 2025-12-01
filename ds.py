@@ -32,7 +32,7 @@ if "logged_in" not in st.session_state:
 # Login Function
 # ----------------------------
 def login(username, password):
-    username = username.lower()  # ignore case
+    username = username.lower()
     if username in users:
         if users[username]["password"] == password:
             st.session_state.logged_in = True
@@ -52,8 +52,7 @@ def logout():
 # ----------------------------
 # File storage path
 # ----------------------------
-BASE_PATH = "data/uploads"  # فولدر داخل المشروع
-os.makedirs(BASE_PATH, exist_ok=True)
+BASE_PATH = "data"
 
 # ----------------------------
 # UI
@@ -102,25 +101,23 @@ else:
     # ----------------------------
     elif st.session_state.user_role == "User":
         st.subheader("👤 User Dashboard")
-        st.write("✅ You can see all uploaded data")
+        st.write("✅ You can see only your data")
+        st.write("✅ Limited access")
 
-        # Display all uploaded files
-        all_data = []
         if os.path.exists(BASE_PATH):
-    all_dates = sorted(os.listdir(BASE_PATH), reverse=True)
-    for folder in all_dates:
-        folder_path = os.path.join(BASE_PATH, folder)
-        if os.path.isdir(folder_path):  # <- تأكد إنه فولدر
-            files = os.listdir(folder_path)
-            for file in files:
-                file_path = os.path.join(folder_path, file)
-                try:
-                    df = pd.read_excel(file_path)
-                    st.markdown(f"**{folder}/{file}**")
-                    st.dataframe(df)
-                except Exception as e:
-                    st.warning(f"Could not read {file}: {e}")
-
+            all_dates = sorted(os.listdir(BASE_PATH), reverse=True)
+            for folder in all_dates:
+                folder_path = os.path.join(BASE_PATH, folder)
+                if os.path.isdir(folder_path):  # تأكد إنه فولدر
+                    files = os.listdir(folder_path)
+                    for file in files:
+                        file_path = os.path.join(folder_path, file)
+                        try:
+                            df = pd.read_excel(file_path)
+                            st.markdown(f"**{folder}/{file}**")
+                            st.dataframe(df)
+                        except Exception as e:
+                            st.warning(f"Could not read {file}: {e}")
         else:
             st.warning("No data folder found yet.")
 
