@@ -107,18 +107,20 @@ else:
         # Display all uploaded files
         all_data = []
         if os.path.exists(BASE_PATH):
-            all_dates = sorted(os.listdir(BASE_PATH), reverse=True)
-            for folder in all_dates:
-                folder_path = os.path.join(BASE_PATH, folder)
-                files = os.listdir(folder_path)
-                for file in files:
-                    file_path = os.path.join(folder_path, file)
-                    try:
-                        df = pd.read_excel(file_path)
-                        st.markdown(f"**{folder}/{file}**")
-                        st.dataframe(df)
-                    except Exception as e:
-                        st.warning(f"Could not read {file}: {e}")
+    all_dates = sorted(os.listdir(BASE_PATH), reverse=True)
+    for folder in all_dates:
+        folder_path = os.path.join(BASE_PATH, folder)
+        if os.path.isdir(folder_path):  # <- تأكد إنه فولدر
+            files = os.listdir(folder_path)
+            for file in files:
+                file_path = os.path.join(folder_path, file)
+                try:
+                    df = pd.read_excel(file_path)
+                    st.markdown(f"**{folder}/{file}**")
+                    st.dataframe(df)
+                except Exception as e:
+                    st.warning(f"Could not read {file}: {e}")
+
         else:
             st.warning("No data folder found yet.")
 
