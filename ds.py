@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-import matplotlib.pyplot as plt
+from PIL import Image, ImageDraw, ImageFont
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -59,6 +59,7 @@ def get_current_month_folders():
     today = date.today().strftime("%Y-%m")
     return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
+
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
     parts = re.split(r"\s*-\s*", name)
@@ -67,13 +68,42 @@ def is_file_for_user(filename, username):
             return True
     return False
 
-def excel_to_image(df, img_path):
-    fig, ax = plt.subplots(figsize=(len(df.columns) * 2, len(df) * 0.4))
-    ax.axis('off')
-    table = ax.table(cellText=df.values, colLabels=df.columns, loc='center')
-    table.scale(1, 1.3)
-    plt.savefig(img_path, dpi=200, bbox_inches="tight")
-    plt.close()
+
+def excel_to_image_pure(df, img_path):
+    df = df.astype(str)
+
+    cell_width = 180
+    cell_height = 40
+    padding = 10
+
+    rows, cols = df.shape
+    width = cols * cell_width + padding * 2
+    height = (rows + 1) * cell_height + padding * 2
+
+    img = Image.new("RGB", (width, height), "white")
+    draw = ImageDraw.Draw(img)
+
+    try:
+        font = ImageFont.truetype("arial.ttf", 18)
+    except:
+        font = ImageFont.load_default()
+
+    # Header
+    for j, col in enumerate(df.columns):
+        x = padding + j * cell_width
+        y = padding
+        draw.rectangle([x, y, x + cell_width, y + cell_height], outline="black")
+        draw.text((x + 5, y + 10), col, fill="black", font=font)
+
+    # Data
+    for i in range(rows):
+        for j in range(cols):
+            x = padding + j * cell_width
+            y = padding + (i + 1) * cell_height
+            draw.rectangle([x, y, x + cell_width, y + cell_height], outline="black")
+            draw.text((x + 5, y + 10), df.iloc[i, j], fill="black", font=font)
+
+    img.save(img_path)
 
 # ----------------------------
 # Login / Logout
@@ -86,6 +116,7 @@ def login(username, password):
             st.session_state.username = user_key
             return True
     return False
+
 
 def logout():
     st.session_state.logged_in = False
@@ -176,12 +207,14 @@ else:
 
                 df = pd.read_excel(path).astype(str)
 
+                # ✅ عرض الجدول
                 st.dataframe(df)
 
-                # ✅ إنشاء صورة + عرضها بسكرول
+                # ✅ إنشاء الصورة
                 img_path = "temp_sheet.png"
-                excel_to_image(df, img_path)
+                excel_to_image_pure(df, img_path)
 
+                # ✅ عرض الصورة بسكرول
                 st.markdown("""
                     <div style="height:450px; overflow-y:scroll; border:2px solid #ddd; padding:10px;">
                 """, unsafe_allow_html=True)
@@ -190,12 +223,22 @@ else:
 
                 st.markdown("</div>", unsafe_allow_html=True)
 
+                # ✅ تحميل Excel
                 with open(path, "rb") as f:
                     st.download_button(
                         "🔽 Download Excel File",
                         f,
                         file_name=chosen_file
                     )
+
+                # ✅ تحميل الصورة PNG
+                with open(img_path, "rb") as img_file:
+                    st.download_button(
+                        "📥 Download Image",
+                        img_file,
+                        file_name="sheet.png"
+                    )
+
             else:
                 st.warning("No files for your line.")
 
