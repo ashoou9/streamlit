@@ -4,6 +4,7 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
+import re  # لاستعمال regex لتقسيم اسم الملف
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -50,13 +51,14 @@ def get_current_month_folders():
 
 def extract_line_from_filename(filename):
     try:
-        # بيعتمد على " - " وليس "-"
-        line_part = filename.split(" - ")[-1]
-        line_part = line_part.replace(".xlsx", "").replace(".xls", "")
+        # إزالة الامتداد
+        name = filename.replace(".xlsx", "").replace(".xls", "")
+        # تقسيم على أي dash مع أو بدون مسافات
+        parts = re.split(r"\s*-\s*", name)
+        line_part = parts[-1] if parts else name
         return line_part.strip().lower()
     except:
         return ""
-
 
 # ----------------------------
 # Login / Logout
@@ -139,7 +141,7 @@ else:
                         st.download_button("⬇", f, file_name=file)
 
     # ==================================================
-    # ✅ USER
+    # ✅ USER / ALLVIEWER
     # ==================================================
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 User Dashboard")
