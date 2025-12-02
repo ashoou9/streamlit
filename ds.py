@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re  # لاستعمال regex لتقسيم اسم الملف
-
+from xlsx2html import xlsx2html
 # ----------------------------
 # Hide Warnings and Logs
 # ----------------------------
@@ -151,9 +151,13 @@ else:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path)
-                        df = df.astype(str)  # حل مشكلة PyArrow
-                        st.dataframe(df)
+                        # عرض الملف بالألوان والتنسيق الأصلي
+                        from xlsx2html import xlsx2html
+                        html_file = path + ".html"
+                        xlsx2html(path, html_file)
+                        with open(html_file, "r", encoding="utf-8") as f:
+                            html_data = f.read()
+                        st.components.v1.html(html_data, height=700, scrolling=True)
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
@@ -181,10 +185,13 @@ else:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                df = pd.read_excel(path)
-                df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
-                
+                # عرض الملف بالألوان والتنسيق الأصلي
+                from xlsx2html import xlsx2html
+                html_file = path + ".html"
+                xlsx2html(path, html_file)
+                with open(html_file, "r", encoding="utf-8") as f:
+                    html_data = f.read()
+                st.components.v1.html(html_data, height=700, scrolling=True)
 
                 with open(path, "rb") as f:
                     st.download_button(
