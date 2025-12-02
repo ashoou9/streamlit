@@ -183,7 +183,7 @@ else:
 
                 df = pd.read_excel(path)
                 df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df,width=700 ,height=700)
+                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
                 
 
                 with open(path, "rb") as f:
