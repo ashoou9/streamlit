@@ -138,7 +138,7 @@ else:
 
         # --------- History ----------
         st.markdown("---")
-        selected_day = st.selectbox("Choose Day", get_current_month_folders())
+        selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -162,7 +162,7 @@ else:
     # ✅ USER / ALLVIEWER
     # ==================================================
     elif st.session_state.user_role in ["User", "AllViewer"]:
-        st.subheader("👤 User Dashboard")
+        st.subheader("👤 Sales Dashboard")
 
         selected_day = st.selectbox("Choose Day", get_current_month_folders())
 
