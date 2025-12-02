@@ -2,5 +2,4 @@ streamlit
 pandas
 openpyxl
 xlsx2html
-beautifulsoup4
-bs4
+matplotlib.pyplot
