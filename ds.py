@@ -49,16 +49,18 @@ def get_current_month_folders():
             folders.append(f)
     return sorted(folders, reverse=True)
 
-def extract_line_from_filename(filename):
-    try:
-        # إزالة الامتداد
-        name = filename.replace(".xlsx", "").replace(".xls", "")
-        # تقسيم على أي dash مع أو بدون مسافات
-        parts = re.split(r"\s*-\s*", name)
-        line_part = parts[-1] if parts else name
-        return line_part.strip().lower()
-    except:
-        return ""
+def is_file_for_user(filename, username):
+    """
+    تتحقق إذا كان الملف يخص المستخدم.
+    username لازم يكون lower case
+    """
+    name = filename.replace(".xlsx", "").replace(".xls", "").lower()
+    # تقسيم الاسم على أي dash مع أو بدون مسافات
+    parts = re.split(r"\s*-\s*", name)
+    for part in parts:
+        if username.lower() in part.strip():
+            return True
+    return False
 
 # ----------------------------
 # Login / Logout
@@ -135,7 +137,9 @@ else:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        st.dataframe(pd.read_excel(path))
+                        df = pd.read_excel(path)
+                        df = df.astype(str)  # حل مشكلة PyArrow
+                        st.dataframe(df)
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
@@ -154,11 +158,9 @@ else:
 
             allowed_files = []
             for file in files:
-                line_name = extract_line_from_filename(file)
-
                 if st.session_state.user_role == "AllViewer":
                     allowed_files.append(file)
-                elif line_name == st.session_state.username.lower():
+                elif is_file_for_user(file, st.session_state.username):
                     allowed_files.append(file)
 
             if allowed_files:
@@ -166,6 +168,7 @@ else:
                 path = os.path.join(folder_path, chosen_file)
 
                 df = pd.read_excel(path)
+                df = df.astype(str)  # حل مشكلة PyArrow
                 st.dataframe(df)
 
                 with open(path, "rb") as f:
