@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re  # لاستعمال regex لتقسيم اسم الملف
+import base64
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -12,6 +13,28 @@ import re  # لاستعمال regex لتقسيم اسم الملف
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
+
+def set_bg_local(image_file):
+    """
+    صورة خلفية من الجهاز
+    """
+    with open(image_file, "rb") as f:
+        img_bytes = f.read()
+    b64 = base64.b64encode(img_bytes).decode()
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+    background-image: url("data:c:\Users\pc\Documents\GitHub\streamlit\data\background.png/png;base64,{b64}");
+    background-size: cover;
+    background-position: center;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+# Example usage
+
+set_bg_local("data/your_image.png")  # حط مسار الصورة هنا
 
 # ----------------------------
 # Users Database
@@ -79,14 +102,7 @@ def is_file_for_user(filename, username):
 # Login / Logout
 # ----------------------------
 def login(username, password):
-    page_bg_img = f"""
-<style>
-[data-testid="stAppViewContainer"] > .main {{
-background-image: url("https://images.unsplash.com/photo-1761839257046-84e95464cc52?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-background-size: cover;
-}}
-</style>
-"""
+ 
     st.markdown(page_bg_img,unsafe_allow_html=True)
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
