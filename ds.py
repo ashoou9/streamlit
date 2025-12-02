@@ -111,7 +111,7 @@ if not st.session_state.logged_in:
 # ✅ AFTER LOGIN
 # =======================
 else:
-    st.success(f"Welcome To Your Daily Sales Sheet👋")
+    st.success(f"Welcome To Your Daily Sales👋")
 
     # ==================================================
     # ✅ ADMIN
@@ -138,7 +138,7 @@ else:
 
         # --------- History ----------
         st.markdown("---")
-        selected_day = st.textbox("Sales Day", get_current_month_folders())
+        selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
