@@ -5,53 +5,118 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-import base64
 
 # ======================================================
-# 🔥 BACKGROUND IMAGE FUNCTION
+# 🎨 CUSTOM CSS DESIGN (FULL BACKGROUND WITHOUT IMAGE)
 # ======================================================
-def add_background(image_file):
-    try:
-        with open(image_file, "rb") as f:
-            encoded = base64.b64encode(f.read()).decode()
+page_bg = """
+<style>
+.stApp {
+    background: #0f1a24;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+}
 
-        css = f"""
-        <style>
-        .stApp {{
-            background-image: url("data:image/png;base64,{encoded}");
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }}
+/* 🔴 RED CURVE RIGHT SIDE */
+.stApp:before {
+    content: "";
+    position: absolute;
+    right: -300px;
+    bottom: -200px;
+    width: 900px;
+    height: 900px;
+    background: #d71920;
+    border-radius: 50%;
+    z-index: -1;
+}
 
-        .stTextInput > div > div > input {{
-            background-color: rgba(255,255,255,0.85);
-            color: black;
-            border-radius: 6px;
-        }}
+/* 🔺 RED TRIANGLES */
+.red-triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 35px solid #d71920;
+    position: absolute;
+}
 
-        .stPasswordInput > div > div > input {{
-            background-color: rgba(255,255,255,0.85);
-            color: black;
-            border-radius: 6px;
-        }}
+/* ⚪ WHITE TRIANGLES */
+.white-triangle {
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 18px solid white;
+    position: absolute;
+}
 
-        .stButton > button {{
-            background-color: #cc0000;
-            color: white;
-            border-radius: 6px;
-            font-size: 18px;
-            padding: 8px 20px;
-        }}
-        </style>
-        """
-        st.markdown(css, unsafe_allow_html=True)
-    except:
-        pass
+/* ⚪ DOT PATTERNS */
+.dot-grid {
+    position: absolute;
+    display: grid;
+    grid-template-columns: repeat(12, 10px);
+    grid-gap: 6px;
+}
+.dot-grid div {
+    width: 6px;
+    height: 6px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.7;
+}
 
-# ⬅️ Apply background
-add_background("background.png")
+/* 🔒 LOGIN BOX IN CENTER */
+.login-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 40px;
+    border-radius: 15px;
+    width: 450px;
+    margin: auto;
+    margin-top: 200px;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 0 25px rgba(0,0,0,0.3);
+}
 
+.login-title {
+    text-align: center;
+    color: white;
+    font-size: 45px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+/* TEXT INPUT STYLE */
+.stTextInput > div > div > input {
+    background: rgba(255,255,255,0.8);
+    padding: 10px;
+    border-radius: 8px;
+}
+.stPasswordInput > div > div > input {
+    background: rgba(255,255,255,0.8);
+    padding: 10px;
+    border-radius: 8px;
+}
+.stButton > button {
+    background: #d71920;
+    color: white;
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 8px;
+    width: 100%;
+}
+</style>
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
+
+# Add triangles and dots
+st.markdown("""
+<div class="red-triangle" style="top: 120px; left: 820px;"></div>
+<div class="white-triangle" style="top: 280px; left: 480px;"></div>
+<div class="dot-grid" style="top: 200px; right: 200px;">
+""" + "".join(["<div></div>" for _ in range(60)]) + """
+</div>
+""", unsafe_allow_html=True)
 
 # ======================================================
 # Hide warnings
@@ -59,7 +124,6 @@ add_background("background.png")
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
-
 
 # ======================================================
 # Users Database
@@ -84,17 +148,6 @@ users = {
     "All":   {"password": "9021", "role": "AllViewer"}
 }
 
-
-# ======================================================
-# Read Excel Safely Function
-# ======================================================
-def read_excel_file(path):
-    try:
-        return pd.read_excel(path, engine="openpyxl")
-    except:
-        return pd.read_excel(path, engine="xlrd")
-
-
 # ======================================================
 # Session State
 # ======================================================
@@ -105,7 +158,6 @@ if "logged_in" not in st.session_state:
 
 BASE_PATH = "data"
 
-
 # ======================================================
 # Helpers
 # ======================================================
@@ -115,12 +167,16 @@ def get_current_month_folders():
     today = date.today().strftime("%Y-%m")
     return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
-
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in part.strip() for part in parts)
 
+def read_excel_file(path):
+    try:
+        return pd.read_excel(path, engine="openpyxl")
+    except:
+        return pd.read_excel(path, engine="xlrd")
 
 # ======================================================
 # Login Functions
@@ -134,44 +190,37 @@ def login(username, password):
             return True
     return False
 
-
 def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-
 
 # ======================================================
 # UI
 # ======================================================
 st.title("Daily Sales")
 
-
-# =========================
-# BEFORE LOGIN
-# =========================
 if not st.session_state.logged_in:
 
-    st.markdown("### 🔐 Please Login")
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+    st.markdown('<div class="login-title">Daily Sales</div>', unsafe_allow_html=True)
 
-    u = st.text_input("Username")
-    p = st.text_input("Password", type="password")
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
     if st.button("Login"):
-        if login(u, p):
+        if login(username, password):
             st.rerun()
         else:
             st.error("❌ Wrong User Or Password")
 
+    st.markdown('</div>', unsafe_allow_html=True)
 
-# =========================
 # AFTER LOGIN
-# =========================
 else:
+    st.success(f"Welcome {st.session_state.username} 👋")
 
-    st.success(f"Welcome To Your Daily Sales 👋")
-
-    # ----------------------- ADMIN -----------------------
+    # ---------------- Admin ----------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -184,25 +233,19 @@ else:
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
-
             for file in uploaded_files:
                 with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
-
             st.success("✅ Files uploaded successfully")
 
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-
                 c1, c2, c3 = st.columns([4,1,1])
-                with c1:
-                    st.write(file)
+                with c1: st.write(file)
                 with c2:
                     if st.button("👁", key=file):
                         df = read_excel_file(path).astype(str)
@@ -211,41 +254,27 @@ else:
                     with open(path, "rb") as f:
                         st.download_button("⬇ Download", f, file_name=file)
 
-
-    # ----------------------- USER / ALLVIEWER -----------------------
+    # ---------------- User / AllViewer ----------------
     elif st.session_state.user_role in ["User", "AllViewer"]:
-
         st.subheader("👤 Sales Dashboard")
-
         selected_day = st.selectbox("Date", get_current_month_folders())
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             if st.session_state.user_role == "AllViewer":
                 allowed_files = os.listdir(folder_path)
             else:
-                allowed_files = [
-                    f for f in os.listdir(folder_path)
-                    if is_file_for_user(f, st.session_state.username)
-                ]
+                allowed_files = [f for f in os.listdir(folder_path) if is_file_for_user(f, st.session_state.username)]
 
             if allowed_files:
-
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
-
                 df = read_excel_file(path).astype(str)
                 st.dataframe(df)
-
                 with open(path, "rb") as f:
                     st.download_button("⬇ Download Excel", f, file_name=chosen_file)
-
             else:
                 st.warning("⚠ No files for your line.")
 
-
-    # ----------------------- LOGOUT -----------------------
     if st.button("Logout"):
         logout()
         st.rerun()
