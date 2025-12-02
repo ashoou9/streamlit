@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 
 # ----------------------------
 # Hide Warnings and Logs
