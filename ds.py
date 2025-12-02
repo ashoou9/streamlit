@@ -4,7 +4,7 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
-import re  # لاستعمال regex لتقسيم اسم الملف
+import re
 import base64
 
 # ----------------------------
@@ -14,9 +14,12 @@ warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
+# ----------------------------
+# Page Background
+# ----------------------------
 def set_bg_local(image_file):
     """
-    صورة خلفية من الجهاز
+    تستخدم صورة من الجهاز كخلفية
     """
     with open(image_file, "rb") as f:
         img_bytes = f.read()
@@ -24,17 +27,16 @@ def set_bg_local(image_file):
     page_bg_img = f"""
     <style>
     [data-testid="stAppViewContainer"] > .main {{
-    background-image: url("data:c:\\Users\\pc\\Documents\\GitHub\\streamlit\\data\\background.png;base64,{b64}");
-    background-size: cover;
-    background-position: center;
+        background-image: url("data:image/png;base64,{b64}");
+        background-size: cover;
+        background-position: center;
     }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# Example usage
-
-set_bg_local("data/your_image.png")  # حط مسار الصورة هنا
+# استخدم المسار الصحيح للصورة على جهازك
+set_bg_local(r"data/background.png")  # أو المسار الكامل بالـ raw string
 
 # ----------------------------
 # Users Database
@@ -79,40 +81,25 @@ def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith(today):
-            folders.append(f)
+    folders = [f for f in os.listdir(BASE_PATH) if f.startswith(today)]
     return sorted(folders, reverse=True)
 
 def is_file_for_user(filename, username):
-    """
-    تتحقق إذا كان الملف يخص المستخدم.
-    username لازم يكون lower case
-    """
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
-    # تقسيم الاسم على أي dash مع أو بدون مسافات
     parts = re.split(r"\s*-\s*", name)
-    for part in parts:
-        if username.lower() in part.strip():
-            return True
-    return False
+    return any(username.lower() in part.strip() for part in parts)
 
 # ----------------------------
 # Login / Logout
 # ----------------------------
 def login(username, password):
- 
-    st.markdown(page_bg_img,unsafe_allow_html=True)
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key  # خلي الاسم الأصلي
-            
+            st.session_state.username = user_key
             return True
     return False
-
 
 def logout():
     st.session_state.logged_in = False
@@ -133,91 +120,61 @@ if not st.session_state.logged_in:
         else:
             st.error("Wrong User Or Password")
 
-# =======================
-# ✅ AFTER LOGIN
-# =======================
 else:
     st.success(f"Welcome To Your Daily Sales👋")
 
-    # ==================================================
-    # ✅ ADMIN
-    # ==================================================
+    # ================= ADMIN =================
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
-
         uploaded_files = st.file_uploader(
-            "Upload Excel Files",
-            type=["xlsx", "xls"],
-            accept_multiple_files=True
+            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
         )
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
-
             for file in uploaded_files:
                 file_path = os.path.join(today_folder, file.name)
                 with open(file_path, "wb") as f:
                     f.write(file.getbuffer())
-
             st.success("✅ Files uploaded successfully")
 
-        # --------- History ----------
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             files = os.listdir(folder_path)
-
             for file in files:
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+                c1,c2,c3 = st.columns([4,1,1])
                 with c1:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path)
-                        df = df.astype(str)  # حل مشكلة PyArrow
+                        df = pd.read_excel(path).astype(str)
                         st.dataframe(df)
                 with c3:
-                    with open(path, "rb") as f:
+                    with open(path,"rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ==================================================
-    # ✅ USER / ALLVIEWER
-    # ==================================================
-    elif st.session_state.user_role in ["User", "AllViewer"]:
+    # ================= USER / ALLVIEWER =================
+    elif st.session_state.user_role in ["User","AllViewer"]:
         st.subheader("👤 Sales Dashboard")
-
         selected_day = st.selectbox("Date", get_current_month_folders())
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             files = os.listdir(folder_path)
-
             allowed_files = []
             for file in files:
-                if st.session_state.user_role == "AllViewer":
+                if st.session_state.user_role=="AllViewer" or is_file_for_user(file, st.session_state.username):
                     allowed_files.append(file)
-                elif is_file_for_user(file, st.session_state.username):
-                    allowed_files.append(file)
-
             if allowed_files:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
-
-                df = pd.read_excel(path)
-                df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
-                
-
-                with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File",
-                        f,
-                        file_name=chosen_file
-                    )
+                df = pd.read_excel(path).astype(str)
+                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x=='SomeValue' else ''))
+                with open(path,"rb") as f:
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
             else:
                 st.warning("No files for your line.")
 
