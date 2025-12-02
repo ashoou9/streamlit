@@ -49,9 +49,14 @@ def get_current_month_folders():
     return sorted(folders, reverse=True)
 
 def extract_line_from_filename(filename):
-    if "-" in filename:
-        return filename.split("-")[-1].replace(".xlsx", "").replace(".xls", "").strip().lower()
-    return ""
+    try:
+        # بيعتمد على " - " وليس "-"
+        line_part = filename.split(" - ")[-1]
+        line_part = line_part.replace(".xlsx", "").replace(".xls", "")
+        return line_part.strip().lower()
+    except:
+        return ""
+
 
 # ----------------------------
 # Login / Logout
