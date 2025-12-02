@@ -5,6 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
+import base64
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -16,8 +17,24 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 # Page Background (URL)
 # ----------------------------
-st.image("data/background.png", width=200)
+# logo mash st.image("data/background.png", width=200)
+def set_bg_local(image_file):
+    with open(image_file, "rb") as f:
+        img_bytes = f.read()
+    b64 = base64.b64encode(img_bytes).decode()
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+        background-image: url("data:image/png;base64,{b64}");
+        background-size: cover;
+        background-position: center;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
+# استخدم الصورة من الفولدر
+set_bg_local("data/background.png")
 # استخدم رابط صورة من الإنترنت
 
 
