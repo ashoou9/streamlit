@@ -17,24 +17,7 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 # Page Background
 # ----------------------------
-def set_bg_local(image_file):
-    """
-    تستخدم صورة من الجهاز كخلفية
-    """
-    with open(image_file, "rb") as f:
-        img_bytes = f.read()
-    b64 = base64.b64encode(img_bytes).decode()
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] > .main {{
-        background-image: url("data:image/png;base64,{b64}");
-        background-size: cover;
-        background-position: center;
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-set_bg_local("data/background.png")
+
 
 # ----------------------------
 # Users Database
@@ -108,6 +91,24 @@ def logout():
 # UI
 # ----------------------------
 st.title("Daily Sales")
+def set_bg_local(image_file):
+    """
+    تستخدم صورة من الجهاز كخلفية
+    """
+    with open(image_file, "rb") as f:
+        img_bytes = f.read()
+    b64 = base64.b64encode(img_bytes).decode()
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+        background-image: url("data:image/png;base64,{b64}");
+        background-size: cover;
+        background-position: center;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+set_bg_local("data/background.png")
 
 if not st.session_state.logged_in:
     u = st.text_input("Username")
