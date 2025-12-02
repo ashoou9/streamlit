@@ -34,7 +34,7 @@ def set_bg_local(image_file):
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
-set_bg_local(r"c:\Users\pc\Documents\GitHub\streamlit\data\background.png")
+set_bg_local("data/background.png")
 
 # ----------------------------
 # Users Database
