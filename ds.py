@@ -5,7 +5,7 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re  # لاستعمال regex لتقسيم اسم الملف
-from xlsx2html import xlsx2html
+import xlsx2html
 # ----------------------------
 # Hide Warnings and Logs
 # ----------------------------
