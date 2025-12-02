@@ -79,13 +79,14 @@ def is_file_for_user(filename, username):
 # Login / Logout
 # ----------------------------
 def login(username, password):
-    username = username.lower()
-    if username in users and users[username]["password"] == password:
-        st.session_state.logged_in = True
-        st.session_state.user_role = users[username]["role"]
-        st.session_state.username = username
-        return True
+    for user_key, user_data in users.items():
+        if username.lower() == user_key.lower() and password == user_data["password"]:
+            st.session_state.logged_in = True
+            st.session_state.user_role = user_data["role"]
+            st.session_state.username = user_key  # خلي الاسم الأصلي
+            return True
     return False
+
 
 def logout():
     st.session_state.logged_in = False
