@@ -49,6 +49,7 @@ page_bg = """
     border-right: 12px solid transparent;
     border-top: 18px solid white;
     position: absolute;
+    z-index: -1;
 }
 
 /* ⚪ DOT PATTERNS */
@@ -57,6 +58,7 @@ page_bg = """
     display: grid;
     grid-template-columns: repeat(12, 10px);
     grid-gap: 6px;
+    z-index: -1;
 }
 .dot-grid div {
     width: 6px;
@@ -64,6 +66,7 @@ page_bg = """
     background: white;
     border-radius: 50%;
     opacity: 0.7;
+    z-index: -1;
 }
 
 /* 🔒 LOGIN BOX IN CENTER */
@@ -76,6 +79,7 @@ page_bg = """
     margin-top: 200px;
     backdrop-filter: blur(4px);
     box-shadow: 0 0 25px rgba(0,0,0,0.3);
+    z-index: 10;
 }
 
 .login-title {
