@@ -4,18 +4,57 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
-import re  # لاستعمال regex لتقسيم اسم الملف
+import re
+import base64   # مهم عشان الخلفية
 
-# ----------------------------
+# ======================================================
+# 🔥 BACKGROUND IMAGE FUNCTION
+# ======================================================
+def add_background(image_file):
+    with open(image_file, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+
+    css = f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/png;base64,{encoded}");
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+
+    /* تحسين صندوق الإدخال */
+    .stTextInput > div > div > input {{
+        background-color: rgba(255,255,255,0.8);
+        color: black;
+        border-radius: 6px;
+    }}
+
+    .stButton > button {{
+        background-color: #d40000;
+        color: white;
+        border-radius: 6px;
+        font-size: 18px;
+        padding: 8px 20px;
+    }}
+
+    </style>
+    """
+    st.markdown(css, unsafe_allow_html=True)
+
+# ⬅️ هنا بنشغل الخلفية
+add_background("background.png")
+
+# ======================================================
 # Hide Warnings and Logs
-# ----------------------------
+# ======================================================
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
-# ----------------------------
+# ======================================================
 # Users Database
-# ----------------------------
+# ======================================================
 users = {
     "ahmed": {"password": "1001", "role": "Admin"},
     "CHC New": {"password": "1000", "role": "User"},
@@ -36,86 +75,75 @@ users = {
     "All":   {"password": "9021", "role": "AllViewer"}
 }
 
-# ----------------------------
+# ======================================================
 # Session State
-# ----------------------------
+# ======================================================
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------
-# Paths
-# ----------------------------
 BASE_PATH = "data"
 
-# ----------------------------
+# ======================================================
 # Helpers
-# ----------------------------
+# ======================================================
 def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith(today):
-            folders.append(f)
-    return sorted(folders, reverse=True)
+    return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
-    """
-    تتحقق إذا كان الملف يخص المستخدم.
-    username لازم يكون lower case
-    """
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
-    # تقسيم الاسم على أي dash مع أو بدون مسافات
     parts = re.split(r"\s*-\s*", name)
-    for part in parts:
-        if username.lower() in part.strip():
-            return True
-    return False
+    return any(username.lower() in part.strip() for part in parts)
 
-# ----------------------------
-# Login / Logout
-# ----------------------------
+# ======================================================
+# Login Functions
+# ======================================================
 def login(username, password):
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key  # خلي الاسم الأصلي
+            st.session_state.username = user_key
             return True
     return False
-
 
 def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------
+# ======================================================
 # UI
-# ----------------------------
+# ======================================================
 st.title("Daily Sales")
 
+# =========================
+# BEFORE LOGIN
+# =========================
 if not st.session_state.logged_in:
+
+    st.markdown("### 🔐 Please Login")
+
     u = st.text_input("Username")
     p = st.text_input("Password", type="password")
+
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
-            st.error("Wrong User Or Password")
+            st.error("❌ Wrong User Or Password")
 
-# =======================
-# ✅ AFTER LOGIN
-# =======================
+# =========================
+# AFTER LOGIN
+# =========================
 else:
-    st.success(f"Welcome To Your Daily Sales👋")
+    st.success(f"Welcome To Your Daily Sales 👋")
 
-    # ==================================================
-    # ✅ ADMIN
-    # ==================================================
+    # ----------------------- Admin -----------------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -130,37 +158,32 @@ else:
             os.makedirs(today_folder, exist_ok=True)
 
             for file in uploaded_files:
-                file_path = os.path.join(today_folder, file.name)
-                with open(file_path, "wb") as f:
+                with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
 
             st.success("✅ Files uploaded successfully")
 
-        # --------- History ----------
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-            files = os.listdir(folder_path)
 
-            for file in files:
+            for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
+
                 c1, c2, c3 = st.columns([4,1,1])
                 with c1:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path)
-                        df = df.astype(str)  # حل مشكلة PyArrow
+                        df = pd.read_excel(path).astype(str)
                         st.dataframe(df)
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ==================================================
-    # ✅ USER / ALLVIEWER
-    # ==================================================
+    # ----------------------- User / AllViewer -----------------------
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
@@ -168,34 +191,26 @@ else:
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-            files = os.listdir(folder_path)
 
-            allowed_files = []
-            for file in files:
-                if st.session_state.user_role == "AllViewer":
-                    allowed_files.append(file)
-                elif is_file_for_user(file, st.session_state.username):
-                    allowed_files.append(file)
+            if st.session_state.user_role == "AllViewer":
+                allowed_files = os.listdir(folder_path)
+            else:
+                allowed_files = [f for f in os.listdir(folder_path)
+                                 if is_file_for_user(f, st.session_state.username)]
 
             if allowed_files:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                df = pd.read_excel(path)
-                df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
-                
+                df = pd.read_excel(path).astype(str)
+                st.dataframe(df)
 
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File",
-                        f,
-                        file_name=chosen_file
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
             else:
-                st.warning("No files for your line.")
+                st.warning("⚠ No files for your line.")
 
-    # -------- Logout ----------
+    # ----------------------- Logout -----------------------
     if st.button("Logout"):
         logout()
         st.rerun()
