@@ -4,20 +4,18 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
-import re
-from openpyxl import load_workbook
-from bs4 import BeautifulSoup
+import re  # لاستعمال regex لتقسيم اسم الملف
 
-# ----------------------------------------------------
-# إخفاء التحذيرات واللوجز
-# ----------------------------------------------------
+# ----------------------------
+# Hide Warnings and Logs
+# ----------------------------
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
-# ----------------------------------------------------
+# ----------------------------
 # Users Database
-# ----------------------------------------------------
+# ----------------------------
 users = {
     "ahmed": {"password": "1001", "role": "Admin"},
     "CHC New": {"password": "1000", "role": "User"},
@@ -35,103 +33,89 @@ users = {
     "DNU": {"password": "2938", "role": "User"},
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
-    "All": {"password": "9021", "role": "AllViewer"}
+    "All":   {"password": "9021", "role": "AllViewer"}
 }
 
-# ----------------------------------------------------
+# ----------------------------
 # Session State
-# ----------------------------------------------------
+# ----------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------------------------------
+# ----------------------------
 # Paths
-# ----------------------------------------------------
+# ----------------------------
 BASE_PATH = "data"
 
-# ----------------------------------------------------
-# Helper Functions
-# ----------------------------------------------------
+# ----------------------------
+# Helpers
+# ----------------------------
 def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = [f for f in os.listdir(BASE_PATH) if f.startswith(today)]
+    folders = []
+    for f in os.listdir(BASE_PATH):
+        if f.startswith(today):
+            folders.append(f)
     return sorted(folders, reverse=True)
 
 def is_file_for_user(filename, username):
+    """
+    تتحقق إذا كان الملف يخص المستخدم.
+    username لازم يكون lower case
+    """
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
+    # تقسيم الاسم على أي dash مع أو بدون مسافات
     parts = re.split(r"\s*-\s*", name)
     for part in parts:
         if username.lower() in part.strip():
             return True
     return False
 
-# ----------------------------------------------------
-# Login Functions
-# ----------------------------------------------------
+# ----------------------------
+# Login / Logout
+# ----------------------------
 def login(username, password):
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key
+            st.session_state.username = user_key  # خلي الاسم الأصلي
             return True
     return False
+
 
 def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------------------------------
-# تحويل الإكسل إلى HTML بسيط + منسق
-# ----------------------------------------------------
-def excel_to_html_basic(path):
-    wb = load_workbook(path)
-    sheet = wb.active
-    df = pd.DataFrame(sheet.values)
-
-    html = df.to_html(index=False, header=False)
-
-    soup = BeautifulSoup(html, "html.parser")
-
-    table = soup.find("table")
-    table["style"] = "border-collapse: collapse; width:100%; font-size:14px;"
-
-    for td in soup.find_all("td"):
-        td["style"] = "border:1px solid #888; padding:6px; text-align:center;"
-
-    return str(soup)
-
-def show_excel_html(path):
-    html_data = excel_to_html_basic(path)
-    st.components.v1.html(html_data, height=800, scrolling=True)
-
-# ----------------------------------------------------
+# ----------------------------
 # UI
-# ----------------------------------------------------
+# ----------------------------
 st.title("Daily Sales")
 
 if not st.session_state.logged_in:
-
     u = st.text_input("Username")
     p = st.text_input("Password", type="password")
-
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
             st.error("Wrong User Or Password")
 
+# =======================
+# ✅ AFTER LOGIN
+# =======================
 else:
-    st.success(f"Welcome To Your Daily Sales 👋")
+    st.success(f"Welcome To Your Daily Sales👋")
 
-    # ----------------------------------------------------
-    # ADMIN VIEW
-    # ----------------------------------------------------
+    # ==================================================
+    # ✅ ADMIN
+    # ==================================================
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -152,8 +136,8 @@ else:
 
             st.success("✅ Files uploaded successfully")
 
+        # --------- History ----------
         st.markdown("---")
-
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
@@ -162,22 +146,21 @@ else:
 
             for file in files:
                 path = os.path.join(folder_path, file)
-                col1, col2, col3 = st.columns([4, 1, 1])
-
-                with col1:
+                c1, c2, c3 = st.columns([4,1,1])
+                with c1:
                     st.write(file)
-
-                with col2:
+                with c2:
                     if st.button("👁", key=file):
-                        show_excel_html(path)
-
-                with col3:
+                        df = pd.read_excel(path)
+                        df = df.astype(str)  # حل مشكلة PyArrow
+                        st.dataframe(df)
+                with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ----------------------------------------------------
-    # USER / ALLVIEWER
-    # ----------------------------------------------------
+    # ==================================================
+    # ✅ USER / ALLVIEWER
+    # ==================================================
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
@@ -198,17 +181,21 @@ else:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                show_excel_html(path)
+                df = pd.read_excel(path)
+                df = df.astype(str)  # حل مشكلة PyArrow
+                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
+                
 
                 with open(path, "rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
-
+                    st.download_button(
+                        "🔽 Download Excel File",
+                        f,
+                        file_name=chosen_file
+                    )
             else:
                 st.warning("No files for your line.")
 
-    # ----------------------------------------------------
-    # LOGOUT
-    # ----------------------------------------------------
+    # -------- Logout ----------
     if st.button("Logout"):
         logout()
         st.rerun()
