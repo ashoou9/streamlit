@@ -5,7 +5,8 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-from aspose.cells import Workbook   # جديد لعرض الإكسل بالشكل الأصلي 
+from openpyxl import load_workbook
+from bs4 import BeautifulSoup
 
 # ----------------------------------------------------
 # إخفاء التحذيرات واللوجز
@@ -86,19 +87,27 @@ def logout():
     st.session_state.username = None
 
 # ----------------------------------------------------
-# تحويل الإكسل إلى HTML بنفس التنسيق (Aspose.Cells)
+# تحويل الإكسل إلى HTML بسيط + منسق
 # ----------------------------------------------------
-def excel_to_html(input_path, output_path):
-    workbook = Workbook(input_path)
-    workbook.save(output_path, 12)  # 12 = HTML
+def excel_to_html_basic(path):
+    wb = load_workbook(path)
+    sheet = wb.active
+    df = pd.DataFrame(sheet.values)
 
-def show_excel_as_html(path):
-    html_path = path + "_view.html"
-    excel_to_html(path, html_path)
+    html = df.to_html(index=False, header=False)
 
-    with open(html_path, "r", encoding="utf-8") as f:
-        html_data = f.read()
+    soup = BeautifulSoup(html, "html.parser")
 
+    table = soup.find("table")
+    table["style"] = "border-collapse: collapse; width:100%; font-size:14px;"
+
+    for td in soup.find_all("td"):
+        td["style"] = "border:1px solid #888; padding:6px; text-align:center;"
+
+    return str(soup)
+
+def show_excel_html(path):
+    html_data = excel_to_html_basic(path)
     st.components.v1.html(html_data, height=800, scrolling=True)
 
 # ----------------------------------------------------
@@ -121,7 +130,7 @@ else:
     st.success(f"Welcome To Your Daily Sales 👋")
 
     # ----------------------------------------------------
-    # ADMIN
+    # ADMIN VIEW
     # ----------------------------------------------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
@@ -145,7 +154,6 @@ else:
 
         st.markdown("---")
 
-        # Show History
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
@@ -154,16 +162,16 @@ else:
 
             for file in files:
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4, 1, 1])
+                col1, col2, col3 = st.columns([4, 1, 1])
 
-                with c1:
+                with col1:
                     st.write(file)
 
-                with c2:
+                with col2:
                     if st.button("👁", key=file):
-                        show_excel_as_html(path)
+                        show_excel_html(path)
 
-                with c3:
+                with col3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
@@ -190,7 +198,7 @@ else:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                show_excel_as_html(path)
+                show_excel_html(path)
 
                 with open(path, "rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
@@ -199,7 +207,7 @@ else:
                 st.warning("No files for your line.")
 
     # ----------------------------------------------------
-    # Logout
+    # LOGOUT
     # ----------------------------------------------------
     if st.button("Logout"):
         logout()

@@ -2,5 +2,5 @@ streamlit
 pandas
 openpyxl
 xlsx2html
-aspose.cells
-Workbook
+BeautifulSoup
+bs4
