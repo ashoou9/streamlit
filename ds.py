@@ -17,7 +17,9 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 users = {
     "ahmed": {"password": "2811", "role": "Admin"},
-    "david": {"password": "1234", "role": "User"}
+    "git 1": {"password": "1111", "role": "User"},
+    "cns 2": {"password": "2222", "role": "User"},
+    "all":   {"password": "9999", "role": "AllViewer"}
 }
 
 # ----------------------------
@@ -34,39 +36,33 @@ if "logged_in" not in st.session_state:
 BASE_PATH = "data"
 
 # ----------------------------
-# Helper: Get Current Month Folders
+# Helpers
 # ----------------------------
-def get_current_month_folders(base_path):
-    if not os.path.exists(base_path):
+def get_current_month_folders():
+    if not os.path.exists(BASE_PATH):
         return []
-
-    today = date.today()
-    current_year_month = today.strftime("%Y-%m")
-
+    today = date.today().strftime("%Y-%m")
     folders = []
-    for folder in os.listdir(base_path):
-        folder_path = os.path.join(base_path, folder)
-        if os.path.isdir(folder_path) and folder.startswith(current_year_month):
-            try:
-                folder_date = datetime.strptime(folder, "%Y-%m-%d").date()
-                folders.append(folder_date)
-            except:
-                pass
+    for f in os.listdir(BASE_PATH):
+        if f.startswith(today):
+            folders.append(f)
+    return sorted(folders, reverse=True)
 
-    folders.sort(reverse=True)
-    return folders
+def extract_line_from_filename(filename):
+    if "-" in filename:
+        return filename.split("-")[-1].replace(".xlsx", "").replace(".xls", "").strip().lower()
+    return ""
 
 # ----------------------------
 # Login / Logout
 # ----------------------------
 def login(username, password):
     username = username.lower()
-    if username in users:
-        if users[username]["password"] == password:
-            st.session_state.logged_in = True
-            st.session_state.user_role = users[username]["role"]
-            st.session_state.username = username
-            return True
+    if username in users and users[username]["password"] == password:
+        st.session_state.logged_in = True
+        st.session_state.user_role = users[username]["role"]
+        st.session_state.username = username
+        return True
     return False
 
 def logout():
@@ -80,156 +76,101 @@ def logout():
 st.title("🔐 Login Page")
 
 if not st.session_state.logged_in:
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-
+    u = st.text_input("Username")
+    p = st.text_input("Password", type="password")
     if st.button("Login"):
-        if login(username, password):
-            st.success("✅ Login Successful")
+        if login(u, p):
             st.rerun()
         else:
-            st.error("❌ Wrong Username or Password")
+            st.error("Wrong login")
 
+# =======================
+# ✅ AFTER LOGIN
+# =======================
 else:
     st.success(f"Welcome {st.session_state.username.upper()} 👋")
-    st.info(f"Your Role: {st.session_state.user_role}")
 
     # ==================================================
-    # ✅ ADMIN DASHBOARD
+    # ✅ ADMIN
     # ==================================================
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
-        # ---------- Upload ----------
-        uploaded_file = st.file_uploader("Upload Excel File", type=["xlsx", "xls"])
+        uploaded_files = st.file_uploader(
+            "Upload Excel Files",
+            type=["xlsx", "xls"],
+            accept_multiple_files=True
+        )
 
-        if uploaded_file is not None:
+        if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
 
-            file_path = os.path.join(today_folder, uploaded_file.name)
+            for file in uploaded_files:
+                file_path = os.path.join(today_folder, file.name)
+                with open(file_path, "wb") as f:
+                    f.write(file.getbuffer())
 
-            # حفظ الملف بنفس التمبلت الأصلي
-            with open(file_path, "wb") as f:
-                f.write(uploaded_file.getbuffer())
+            st.success("✅ Files uploaded successfully")
 
-            st.success("✅ File uploaded successfully with full formatting!")
-
-        # ---------- Filter by Current Month Days ----------
+        # --------- History ----------
         st.markdown("---")
-        st.subheader("📅 Filter by Day (Current Month)")
+        selected_day = st.selectbox("Choose Day", get_current_month_folders())
 
-        available_days = get_current_month_folders(BASE_PATH)
+        if selected_day:
+            folder_path = os.path.join(BASE_PATH, selected_day)
+            files = os.listdir(folder_path)
 
-        if available_days:
-            selected_day = st.selectbox(
-                "Choose a day",
-                available_days,
-                format_func=lambda x: x.strftime("%Y-%m-%d")
-            )
-
-            selected_folder = os.path.join(BASE_PATH, selected_day.strftime("%Y-%m-%d"))
-
-            # ---------- Files History ----------
-            st.markdown("---")
-            st.subheader("📂 Uploaded Files History")
-
-            files = os.listdir(selected_folder)
-
-            if files:
-                for file in files:
-                    file_path = os.path.join(selected_folder, file)
-
-                    col1, col2, col3 = st.columns([4, 1, 1])
-
-                    with col1:
-                        st.write(file)
-
-                    # 👁 View
-                    with col2:
-                        if st.button("👁", key=f"view_{file_path}"):
-                            df = pd.read_excel(file_path)
-                            st.dataframe(df)
-
-                    # ⬇ Download
-                    with col3:
-                        with open(file_path, "rb") as f:
-                            st.download_button(
-                                label="⬇",
-                                data=f,
-                                file_name=file,
-                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                                key=f"down_{file_path}"
-                            )
-
-                    # 🗑 Delete with Confirmation
-                    confirm_key = f"confirm_{file_path}"
-                    if st.button("🗑 Delete", key=f"del_{file_path}"):
-                        st.session_state[confirm_key] = True
-
-                    if st.session_state.get(confirm_key):
-                        st.warning(f"Are you sure you want to delete {file}?")
-
-                        col_yes, col_no = st.columns(2)
-
-                        with col_yes:
-                            if st.button("✅ Yes", key=f"yes_{file_path}"):
-                                os.remove(file_path)
-                                st.success("Deleted successfully")
-                                st.session_state[confirm_key] = False
-                                st.rerun()
-
-                        with col_no:
-                            if st.button("❌ No", key=f"no_{file_path}"):
-                                st.session_state[confirm_key] = False
-
-            else:
-                st.warning("No files for this day.")
-
-        else:
-            st.info("No uploads for current month yet.")
+            for file in files:
+                path = os.path.join(folder_path, file)
+                c1, c2, c3 = st.columns([4,1,1])
+                with c1:
+                    st.write(file)
+                with c2:
+                    if st.button("👁", key=file):
+                        st.dataframe(pd.read_excel(path))
+                with c3:
+                    with open(path, "rb") as f:
+                        st.download_button("⬇", f, file_name=file)
 
     # ==================================================
-    # ✅ USER DASHBOARD
+    # ✅ USER
     # ==================================================
-    elif st.session_state.user_role == "User":
+    elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 User Dashboard")
 
-        available_days = get_current_month_folders(BASE_PATH)
+        selected_day = st.selectbox("Choose Day", get_current_month_folders())
 
-        if available_days:
-            selected_day = st.selectbox(
-                "Choose a day",
-                available_days,
-                format_func=lambda x: x.strftime("%Y-%m-%d")
-            )
+        if selected_day:
+            folder_path = os.path.join(BASE_PATH, selected_day)
+            files = os.listdir(folder_path)
 
-            selected_folder = os.path.join(BASE_PATH, selected_day.strftime("%Y-%m-%d"))
-            files = os.listdir(selected_folder)
+            allowed_files = []
+            for file in files:
+                line_name = extract_line_from_filename(file)
 
-            if files:
-                selected_file = st.selectbox("Choose File", files)
-                file_path = os.path.join(selected_folder, selected_file)
+                if st.session_state.user_role == "AllViewer":
+                    allowed_files.append(file)
+                elif line_name == st.session_state.username.lower():
+                    allowed_files.append(file)
 
-                df = pd.read_excel(file_path)
+            if allowed_files:
+                chosen_file = st.selectbox("Choose File", allowed_files)
+                path = os.path.join(folder_path, chosen_file)
+
+                df = pd.read_excel(path)
                 st.dataframe(df)
 
-                # ⬇ Download ORIGINAL Excel with Formatting
-                with open(file_path, "rb") as f:
+                with open(path, "rb") as f:
                     st.download_button(
-                        label="⬇ Download File",
-                        data=f,
-                        file_name=selected_file,
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        "⬇ Download Original File",
+                        f,
+                        file_name=chosen_file
                     )
             else:
-                st.warning("No files for this day.")
-        else:
-            st.warning("No uploads for current month yet.")
+                st.warning("No files for your line.")
 
-    # ----------------------------
-    # Logout
-    # ----------------------------
+    # -------- Logout ----------
     if st.button("Logout"):
         logout()
         st.rerun()
