@@ -5,52 +5,61 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-import base64   # مهم عشان الخلفية
+import base64
 
 # ======================================================
 # 🔥 BACKGROUND IMAGE FUNCTION
 # ======================================================
 def add_background(image_file):
-    with open(image_file, "rb") as f:
-        encoded = base64.b64encode(f.read()).decode()
+    try:
+        with open(image_file, "rb") as f:
+            encoded = base64.b64encode(f.read()).decode()
 
-    css = f"""
-    <style>
-    .stApp {{
-        background-image: url("data:image/png;base64,{encoded}");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
+        css = f"""
+        <style>
+        .stApp {{
+            background-image: url("data:image/png;base64,{encoded}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
 
-    /* تحسين صندوق الإدخال */
-    .stTextInput > div > div > input {{
-        background-color: rgba(255,255,255,0.8);
-        color: black;
-        border-radius: 6px;
-    }}
+        .stTextInput > div > div > input {{
+            background-color: rgba(255,255,255,0.85);
+            color: black;
+            border-radius: 6px;
+        }}
 
-    .stButton > button {{
-        background-color: #d40000;
-        color: white;
-        border-radius: 6px;
-        font-size: 18px;
-        padding: 8px 20px;
-    }}
+        .stPasswordInput > div > div > input {{
+            background-color: rgba(255,255,255,0.85);
+            color: black;
+            border-radius: 6px;
+        }}
 
-    </style>
-    """
-    st.markdown(css, unsafe_allow_html=True)
+        .stButton > button {{
+            background-color: #cc0000;
+            color: white;
+            border-radius: 6px;
+            font-size: 18px;
+            padding: 8px 20px;
+        }}
+        </style>
+        """
+        st.markdown(css, unsafe_allow_html=True)
+    except:
+        pass
 
-# ⬅️ هنا بنشغل الخلفية
+# ⬅️ Apply background
 add_background("background.png")
 
+
 # ======================================================
-# Hide Warnings and Logs
+# Hide warnings
 # ======================================================
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
+
 
 # ======================================================
 # Users Database
@@ -75,6 +84,17 @@ users = {
     "All":   {"password": "9021", "role": "AllViewer"}
 }
 
+
+# ======================================================
+# Read Excel Safely Function
+# ======================================================
+def read_excel_file(path):
+    try:
+        return pd.read_excel(path, engine="openpyxl")
+    except:
+        return pd.read_excel(path, engine="xlrd")
+
+
 # ======================================================
 # Session State
 # ======================================================
@@ -85,6 +105,7 @@ if "logged_in" not in st.session_state:
 
 BASE_PATH = "data"
 
+
 # ======================================================
 # Helpers
 # ======================================================
@@ -94,10 +115,12 @@ def get_current_month_folders():
     today = date.today().strftime("%Y-%m")
     return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
+
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in part.strip() for part in parts)
+
 
 # ======================================================
 # Login Functions
@@ -111,15 +134,18 @@ def login(username, password):
             return True
     return False
 
+
 def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
+
 # ======================================================
 # UI
 # ======================================================
 st.title("Daily Sales")
+
 
 # =========================
 # BEFORE LOGIN
@@ -137,13 +163,15 @@ if not st.session_state.logged_in:
         else:
             st.error("❌ Wrong User Or Password")
 
+
 # =========================
 # AFTER LOGIN
 # =========================
 else:
+
     st.success(f"Welcome To Your Daily Sales 👋")
 
-    # ----------------------- Admin -----------------------
+    # ----------------------- ADMIN -----------------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -177,14 +205,16 @@ else:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path).astype(str)
+                        df = read_excel_file(path).astype(str)
                         st.dataframe(df)
                 with c3:
                     with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file)
+                        st.download_button("⬇ Download", f, file_name=file)
 
-    # ----------------------- User / AllViewer -----------------------
+
+    # ----------------------- USER / ALLVIEWER -----------------------
     elif st.session_state.user_role in ["User", "AllViewer"]:
+
         st.subheader("👤 Sales Dashboard")
 
         selected_day = st.selectbox("Date", get_current_month_folders())
@@ -195,22 +225,27 @@ else:
             if st.session_state.user_role == "AllViewer":
                 allowed_files = os.listdir(folder_path)
             else:
-                allowed_files = [f for f in os.listdir(folder_path)
-                                 if is_file_for_user(f, st.session_state.username)]
+                allowed_files = [
+                    f for f in os.listdir(folder_path)
+                    if is_file_for_user(f, st.session_state.username)
+                ]
 
             if allowed_files:
+
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                df = pd.read_excel(path).astype(str)
+                df = read_excel_file(path).astype(str)
                 st.dataframe(df)
 
                 with open(path, "rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
+                    st.download_button("⬇ Download Excel", f, file_name=chosen_file)
+
             else:
                 st.warning("⚠ No files for your line.")
 
-    # ----------------------- Logout -----------------------
+
+    # ----------------------- LOGOUT -----------------------
     if st.button("Logout"):
         logout()
         st.rerun()
