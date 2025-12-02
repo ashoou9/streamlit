@@ -96,7 +96,7 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-st.title("🔐 Home Page")
+st.title("Daily Sales")
 
 if not st.session_state.logged_in:
     u = st.text_input("Username")
