@@ -2,5 +2,5 @@ streamlit
 pandas
 openpyxl
 xlsx2html
-BeautifulSoup
+beautifulsoup4
 bs4
