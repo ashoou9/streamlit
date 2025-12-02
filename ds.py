@@ -83,34 +83,17 @@ def login(username, password):
 <style>
 [data-testid="stAppViewContainer"] > .main {{
 background-image: url("https://images.unsplash.com/photo-1761839257046-84e95464cc52?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
-background-size: 180%;
-background-position: top left;
-background-repeat: no-repeat;
-background-attachment: local;
-}}
-
-[data-testid="stSidebar"] > div:first-child {{
-background-image: url("data:image/png;base64,{img}");
-background-position: center; 
-background-repeat: no-repeat;
-background-attachment: fixed;
-}}
-
-[data-testid="stHeader"] {{
-background: rgba(0,0,0,0);
-}}
-
-[data-testid="stToolbar"] {{
-right: 2rem;
+background-size: cover;
 }}
 </style>
 """
+    st.markdown(page_bg_img,unsafe_allow_html=True)
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
             st.session_state.username = user_key  # خلي الاسم الأصلي
-            st.markdown(page_bg_img,unsafe_allow_html=True)
+            
             return True
     return False
 
