@@ -5,7 +5,6 @@ import os
 import pandas as pd
 from datetime import datetime, date
 import re
-import base64
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -15,9 +14,22 @@ logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
 # ----------------------------
-# Page Background
+# Page Background (URL)
 # ----------------------------
+def set_bg_url(url):
+    page_bg_img = f"""
+    <style>
+    [data-testid="stAppViewContainer"] > .main {{
+        background-image: url("{url}");
+        background-size: cover;
+        background-position: center;
+    }}
+    </style>
+    """
+    st.markdown(page_bg_img, unsafe_allow_html=True)
 
+# استخدم رابط صورة من الإنترنت
+set_bg_url("https://images.unsplash.com/photo-1761839257046-84e95464cc52?q=80&w=1169&auto=format&fit=crop")
 
 # ----------------------------
 # Users Database
@@ -91,24 +103,6 @@ def logout():
 # UI
 # ----------------------------
 st.title("Daily Sales")
-def set_bg_local(image_file):
-    """
-    تستخدم صورة من الجهاز كخلفية
-    """
-    with open(image_file, "rb") as f:
-        img_bytes = f.read()
-    b64 = base64.b64encode(img_bytes).decode()
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] > .main {{
-        background-image: url("data:image/png;base64,{b64}");
-        background-size: cover;
-        background-position: center;
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
-set_bg_local("data/background.png")
 
 if not st.session_state.logged_in:
     u = st.text_input("Username")
@@ -118,7 +112,6 @@ if not st.session_state.logged_in:
             st.rerun()
         else:
             st.error("Wrong User Or Password")
-
 else:
     st.success(f"Welcome To Your Daily Sales👋")
 
@@ -128,7 +121,6 @@ else:
         uploaded_files = st.file_uploader(
             "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
         )
-
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
@@ -146,8 +138,7 @@ else:
             for file in files:
                 path = os.path.join(folder_path, file)
                 c1,c2,c3 = st.columns([4,1,1])
-                with c1:
-                    st.write(file)
+                with c1: st.write(file)
                 with c2:
                     if st.button("👁", key=file):
                         df = pd.read_excel(path).astype(str)
