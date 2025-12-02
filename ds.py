@@ -4,19 +4,19 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
-import re  # لاستعمال regex لتقسيم اسم الملف
-from xlsx2html import xlsx2html
+import re
+from aspose.cells import Workbook   # جديد لعرض الإكسل بالشكل الأصلي
 
-# ----------------------------
-# Hide Warnings and Logs
-# ----------------------------
+# ----------------------------------------------------
+# إخفاء التحذيرات واللوجز
+# ----------------------------------------------------
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
-# ----------------------------
+# ----------------------------------------------------
 # Users Database
-# ----------------------------
+# ----------------------------------------------------
 users = {
     "ahmed": {"password": "1001", "role": "Admin"},
     "CHC New": {"password": "1000", "role": "User"},
@@ -34,89 +34,95 @@ users = {
     "DNU": {"password": "2938", "role": "User"},
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
-    "All":   {"password": "9021", "role": "AllViewer"}
+    "All": {"password": "9021", "role": "AllViewer"}
 }
 
-# ----------------------------
+# ----------------------------------------------------
 # Session State
-# ----------------------------
+# ----------------------------------------------------
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------
+# ----------------------------------------------------
 # Paths
-# ----------------------------
+# ----------------------------------------------------
 BASE_PATH = "data"
 
-# ----------------------------
-# Helpers
-# ----------------------------
+# ----------------------------------------------------
+# Helper Functions
+# ----------------------------------------------------
 def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith(today):
-            folders.append(f)
+    folders = [f for f in os.listdir(BASE_PATH) if f.startswith(today)]
     return sorted(folders, reverse=True)
 
 def is_file_for_user(filename, username):
-    """
-    تتحقق إذا كان الملف يخص المستخدم.
-    username لازم يكون lower case
-    """
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
-    # تقسيم الاسم على أي dash مع أو بدون مسافات
     parts = re.split(r"\s*-\s*", name)
     for part in parts:
         if username.lower() in part.strip():
             return True
     return False
 
-# ----------------------------
-# Login / Logout
-# ----------------------------
+# ----------------------------------------------------
+# Login Functions
+# ----------------------------------------------------
 def login(username, password):
     for user_key, user_data in users.items():
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key  # خلي الاسم الأصلي
+            st.session_state.username = user_key
             return True
     return False
-
 
 def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
 
-# ----------------------------
+# ----------------------------------------------------
+# تحويل الإكسل إلى HTML بنفس التنسيق (Aspose.Cells)
+# ----------------------------------------------------
+def excel_to_html(input_path, output_path):
+    workbook = Workbook(input_path)
+    workbook.save(output_path, 12)  # 12 = HTML
+
+def show_excel_as_html(path):
+    html_path = path + "_view.html"
+    excel_to_html(path, html_path)
+
+    with open(html_path, "r", encoding="utf-8") as f:
+        html_data = f.read()
+
+    st.components.v1.html(html_data, height=800, scrolling=True)
+
+# ----------------------------------------------------
 # UI
-# ----------------------------
+# ----------------------------------------------------
 st.title("Daily Sales")
 
 if not st.session_state.logged_in:
+
     u = st.text_input("Username")
     p = st.text_input("Password", type="password")
+
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
             st.error("Wrong User Or Password")
 
-# =======================
-# ✅ AFTER LOGIN
-# =======================
 else:
-    st.success(f"Welcome To Your Daily Sales👋")
+    st.success(f"Welcome To Your Daily Sales 👋")
 
-    # ==================================================
-    # ✅ ADMIN
-    # ==================================================
+    # ----------------------------------------------------
+    # ADMIN
+    # ----------------------------------------------------
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -137,8 +143,9 @@ else:
 
             st.success("✅ Files uploaded successfully")
 
-        # --------- History ----------
         st.markdown("---")
+
+        # Show History
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
@@ -147,25 +154,22 @@ else:
 
             for file in files:
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+                c1, c2, c3 = st.columns([4, 1, 1])
+
                 with c1:
                     st.write(file)
+
                 with c2:
                     if st.button("👁", key=file):
-                        # عرض الملف بالألوان والتنسيق الأصلي
-                        from xlsx2html import xlsx2html
-                        html_file = path + ".html"
-                        xlsx2html(path, html_file)
-                        with open(html_file, "r", encoding="utf-8") as f:
-                            html_data = f.read()
-                        st.components.v1.html(html_data, height=700, scrolling=True)
+                        show_excel_as_html(path)
+
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ==================================================
-    # ✅ USER / ALLVIEWER
-    # ==================================================
+    # ----------------------------------------------------
+    # USER / ALLVIEWER
+    # ----------------------------------------------------
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
@@ -186,24 +190,17 @@ else:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                # عرض الملف بالألوان والتنسيق الأصلي
-                from xlsx2html import xlsx2html
-                html_file = path + ".html"
-                xlsx2html(path, html_file)
-                with open(html_file, "r", encoding="utf-8") as f:
-                    html_data = f.read()
-                st.components.v1.html(html_data, height=700, scrolling=True)
+                show_excel_as_html(path)
 
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File",
-                        f,
-                        file_name=chosen_file
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
+
             else:
                 st.warning("No files for your line.")
 
-    # -------- Logout ----------
+    # ----------------------------------------------------
+    # Logout
+    # ----------------------------------------------------
     if st.button("Logout"):
         logout()
         st.rerun()
