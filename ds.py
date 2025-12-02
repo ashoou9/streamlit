@@ -96,7 +96,7 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-st.title("🔐 Login Page")
+st.title("🔐 Home Page")
 
 if not st.session_state.logged_in:
     u = st.text_input("Username")
@@ -164,7 +164,7 @@ else:
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
-        selected_day = st.selectbox("File Name", get_current_month_folders())
+        selected_day = st.selectbox("Date", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
