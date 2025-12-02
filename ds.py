@@ -24,7 +24,7 @@ def set_bg_local(image_file):
     page_bg_img = f"""
     <style>
     [data-testid="stAppViewContainer"] > .main {{
-    background-image: url("data:c:\Users\pc\Documents\GitHub\streamlit\data\background.png/png;base64,{b64}");
+    background-image: url("data:c:\\Users\\pc\\Documents\\GitHub\\streamlit\\data\\background.png/png;base64,{b64}");
     background-size: cover;
     background-position: center;
     }}
