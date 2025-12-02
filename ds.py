@@ -183,11 +183,12 @@ else:
 
                 df = pd.read_excel(path)
                 df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df)
+                st.dataframe(df,width=700 ,height=700)
+                
 
                 with open(path, "rb") as f:
                     st.download_button(
-                        "⬇ Download Original File",
+                        "🔽 Download Excel File",
                         f,
                         file_name=chosen_file
                     )
