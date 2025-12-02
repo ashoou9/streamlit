@@ -16,20 +16,10 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 # Page Background (URL)
 # ----------------------------
-def set_bg_url(url):
-    page_bg_img = f"""
-    <style>
-    [data-testid="stAppViewContainer"] > .main {{
-        background-image: url("{url}");
-        background-size: cover;
-        background-position: center;
-    }}
-    </style>
-    """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
+st.image("data/background.png", width=200)
 
 # استخدم رابط صورة من الإنترنت
-set_bg_url("https://images.unsplash.com/photo-1761839257046-84e95464cc52?q=80&w=1169&auto=format&fit=crop")
+
 
 # ----------------------------
 # Users Database
