@@ -4,7 +4,8 @@ import logging
 import os
 import pandas as pd
 from datetime import datetime, date
-import re  # لاستعمال regex لتقسيم اسم الملف
+import re
+import matplotlib.pyplot as plt
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -33,7 +34,7 @@ users = {
     "DNU": {"password": "2938", "role": "User"},
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
-    "All":   {"password": "9021", "role": "AllViewer"}
+    "All": {"password": "9021", "role": "AllViewer"}
 }
 
 # ----------------------------
@@ -56,24 +57,23 @@ def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = []
-    for f in os.listdir(BASE_PATH):
-        if f.startswith(today):
-            folders.append(f)
-    return sorted(folders, reverse=True)
+    return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
-    """
-    تتحقق إذا كان الملف يخص المستخدم.
-    username لازم يكون lower case
-    """
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
-    # تقسيم الاسم على أي dash مع أو بدون مسافات
     parts = re.split(r"\s*-\s*", name)
     for part in parts:
         if username.lower() in part.strip():
             return True
     return False
+
+def excel_to_image(df, img_path):
+    fig, ax = plt.subplots(figsize=(len(df.columns) * 2, len(df) * 0.4))
+    ax.axis('off')
+    table = ax.table(cellText=df.values, colLabels=df.columns, loc='center')
+    table.scale(1, 1.3)
+    plt.savefig(img_path, dpi=200, bbox_inches="tight")
+    plt.close()
 
 # ----------------------------
 # Login / Logout
@@ -83,10 +83,9 @@ def login(username, password):
         if username.lower() == user_key.lower() and password == user_data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key  # خلي الاسم الأصلي
+            st.session_state.username = user_key
             return True
     return False
-
 
 def logout():
     st.session_state.logged_in = False
@@ -111,11 +110,9 @@ if not st.session_state.logged_in:
 # ✅ AFTER LOGIN
 # =======================
 else:
-    st.success(f"Welcome To Your Daily Sales👋")
+    st.success("Welcome To Your Daily Sales 👋")
 
-    # ==================================================
-    # ✅ ADMIN
-    # ==================================================
+    # ================= ADMIN =================
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -136,7 +133,6 @@ else:
 
             st.success("✅ Files uploaded successfully")
 
-        # --------- History ----------
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
@@ -146,21 +142,18 @@ else:
 
             for file in files:
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+                c1, c2, c3 = st.columns([4, 1, 1])
                 with c1:
                     st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path)
-                        df = df.astype(str)  # حل مشكلة PyArrow
+                        df = pd.read_excel(path).astype(str)
                         st.dataframe(df)
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ==================================================
-    # ✅ USER / ALLVIEWER
-    # ==================================================
+    # ================= USER =================
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
@@ -181,10 +174,21 @@ else:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
-                df = pd.read_excel(path)
-                df = df.astype(str)  # حل مشكلة PyArrow
-                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x == 'SomeValue' else ''))
-                
+                df = pd.read_excel(path).astype(str)
+
+                st.dataframe(df)
+
+                # ✅ إنشاء صورة + عرضها بسكرول
+                img_path = "temp_sheet.png"
+                excel_to_image(df, img_path)
+
+                st.markdown("""
+                    <div style="height:450px; overflow-y:scroll; border:2px solid #ddd; padding:10px;">
+                """, unsafe_allow_html=True)
+
+                st.image(img_path, use_container_width=True)
+
+                st.markdown("</div>", unsafe_allow_html=True)
 
                 with open(path, "rb") as f:
                     st.download_button(
@@ -195,7 +199,7 @@ else:
             else:
                 st.warning("No files for your line.")
 
-    # -------- Logout ----------
+    # ---------------- Logout ----------------
     if st.button("Logout"):
         logout()
         st.rerun()
