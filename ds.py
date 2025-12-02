@@ -17,10 +17,23 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # Users Database
 # ----------------------------
 users = {
-    "ahmed": {"password": "2811", "role": "Admin"},
-    "git 1": {"password": "1111", "role": "User"},
-    "cns 2": {"password": "2222", "role": "User"},
-    "all":   {"password": "9999", "role": "AllViewer"}
+    "ahmed": {"password": "1001", "role": "Admin"},
+    "CHC New": {"password": "1000", "role": "User"},
+    "CNS 1": {"password": "0123", "role": "User"},
+    "CNS 2": {"password": "9990", "role": "User"},
+    "CNS 3": {"password": "6537", "role": "User"},
+    "CNS 4": {"password": "2873", "role": "User"},
+    "GIT 1": {"password": "1978", "role": "User"},
+    "GIT 2": {"password": "5422", "role": "User"},
+    "GIT 3": {"password": "1822", "role": "User"},
+    "Primary Care": {"password": "2252", "role": "User"},
+    "CVM": {"password": "0287", "role": "User"},
+    "Power Team": {"password": "7211", "role": "User"},
+    "DGU": {"password": "1619", "role": "User"},
+    "DNU": {"password": "2938", "role": "User"},
+    "Sildava": {"password": "1000", "role": "User"},
+    "Ortho": {"password": "4090", "role": "User"},
+    "All":   {"password": "9021", "role": "AllViewer"}
 }
 
 # ----------------------------
