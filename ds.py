@@ -105,13 +105,13 @@ if not st.session_state.logged_in:
         if login(u, p):
             st.rerun()
         else:
-            st.error("Wrong login")
+            st.error("Wrong User Or Password")
 
 # =======================
 # ✅ AFTER LOGIN
 # =======================
 else:
-    st.success(f"Welcome {st.session_state.username.upper()} 👋")
+    st.success(f"Welcome To Your Daily Sales Sheet👋")
 
     # ==================================================
     # ✅ ADMIN
@@ -138,7 +138,7 @@ else:
 
         # --------- History ----------
         st.markdown("---")
-        selected_day = st.selectbox("Sales Day", get_current_month_folders())
+        selected_day = st.textbox("Sales Day", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -164,7 +164,7 @@ else:
     elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
 
-        selected_day = st.selectbox("Choose Day", get_current_month_folders())
+        selected_day = st.selectbox("File Name", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -178,7 +178,7 @@ else:
                     allowed_files.append(file)
 
             if allowed_files:
-                chosen_file = st.selectbox("Choose File", allowed_files)
+                chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
 
                 df = pd.read_excel(path)
