@@ -82,7 +82,7 @@ def login(username, password):
     page_bg_img = f"""
 <style>
 [data-testid="stAppViewContainer"] > .main {{
-background-image: url("C:\Users\pc\Downloads\Untitled.png");
+background-image: url("https://images.unsplash.com/photo-1761839257046-84e95464cc52?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 background-size: 180%;
 background-position: top left;
 background-repeat: no-repeat;
