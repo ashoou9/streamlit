@@ -78,15 +78,9 @@ st.markdown("""
     margin-top: 120px;
 }
 
-.login-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 1000px;
-    color: #111;
-}
 
 .stTextInput > div > div > input {
-    text-align: center;
+    text-align: right;
     font-size: 16px;
     padding: 10px;
     border-radius: 8px;
