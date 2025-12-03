@@ -218,7 +218,7 @@ if not st.session_state.logged_in:
     st.markdown('</div>', unsafe_allow_html=True)
 
 else:
-    st.success(f"Welcome {st.session_state.username} 👋")
+    st.success(f"Welcome To Your Sales Report 👋")
 
     # ================= ADMIN =================
     if st.session_state.user_role == "Admin":
