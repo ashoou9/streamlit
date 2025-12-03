@@ -17,7 +17,6 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 # Page Background
 # ----------------------------
-# ----------------------------
 def set_bg_local(image_file):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
@@ -35,27 +34,35 @@ def set_bg_local(image_file):
 
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
-        background-size: cover;      /* يملأ الشاشة بالكامل */
-        background-position: center;
-        min-height: 100vh;
-        width: 100%;
+        background-size: cover;
     }}
 
     [data-testid="stAppViewContainer"] {{
         padding: 0 !important;
         margin: 0 !important;
-        width: 100% !important;
-        height: 100% !important;
+        width: auto !important;
+        height: auto !important;
     }}
 
     .block-container {{
-        padding: 0 !important;
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 30rem !important;
+        padding-right: 30rem !important;
         max-width: 100% !important;
     }}
 
     header, footer {{
         visibility: hidden;
         height: 0px;
+    }}
+
+    /* Media Query للموبايل */
+    @media only screen and (max-width: 768px) {{
+        .block-container {{
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }}
     }}
     </style>
     """
@@ -74,18 +81,16 @@ st.markdown("""
     max-width: 90%;
     padding: 35px;
     border-radius: 18px;
+    box-shadow: 0 0 0px rgba(0,0,0,0.4);
     text-align: center;
-    margin: 120px auto 0 auto; /* في النص */
+    margin: 120px auto 0 auto; /* top margin + center horizontally */
 }
 
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.4);
-    background: rgba(255,255,255,0.1);
-    color: white;
+    padding: 10px;
+    border-radius: 8px;
 }
 
 .stButton > button {
@@ -105,23 +110,24 @@ st.markdown("""
 }
 
 /* Media Query للموبايل */
-@media only screen and (max-width: 768px) {
-    .login-box {
+@media only screen and (max-width: 768px) {{
+    .login-box {{
         width: 90%;
         padding: 25px;
         margin-top: 60px;
-    }
-    .stTextInput > div > div > input {
+    }}
+    .stTextInput > div > div > input {{
         font-size: 14px;
-        padding: 10px;
-    }
-    .stButton > button {
+        padding: 8px;
+    }}
+    .stButton > button {{
         font-size: 14px;
         height: 40px;
-    }
-}
+    }}
+}}
 </style>
 """, unsafe_allow_html=True)
+
 # ----------------------------
 # Users Database
 # ----------------------------
