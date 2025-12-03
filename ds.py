@@ -40,8 +40,8 @@ def set_bg_local(image_file):
     [data-testid="stAppViewContainer"] {{
         padding: 0 !important;
         margin: 0 !important;
-        width: 50vw !important;
-        height: 50vh !important;
+        width: 100vw !important;
+        height: 100vh !important;
     }}
 
     .block-container {{
