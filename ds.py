@@ -90,7 +90,7 @@ st.markdown("""
     text-align: left;
     font-size: 16px;
     padding: 10px;
-    color: white !important; 
+    color: red !important; 
     border-radius: 8px;
 }
 
