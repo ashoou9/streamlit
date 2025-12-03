@@ -38,10 +38,10 @@ def set_bg_local(image_file):
     }}
 
     [data-testid="stAppViewContainer"] {{
-        padding: 0 !important;
+        padding: 50 !important;
         margin: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
+        width: 50vw !important;
+        height: 50vh !important;
     }}
 
     .block-container {{
@@ -181,7 +181,7 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-st.title("Daily Sales")
+
 
 if not st.session_state.logged_in:
 
