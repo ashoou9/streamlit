@@ -34,14 +34,14 @@ def set_bg_local(image_file):
 
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
-        background-size: auto;
+        background-size: cover;
     }}
 
     [data-testid="stAppViewContainer"] {{
         padding: 0 !important;
         margin: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
+        width: 1000vw !important;
+        height: 1000vh !important;
     }}
 
     .block-container {{
