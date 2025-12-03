@@ -128,9 +128,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 # ----------------------------
+# Post-login container centered
 st.markdown("""
 <style>
 .post-login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* عمودي */
+    align-items: center;     /* أفقي */
+    min-height: 80vh;        /* ارتفاع كامل تقريبا */
     background: rgba(0, 0, 0, 0.25); /* خلفية شفافة */
     border-radius: 20px;
     padding: 20px;
@@ -236,7 +242,7 @@ if not st.session_state.logged_in:
 
 # ================= ADMIN =================
 if st.session_state.user_role == "Admin":
-    st.subheader("🧑‍💼 Admin Dashboard")
+    # حذف رسالة welcome
     uploaded_files = st.file_uploader(
         "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
     )
@@ -268,7 +274,6 @@ if st.session_state.user_role == "Admin":
 
 # ================= USER / ALLVIEWER =================
 elif st.session_state.user_role in ["User","AllViewer"]:
-    st.subheader("👤 Sales Dashboard")
     selected_day = st.selectbox("Date", get_current_month_folders())
     if selected_day:
         folder_path = os.path.join(BASE_PATH, selected_day)
