@@ -82,7 +82,7 @@ st.markdown("""
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 25px;
-    color: #111;
+    color: #222;
 }
 
 .stTextInput > div > div > input {
@@ -186,7 +186,7 @@ def logout():
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">🔐 Daily Sales Login</div>', unsafe_allow_html=True)
+   # st.markdown('<div class="login-title">🔐 Daily Sales Login</div>', unsafe_allow_html=True)
 
     u = st.text_input("Username", placeholder="Enter Username")
     p = st.text_input("Password", type="password", placeholder="Enter Password")
