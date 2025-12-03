@@ -25,8 +25,8 @@ def set_bg_local(image_file):
     page_bg_img = f"""
     <style>
     html, body {{
-        width: 100%;
-        height: 100%;
+        width: auto;
+        height: auto;
         margin: auto;
         padding: auto;
         overflow: hidden;
@@ -47,8 +47,8 @@ def set_bg_local(image_file):
     .block-container {{
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
-        padding-left: auto -30 !important;
-        padding-right: auto -30 !important;
+        padding-left: 30rem !important;
+        padding-right: 30rem !important;
         max-width: 100% !important;
     }}
 
