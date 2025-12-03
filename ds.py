@@ -17,10 +17,13 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # ----------------------------
 # Page Background
 # ----------------------------
-def set_bg_local(image_file):
+def set_bg_local(image_file, login_page=True):
+    """Dynamic padding top: Login page = 240px, Dashboard = 210px"""
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
+
+    padding_top = "240px" if login_page else "210px"
 
     page_bg_img = f"""
     <style>
@@ -38,12 +41,12 @@ def set_bg_local(image_file):
     }}
 
     [data-testid="stAppViewContainer"] {{
-        padding-top: 210px !important; /* move elements DOWN */
+        padding-top: {padding_top} !important; 
         margin: 0 !important;
     }}
 
     .block-container {{
-        padding-top: 0rem !important;
+        padding-top: 2rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
         max-width: 100% !important;
@@ -59,7 +62,6 @@ def set_bg_local(image_file):
         [data-testid="stAppViewContainer"] {{
             padding-top: 160px !important;
         }}
-
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -68,8 +70,6 @@ def set_bg_local(image_file):
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
-
-set_bg_local("data/background.png")
 
 # ----------------------------
 # Login UI Style
@@ -82,7 +82,6 @@ st.markdown("""
     max-width: 90%;
     padding: 35px;
     border-radius: 18px;
-    box-shadow: 0 0 0px rgba(0,0,0,0.4);
     text-align: center;
     margin: 60px auto 0 auto;
 }
@@ -184,11 +183,11 @@ def is_file_for_user(filename, username):
 # Login / Logout Logic
 # ----------------------------
 def login(username, password):
-    for user_key, user_data in users.items():
-        if username.lower() == user_key.lower() and password == user_data["password"]:
+    for key, data in users.items():
+        if username.lower() == key.lower() and password == data["password"]:
             st.session_state.logged_in = True
-            st.session_state.user_role = user_data["role"]
-            st.session_state.username = user_key
+            st.session_state.user_role = data["role"]
+            st.session_state.username = key
             return True
     return False
 
@@ -200,6 +199,14 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
+
+# Set correct padding BEFORE page loads
+if not st.session_state.logged_in:
+    set_bg_local("data/background.png", login_page=True)
+else:
+    set_bg_local("data/background.png", login_page=False)
+
+# ---------- LOGIN PAGE ----------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
@@ -215,24 +222,30 @@ if not st.session_state.logged_in:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ---------- DASHBOARD ----------
 else:
+
     st.success(f"Welcome To Your Sales Report 👋")
 
     # ADMIN
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
+
         uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
-        
+
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
+
             for file in uploaded_files:
                 with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
+
             st.success("✅ Files uploaded successfully")
 
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
+
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             for file in os.listdir(folder_path):
@@ -253,23 +266,26 @@ else:
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-            files = os.listdir(folder_path)
 
-            allowed = [
-                f for f in files
-                if st.session_state.user_role=="AllViewer" or is_file_for_user(f, st.session_state.username)
+            allowed_files = [
+                f for f in os.listdir(folder_path)
+                if st.session_state.user_role == "AllViewer"
+                or is_file_for_user(f, st.session_state.username)
             ]
 
-            if allowed:
-                chosen_file = st.selectbox("File Name", allowed)
-                path = os.path.join(folder_path, chosen_file)
+            if allowed_files:
+                chosen = st.selectbox("File Name", allowed_files)
+                path = os.path.join(folder_path, chosen)
+
                 st.dataframe(pd.read_excel(path).astype(str))
 
-                with open(path,"rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
+                with open(path, "rb") as f:
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
+
             else:
                 st.warning("No files for your line.")
 
+    # LOGOUT
     if st.button("Logout"):
         logout()
         st.rerun()
