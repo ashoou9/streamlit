@@ -25,56 +25,38 @@ def set_bg_local(image_file):
     page_bg_img = f"""
     <style>
 
-    /* Remove Streamlit Default White Spaces */
-    .block-container {{
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-    }}
-
-    header, footer {{
-        visibility: hidden;
-    }}
-
-    html, body, [data-testid="stAppViewContainer"], .stApp {{
-        height: 100vh;
+    /* Remove default Streamlit padding and margins */
+    html, body {{
+        width: 100%;
+        height: 100%;
         margin: 0;
         padding: 0;
+        overflow: hidden;
+    }}
+
+    .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
         background-size: cover;
     }}
 
-    /* ✅ PERFECT CENTER LOGIN CARD */
-    .login-box {{
-        background: rgba(255, 255, 255, 0.92);
-        padding: 40px 30px;
-        border-radius: 20px;
-        width: 380px;
-        margin: 140px auto 0 auto;
-        box-shadow: 0px 15px 35px rgba(0,0,0,0.4);
-        text-align: center;
+    [data-testid="stAppViewContainer"] {{
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
     }}
 
-    .login-title {{
-        font-size: 26px;
-        font-weight: bold;
-        margin-bottom: 25px;
-        color: #0E3C6E;
+    .block-container {{
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        max-width: 100% !important;
     }}
 
-    .stTextInput > div > div > input {{
-        border-radius: 10px;
-        height: 45px;
-        font-size: 15px;
-    }}
-
-    .stButton > button {{
-        background: linear-gradient(135deg, #0E3C6E, #1E88E5);
-        color: white;
-        border-radius: 12px;
-        height: 48px;
-        font-size: 16px;
-        width: 100%;
-        margin-top: 10px;
+    header, footer {{
+        visibility: hidden;
+        height: 0px;
     }}
 
     </style>
