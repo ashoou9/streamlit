@@ -49,7 +49,7 @@ def set_bg_local(image_file):
         padding-bottom: 0rem !important;
         padding-left: 0rem !important;
         padding-right: 0rem !important;
-        max-width: 0% !important;
+        max-width: 100% !important;
     }}
 
     header, footer {{
