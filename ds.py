@@ -80,7 +80,7 @@ st.markdown("""
 
 
 .stTextInput > div > div > input {
-    text-align: right;
+    text-align: left;
     font-size: 16px;
     padding: 10px;
     border-radius: 8px;
