@@ -38,7 +38,7 @@ def set_bg_local(image_file):
     }}
 
     [data-testid="stAppViewContainer"] {{
-        padding-top: auto !important; /* move elements DOWN */
+        padding-top: 210px !important; /* move elements DOWN */
         margin: 0 !important;
     }}
 
