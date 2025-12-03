@@ -15,28 +15,28 @@ logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
 # ----------------------------
-# Page Background (URL)
+# ✅ Page Background (LOCAL IMAGE)
 # ----------------------------
-# logo mash st.image("data/background.png", width=200)
 def set_bg_local(image_file):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
+
     page_bg_img = f"""
     <style>
-    [data-testid="stAppViewContainer"] > .main {{
+    .stApp {{
         background-image: url("data:image/png;base64,{b64}");
         background-size: cover;
         background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
     }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# استخدم الصورة من الفولدر
+# 🔥 تأكد إن الصورة موجودة في المسار ده
 set_bg_local("data/background.png")
-# استخدم رابط صورة من الإنترنت
-
 
 # ----------------------------
 # Users Database
@@ -81,8 +81,7 @@ def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = [f for f in os.listdir(BASE_PATH) if f.startswith(today)]
-    return sorted(folders, reverse=True)
+    return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
@@ -114,63 +113,84 @@ st.title("Daily Sales")
 if not st.session_state.logged_in:
     u = st.text_input("Username")
     p = st.text_input("Password", type="password")
+
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
             st.error("Wrong User Or Password")
-else:
-    st.success(f"Welcome To Your Daily Sales👋")
 
-    # ================= ADMIN =================
+# =========================
+# ✅ AFTER LOGIN
+# =========================
+else:
+    st.success("Welcome To Your Daily Sales 👋")
+
+    # ============ ADMIN ============
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
+
         uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+            "Upload Excel Files",
+            type=["xlsx", "xls"],
+            accept_multiple_files=True
         )
+
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
+
             for file in uploaded_files:
                 file_path = os.path.join(today_folder, file.name)
                 with open(file_path, "wb") as f:
                     f.write(file.getbuffer())
+
             st.success("✅ Files uploaded successfully")
 
         st.markdown("---")
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
+
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             files = os.listdir(folder_path)
+
             for file in files:
                 path = os.path.join(folder_path, file)
-                c1,c2,c3 = st.columns([4,1,1])
-                with c1: st.write(file)
+                c1, c2, c3 = st.columns([4,1,1])
+
+                with c1:
+                    st.write(file)
                 with c2:
                     if st.button("👁", key=file):
                         df = pd.read_excel(path).astype(str)
-                        st.dataframe(df)
+                        st.dataframe(df, use_container_width=True)
                 with c3:
-                    with open(path,"rb") as f:
+                    with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ================= USER / ALLVIEWER =================
-    elif st.session_state.user_role in ["User","AllViewer"]:
+    # ============ USER / ALLVIEWER ============
+    elif st.session_state.user_role in ["User", "AllViewer"]:
         st.subheader("👤 Sales Dashboard")
+
         selected_day = st.selectbox("Date", get_current_month_folders())
+
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             files = os.listdir(folder_path)
+
             allowed_files = []
             for file in files:
-                if st.session_state.user_role=="AllViewer" or is_file_for_user(file, st.session_state.username):
+                if st.session_state.user_role == "AllViewer" or is_file_for_user(file, st.session_state.username):
                     allowed_files.append(file)
+
             if allowed_files:
                 chosen_file = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen_file)
+
                 df = pd.read_excel(path).astype(str)
-                st.dataframe(df.style.applymap(lambda x: 'background-color: yellow' if x=='SomeValue' else ''))
-                with open(path,"rb") as f:
+                st.dataframe(df, use_container_width=True)
+
+                with open(path, "rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
             else:
                 st.warning("No files for your line.")
