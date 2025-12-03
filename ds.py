@@ -67,25 +67,29 @@ set_bg_local("data/background.png")
 # ----------------------------
 st.markdown("""
 <style>
-.login-box {
-    background: rgba(255, 255, 255, 0.92);
-    width: 420px;
-    padding: 35px;
-    border-radius: 18px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.4);
-    text-align: center;
-    margin: auto;
-    margin-top: 120px; 
+/* Labels فوق ال inputs */
+label[data-baseweb="label"] {
+    color: white !important;
+    font-weight: bold;
 }
 
-
+/* شكل الـ input box */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
     padding: 10px;
     border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1); /* شفاف شويه عشان يظهر مع الخلفية */
+    color: white; /* النص اللي بتكتبه داخل الـ input أبيض */
+    border: 1px solid rgba(255,255,255,0.3);
 }
 
+/* Placeholder داخل الـ input */
+.stTextInput > div > div > input::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+/* زرار Login */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -103,6 +107,7 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 # ----------------------------
 # Users Database
