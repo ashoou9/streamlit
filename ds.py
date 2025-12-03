@@ -23,7 +23,7 @@ def set_bg_local(image_file, login_page=True):
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
 
-    padding_top = "150px" if login_page else "210px"
+    padding_top = "110px" if login_page else "210px"
 
     page_bg_img = f"""
     <style>
