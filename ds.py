@@ -72,7 +72,7 @@ st.markdown("""
     width: 420px;
     padding: 35px;
     border-radius: 18px;
-    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+    box-shadow: 0 0 0px rgba(0,0,0,0.4);
     text-align: center;
     margin: auto;
     margin-top: 120px; 
