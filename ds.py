@@ -18,7 +18,6 @@ os.environ["PYTHONWARNINGS"] = "ignore"
 # Page Background
 # ----------------------------
 def set_bg_local(image_file, login_page=True):
-    """Dynamic padding top: Login page = 240px, Dashboard = 210px"""
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
@@ -57,7 +56,6 @@ def set_bg_local(image_file, login_page=True):
         height: 0px;
     }}
 
-    /* Mobile Fix */
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 160px !important;
@@ -72,7 +70,7 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Login UI Style
+# Login + Logout UI Style
 # ----------------------------
 st.markdown("""
 <style>
@@ -90,21 +88,60 @@ st.markdown("""
     text-align: left;
     font-size: 16px;
     padding: 10px;
-    color: black !important; 
+    color: white !important; 
     border-radius: 8px;
 }
 
-/* Labels فوق الـ text input */
-.stTextInput > label {
-    color: white !important;
-    font-weight: bold;
+.stButton > button {
+    width: 100%;
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    color: white;
+    border: none;
 }
 
-/* ... باقي CSS ... */
+.stButton > button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02);
+    transition: 0.2s;
+}
 
+/* LOGOUT BUTTON */
+.logout-btn {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.logout-btn button {
+    width: 220px;
+    height: 45px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff4b4b, #ff0000);
+    color: white;
+    border: none;
+}
+
+.logout-btn button:hover {
+    background: linear-gradient(90deg, #cc0000, #990000);
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
+/* Mobile */
+@media only screen and (max-width: 768px) {
+    .login-box {
+        width: 90%;
+        padding: 25px;
+        margin-top: 60px;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
-
 
 # ----------------------------
 # Users Database
@@ -177,14 +214,12 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-
-# Set correct padding BEFORE page loads
 if not st.session_state.logged_in:
-    set_bg_local("data/background.png", login_page=True)
+    set_bg_local("data/background.png", True)
 else:
-    set_bg_local("data/background.png", login_page=False)
+    set_bg_local("data/background.png", False)
 
-# ---------- LOGIN PAGE ----------
+# ---------- LOGIN ----------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
@@ -201,12 +236,10 @@ if not st.session_state.logged_in:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD ----------
-# ---------- DASHBOARD ----------
 else:
 
-    st.success(f"Welcome To Your Sales Report 👋")
+    st.success("Welcome To Your Sales Report 👋")
 
-    # ======= ADMIN =======
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -238,7 +271,6 @@ else:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ======= USER / VIEWER =======
     else:
         st.subheader("👤 Sales Dashboard")
         selected_day = st.selectbox("Date", get_current_month_folders())
@@ -260,12 +292,12 @@ else:
 
                 with open(path, "rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen)
-
             else:
                 st.warning("No files for your line.")
 
-    # -------- LOGOUT BUTTON تحت كل شيء ----------
-    st.markdown("---")
-    if st.button("Logout"):
+    # ✅ LOGOUT BUTTON
+    st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
+    if st.button("🔴 Logout"):
         logout()
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
