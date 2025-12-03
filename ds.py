@@ -25,16 +25,16 @@ def set_bg_local(image_file):
     page_bg_img = f"""
     <style>
     html, body {{
-        width: auto;
-        height: auto;
-        margin: auto;
-        padding: auto;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
         overflow: hidden;
     }}
 
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
-        background-size: cover;
+        background-size: auto;
     }}
 
     [data-testid="stAppViewContainer"] {{
