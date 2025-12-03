@@ -81,8 +81,8 @@ st.markdown("""
 .login-title {
     font-size: 28px;
     font-weight: bold;
-    margin-bottom: 25px;
-    color: #222;
+    margin-bottom: 1000px;
+    color: #111;
 }
 
 .stTextInput > div > div > input {
