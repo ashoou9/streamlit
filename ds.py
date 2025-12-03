@@ -47,8 +47,8 @@ def set_bg_local(image_file):
     .block-container {{
         padding-top: 0rem !important;
         padding-bottom: 0rem !important;
-        padding-left: auto !important;
-        padding-right: auto !important;
+        padding-left: auto -30 !important;
+        padding-right: auto -30 !important;
         max-width: 100% !important;
     }}
 
