@@ -35,14 +35,13 @@ def set_bg_local(image_file):
         visibility: hidden;
     }}
 
-    html, body, [data-testid="stAppViewContainer"], .stApp {
-    background: linear-gradient(
-        rgba(255,255,255,0.75),
-        rgba(255,255,255,0.75)
-    ), url("data:image/png;base64,{b64}");
-}
-
-   
+    html, body, [data-testid="stAppViewContainer"], .stApp {{
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
+        background-size: cover;
+    }}
 
     /* ✅ PERFECT CENTER LOGIN CARD */
     .login-box {{
