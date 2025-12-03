@@ -15,7 +15,7 @@ logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
 # ----------------------------
-# ✅ Page Background (LOCAL IMAGE)
+# ✅ FULL SCREEN BACKGROUND
 # ----------------------------
 def set_bg_local(image_file):
     with open(image_file, "rb") as f:
@@ -24,18 +24,42 @@ def set_bg_local(image_file):
 
     page_bg_img = f"""
     <style>
-    .stApp {{
-        background-image: url("data:image/png;base64,{b64}");
+    html, body, [data-testid="stAppViewContainer"], .stApp {{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
         background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
+    }}
+
+    .login-box {{
+        background-color: rgba(255,255,255,0.9);
+        padding: 35px;
+        border-radius: 18px;
+        width: 360px;
+        margin: 140px auto;
+        box-shadow: 0px 8px 25px rgba(0,0,0,0.35);
+        text-align: center;
+    }}
+
+    .stButton>button {{
+        background-color: #0E3C6E;
+        color: white;
+        border-radius: 10px;
+        height: 45px;
+        font-size: 16px;
+        width: 100%;
+    }}
+
+    .stTextInput>div>div>input {{
+        border-radius: 8px;
+        height: 42px;
     }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-# 🔥 تأكد إن الصورة موجودة في المسار ده
+# 🔥 Background Image
 set_bg_local("data/background.png")
 
 # ----------------------------
@@ -108,11 +132,19 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-st.title("Daily Sales")
+st.markdown("<h1 style='text-align:center;color:white;'>Daily Sales</h1>", unsafe_allow_html=True)
 
+# ================= LOGIN =================
 if not st.session_state.logged_in:
-    u = st.text_input("Username")
-    p = st.text_input("Password", type="password")
+
+    st.markdown("""
+        <div class="login-box">
+            <h3>🔐 Login</h3>
+        </div>
+    """, unsafe_allow_html=True)
+
+    u = st.text_input("Username", key="login_user")
+    p = st.text_input("Password", type="password", key="login_pass")
 
     if st.button("Login"):
         if login(u, p):
@@ -120,9 +152,7 @@ if not st.session_state.logged_in:
         else:
             st.error("Wrong User Or Password")
 
-# =========================
-# ✅ AFTER LOGIN
-# =========================
+# ================= AFTER LOGIN =================
 else:
     st.success("Welcome To Your Daily Sales 👋")
 
@@ -130,11 +160,7 @@ else:
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
-        uploaded_files = st.file_uploader(
-            "Upload Excel Files",
-            type=["xlsx", "xls"],
-            accept_multiple_files=True
-        )
+        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx", "xls"], accept_multiple_files=True)
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
@@ -195,7 +221,7 @@ else:
             else:
                 st.warning("No files for your line.")
 
-    # -------- Logout ----------
+    # ================= LOGOUT =================
     if st.button("Logout"):
         logout()
         st.rerun()
