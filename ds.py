@@ -201,11 +201,12 @@ if not st.session_state.logged_in:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD ----------
+# ---------- DASHBOARD ----------
 else:
 
     st.success(f"Welcome To Your Sales Report 👋")
 
-    # ADMIN
+    # ======= ADMIN =======
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
 
@@ -237,7 +238,7 @@ else:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # USER / VIEWER
+    # ======= USER / VIEWER =======
     else:
         st.subheader("👤 Sales Dashboard")
         selected_day = st.selectbox("Date", get_current_month_folders())
@@ -263,7 +264,8 @@ else:
             else:
                 st.warning("No files for your line.")
 
-    # LOGOUT
+    # -------- LOGOUT BUTTON تحت كل شيء ----------
+    st.markdown("---")
     if st.button("Logout"):
         logout()
         st.rerun()
