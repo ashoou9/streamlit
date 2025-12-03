@@ -110,8 +110,10 @@ st.markdown("""
 
 /* LOGOUT BUTTON */
 .logout-btn {
-    margin-top: 5px;   /* كل ما تقلل الرقم هيطلع لفوق */
-    margin-bottom: 0px;
+    
+    /* كل ما تقلل الرقم هيطلع لفوق */
+     margin-top: -10px;
+            margin-bottom: 20px;
     display: flex;
     justify-content: center;
 }
