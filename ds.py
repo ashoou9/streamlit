@@ -24,37 +24,59 @@ def set_bg_local(image_file):
 
     page_bg_img = f"""
     <style>
+
+    /* Remove Streamlit Default White Spaces */
+    .block-container {{
+        padding-top: 0rem !important;
+        padding-bottom: 0rem !important;
+    }}
+
+    header, footer {{
+        visibility: hidden;
+    }}
+
     html, body, [data-testid="stAppViewContainer"], .stApp {{
-        height: 100%;
+        height: 100vh;
         margin: 0;
         padding: 0;
         background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
         background-size: cover;
     }}
 
+    /* ✅ PERFECT CENTER LOGIN CARD */
     .login-box {{
-        background-color: rgba(255,255,255,0.9);
-        padding: 35px;
-        border-radius: 18px;
-        width: 360px;
-        margin: 140px auto;
-        box-shadow: 0px 8px 25px rgba(0,0,0,0.35);
+        background: rgba(255, 255, 255, 0.92);
+        padding: 40px 30px;
+        border-radius: 20px;
+        width: 380px;
+        margin: 140px auto 0 auto;
+        box-shadow: 0px 15px 35px rgba(0,0,0,0.4);
         text-align: center;
     }}
 
-    .stButton>button {{
-        background-color: #0E3C6E;
-        color: white;
-        border-radius: 10px;
-        height: 45px;
-        font-size: 16px;
-        width: 100%;
+    .login-title {{
+        font-size: 26px;
+        font-weight: bold;
+        margin-bottom: 25px;
+        color: #0E3C6E;
     }}
 
-    .stTextInput>div>div>input {{
-        border-radius: 8px;
-        height: 42px;
+    .stTextInput > div > div > input {{
+        border-radius: 10px;
+        height: 45px;
+        font-size: 15px;
     }}
+
+    .stButton > button {{
+        background: linear-gradient(135deg, #0E3C6E, #1E88E5);
+        color: white;
+        border-radius: 12px;
+        height: 48px;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+    }}
+
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
@@ -138,10 +160,11 @@ st.markdown("<h1 style='text-align:center;color:white;'>Daily Sales</h1>", unsaf
 if not st.session_state.logged_in:
 
     st.markdown("""
-        <div class="login-box">
-            <h3>🔐 Login</h3>
-        </div>
-    """, unsafe_allow_html=True)
+    <div class="login-box">
+        <div class="login-title">🔐 Daily Sales Login</div>
+    </div>
+""", unsafe_allow_html=True)
+
 
     u = st.text_input("Username", key="login_user")
     p = st.text_input("Password", type="password", key="login_pass")
