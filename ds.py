@@ -90,44 +90,21 @@ st.markdown("""
     text-align: left;
     font-size: 16px;
     padding: 10px;
-    color: red !important; 
+    color: white !important; 
     border-radius: 8px;
 }
 
-.stButton > button {
-    width: 100%;
-    border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    color: white;
-    border: none;
+/* Labels فوق الـ text input */
+.stTextInput > label {
+    color: white !important;
+    font-weight: bold;
 }
 
-.stButton > button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02);
-    transition: 0.2s;
-}
+/* ... باقي CSS ... */
 
-/* Mobile */
-@media only screen and (max-width: 768px) {
-    .login-box {
-        width: 90%;
-        padding: 25px;
-        margin-top: 60px;
-    }
-    .stTextInput > div > div > input {
-        font-size: 14px;
-        padding: 8px;
-    }
-    .stButton > button {
-        font-size: 14px;
-        height: 40px;
-    }
-}
 </style>
 """, unsafe_allow_html=True)
+
 
 # ----------------------------
 # Users Database
