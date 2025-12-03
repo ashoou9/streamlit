@@ -29,36 +29,37 @@ def set_bg_local(image_file):
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow: hidden;
+        overflow-x: hidden;
     }}
 
     .stApp {{
-        background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
+        background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
         background-size: cover;
     }}
 
     [data-testid="stAppViewContainer"] {{
-        padding: 0 !important;
+        padding-top: 260px !important; /* move elements DOWN */
         margin: 0 !important;
-        width: auto !important;
-        height: auto !important;
     }}
 
     .block-container {{
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
+        padding-top: 2rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
         max-width: 100% !important;
     }}
 
     header, footer {{
-        visibility: hidden;
+        visibility: hidden !important;
         height: 0px;
     }}
 
-    /* Media Query للموبايل */
+    /* Mobile Fix */
     @media only screen and (max-width: 768px) {{
+        [data-testid="stAppViewContainer"] {{
+            padding-top: 160px !important;
+        }}
+
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -83,7 +84,7 @@ st.markdown("""
     border-radius: 18px;
     box-shadow: 0 0 0px rgba(0,0,0,0.4);
     text-align: center;
-    margin: 120px auto 0 auto; /* top margin + center horizontally */
+    margin: 60px auto 0 auto;
 }
 
 .stTextInput > div > div > input {
@@ -109,22 +110,22 @@ st.markdown("""
     transition: 0.2s;
 }
 
-/* Media Query للموبايل */
-@media only screen and (max-width: 768px) {{
-    .login-box {{
+/* Mobile */
+@media only screen and (max-width: 768px) {
+    .login-box {
         width: 90%;
         padding: 25px;
         margin-top: 60px;
-    }}
-    .stTextInput > div > div > input {{
+    }
+    .stTextInput > div > div > input {
         font-size: 14px;
         padding: 8px;
-    }}
-    .stButton > button {{
+    }
+    .stButton > button {
         font-size: 14px;
         height: 40px;
-    }}
-}}
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -160,7 +161,7 @@ if "logged_in" not in st.session_state:
     st.session_state.username = None
 
 # ----------------------------
-# Paths
+# PATHS
 # ----------------------------
 BASE_PATH = "data"
 
@@ -180,7 +181,7 @@ def is_file_for_user(filename, username):
     return any(username.lower() in part.strip() for part in parts)
 
 # ----------------------------
-# Login / Logout
+# Login / Logout Logic
 # ----------------------------
 def login(username, password):
     for user_key, user_data in users.items():
@@ -199,12 +200,9 @@ def logout():
 # ----------------------------
 # UI
 # ----------------------------
-
-
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-   # st.markdown('<div class="login-title">🔐 Daily Sales Login</div>', unsafe_allow_html=True)
 
     u = st.text_input("Username", placeholder="Enter Username")
     p = st.text_input("Password", type="password", placeholder="Enter Password")
@@ -220,18 +218,16 @@ if not st.session_state.logged_in:
 else:
     st.success(f"Welcome To Your Sales Report 👋")
 
-    # ================= ADMIN =================
+    # ADMIN
     if st.session_state.user_role == "Admin":
         st.subheader("🧑‍💼 Admin Dashboard")
-        uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
-        )
+        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
+        
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
             for file in uploaded_files:
-                file_path = os.path.join(today_folder, file.name)
-                with open(file_path, "wb") as f:
+                with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
             st.success("✅ Files uploaded successfully")
 
@@ -239,43 +235,41 @@ else:
         selected_day = st.selectbox("Sales Day", get_current_month_folders())
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-            files = os.listdir(folder_path)
-            for file in files:
+            for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1,c2,c3 = st.columns([4,1,1])
+                c1, c2, c3 = st.columns([4,1,1])
                 with c1: st.write(file)
                 with c2:
                     if st.button("👁", key=file):
-                        df = pd.read_excel(path).astype(str)
-                        st.dataframe(df)
+                        st.dataframe(pd.read_excel(path).astype(str))
                 with c3:
-                    with open(path,"rb") as f:
+                    with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
-    # ================= USER / ALLVIEWER =================
-    elif st.session_state.user_role in ["User","AllViewer"]:
+    # USER / VIEWER
+    else:
         st.subheader("👤 Sales Dashboard")
         selected_day = st.selectbox("Date", get_current_month_folders())
+
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
             files = os.listdir(folder_path)
-            allowed_files = []
-            for file in files:
-                if st.session_state.user_role=="AllViewer" or is_file_for_user(file, st.session_state.username):
-                    allowed_files.append(file)
 
-            if allowed_files:
-                chosen_file = st.selectbox("File Name", allowed_files)
+            allowed = [
+                f for f in files
+                if st.session_state.user_role=="AllViewer" or is_file_for_user(f, st.session_state.username)
+            ]
+
+            if allowed:
+                chosen_file = st.selectbox("File Name", allowed)
                 path = os.path.join(folder_path, chosen_file)
-                df = pd.read_excel(path).astype(str)
-                st.dataframe(df)
+                st.dataframe(pd.read_excel(path).astype(str))
 
                 with open(path,"rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen_file)
             else:
                 st.warning("No files for your line.")
 
-    # -------- Logout ----------
     if st.button("Logout"):
         logout()
         st.rerun()
