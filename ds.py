@@ -111,7 +111,7 @@ st.markdown("""
 /* LOGOUT BUTTON */
 .logout-btn {
     margin-top: 5px;   /* كل ما تقلل الرقم هيطلع لفوق */
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     display: flex;
     justify-content: center;
 }
