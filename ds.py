@@ -110,7 +110,7 @@ st.markdown("""
 
 /* LOGOUT BUTTON */
 .logout-btn {
-    margin-top: 80px;
+    margin-top: 150px;
     display: flex;
     justify-content: center;
 }
