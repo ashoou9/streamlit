@@ -75,7 +75,7 @@ st.markdown("""
     box-shadow: 0 0 25px rgba(0,0,0,0.4);
     text-align: center;
     margin: auto;
-    margin-top: 120px;
+    margin-top: 120px; 
 }
 
 
