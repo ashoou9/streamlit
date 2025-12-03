@@ -22,35 +22,44 @@ def set_bg_local(image_file):
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
 
-    page_bg_img = f"""
-    <style>
-    html, body {{
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }}
+page_bg_img = f"""
+<style>
+html, body {{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}}
 
-    .stApp {{
-        background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
-        background-size: cover;
-    }}
+.stApp {{
+    background: url("data:image/png;base64,{b64}") no-repeat center center fixed;
+    background-size: cover;
+}}
 
-    [data-testid="stAppViewContainer"] {{
-        padding: 0 !important;
-        margin: 0 !important;
-        width: auto !important;
-        height: auto !important;
-    }}
+[data-testid="stAppViewContainer"] {{
+    padding: 0 !important;
+    margin: 0 !important;
+    width: auto !important;
+    height: auto !important;
+}}
 
+.block-container {{
+    padding-top: 0rem !important;
+    padding-bottom: 0rem !important;
+    padding-left: 30rem !important;
+    padding-right: 30rem !important;
+    max-width: 100% !important;
+}}
+
+/* Media Query للموبايل */
+@media only screen and (max-width: 768px) {{
     .block-container {{
-        padding-top: 0rem !important;
-        padding-bottom: 0rem !important;
-        padding-left: 30rem !important;
-        padding-right: 30rem !important;
-        max-width: 100% !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }}
+}}
+
 
     header, footer {{
         visibility: hidden;
@@ -58,7 +67,7 @@ def set_bg_local(image_file):
     }}
     </style>
     """
-    st.markdown(page_bg_img, unsafe_allow_html=True)
+st.markdown(page_bg_img, unsafe_allow_html=True)
 
 set_bg_local("data/background.png")
 
