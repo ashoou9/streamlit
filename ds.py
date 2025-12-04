@@ -277,7 +277,7 @@ else:
 
     else:
         st.subheader("👤 Sales Dashboard")
-        selected_day = st.title("Date", get_current_month_folders())
+        selected_day = st.selectbox("Date", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
