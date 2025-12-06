@@ -139,6 +139,7 @@ input::placeholder {
     margin-top: -10px;
     margin-bottom: 20px;
     display: flex;
+    position: sticky;
     justify-content: center;
 }
 
