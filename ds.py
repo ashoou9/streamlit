@@ -48,6 +48,7 @@ def set_bg_local(image_file, login_page=True):
         padding-top: 2rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
+        padding-bottom: 100px !important; /* مساحة كافية للـ Logout */
         max-width: 100% !important;
     }}
 
@@ -63,6 +64,7 @@ def set_bg_local(image_file, login_page=True):
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
+            padding-bottom: 120px !important;
         }}
     }}
     </style>
@@ -140,6 +142,7 @@ input::placeholder {
     margin-bottom: 20px;
     display: flex;
     justify-content: center;
+    clear: both;
 }
 
 .logout-btn button {
