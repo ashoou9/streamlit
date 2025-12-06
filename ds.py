@@ -292,7 +292,7 @@ else:
                 chosen = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen)
 
-                st.dataframe(pd.read_excel(path).astype(str))
+                ## st.dataframe(pd.read_excel(path).astype(str))
 
                 with open(path, "rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen)
