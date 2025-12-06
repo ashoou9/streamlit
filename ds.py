@@ -21,9 +21,7 @@ def set_bg_local(image_file, login_page=True):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
-
     padding_top = "105px" if login_page else "210px"
-
     page_bg_img = f"""
     <style>
     html, body {{
@@ -33,17 +31,14 @@ def set_bg_local(image_file, login_page=True):
         padding: 0;
         overflow-x: hidden;
     }}
-
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
         background-size: cover;
     }}
-
     [data-testid="stAppViewContainer"] {{
         padding-top: {padding_top} !important;
         margin: 0 !important;
     }}
-
     .block-container {{
         padding-top: 2rem !important;
         padding-left: 30rem !important;
@@ -51,12 +46,10 @@ def set_bg_local(image_file, login_page=True):
         padding-bottom: 100px !important;
         max-width: 100% !important;
     }}
-
     header, footer {{
         visibility: hidden !important;
         height: 0px;
     }}
-
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 160px !important;
@@ -149,31 +142,6 @@ input::placeholder {
     transform: scale(1.02);
     transition: 0.2s;
     color: white !important;
-}
-
-/* FLOATING LOGOUT TOP-RIGHT */
-.logout-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
-
-.logout-btn button {
-    width: 140px;
-    height: 40px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff4b4b, #ff0000);
-    color: white !important;
-    border: none;
-}
-
-.logout-btn button:hover {
-    background: linear-gradient(90deg, #cc0000, #990000);
-    transform: scale(1.05);
-    transition: 0.2s;
 }
 
 @media only screen and (max-width: 768px) {
@@ -280,17 +248,28 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Logout Top-Right ----------
-    st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
-    if st.button("🔴 Logout"):
-        logout()
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    # ---------- Floating Logout + About Us ----------
+    st.markdown("""
+    <div style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px;">
+        <button onclick="window.location.reload();" style="
+            height:40px; 
+            border-radius:12px; 
+            background: linear-gradient(90deg, #ff4b4b, #ff0000); 
+            color:white; 
+            border:none;
+            font-weight:bold;
+            cursor:pointer;">🔴 Logout</button>
+        <a href='https://example.com/about' target="_blank" style="
+            color:white; 
+            font-weight:bold; 
+            text-decoration: underline;
+            font-size: 14px;">About Us</a>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.subheader("👤 Sales Dashboard")
 
     folders = get_current_month_folders()
-
     if folders:
         selected_day = folders[0]
         st.markdown(f"### 📅 Date: {selected_day}")
@@ -320,7 +299,6 @@ else:
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
                 c1, c2, c3 = st.columns([4,1,1])
@@ -339,7 +317,6 @@ else:
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             allowed_files = [
                 f for f in os.listdir(folder_path)
                 if st.session_state.user_role == "AllViewer"
@@ -349,10 +326,7 @@ else:
             if allowed_files:
                 chosen = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen)
-
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File", f, file_name=chosen
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
             else:
                 st.warning("No files for your line.")
