@@ -136,10 +136,9 @@ input::placeholder {
 
 /* LOGOUT */
 .logout-btn {
-    margin-top: -10px;
+    margin-top: 20px !important;
     margin-bottom: 20px;
     display: flex;
-    position: sticky;
     justify-content: center;
 }
 
@@ -150,7 +149,7 @@ input::placeholder {
     font-size: 16px;
     font-weight: bold;
     background: linear-gradient(90deg, #ff4b4b, #ff0000);
-    color: white;
+    color: white !important; /* النص واضح دايمًا */
     border: none;
 }
 
@@ -158,6 +157,22 @@ input::placeholder {
     background: linear-gradient(90deg, #cc0000, #990000);
     transform: scale(1.05);
     transition: 0.2s;
+}
+
+/* DOWNLOAD BUTTON */
+.stDownloadButton button {
+    color: white !important; /* النص واضح طول الوقت */
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.stDownloadButton button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02);
+    transition: 0.2s;
+    color: white !important; /* يحافظ على النص أبيض */
 }
 
 @media only screen and (max-width: 768px) {
