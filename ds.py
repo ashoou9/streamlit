@@ -70,7 +70,7 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Login + Logout UI Style
+# Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
@@ -93,7 +93,7 @@ st.markdown("""
     border-radius: 8px;
 }
 
-/* ALL LABELS فوق أي Box */
+/* ALL LABELS */
 label[data-baseweb="label"],
 .stSelectbox label,
 .stFileUploader label,
@@ -103,12 +103,21 @@ label[data-baseweb="label"],
     font-weight: bold !important;
 }
 
+/* SUBHEADERS & TEXT */
+h1, h2, h3, h4, h5, h6,
+.stSubheader,
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stText"] {
+    color: white !important;
+    font-weight: bold !important;
+}
+
 /* PLACEHOLDER */
 input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
-/* LOGIN BUTTON */
+/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -125,7 +134,7 @@ input::placeholder {
     transition: 0.2s;
 }
 
-/* LOGOUT BUTTON */
+/* LOGOUT */
 .logout-btn {
     margin-top: -10px;
     margin-bottom: 20px;
@@ -150,7 +159,6 @@ input::placeholder {
     transition: 0.2s;
 }
 
-/* Mobile */
 @media only screen and (max-width: 768px) {
     .login-box {
         width: 90%;
@@ -181,7 +189,7 @@ users = {
     "DNU": {"password": "2938", "role": "User"},
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
-    "All":   {"password": "9021", "role": "AllViewer"}
+    "All": {"password": "9021", "role": "AllViewer"}
 }
 
 # ----------------------------
@@ -193,7 +201,7 @@ if "logged_in" not in st.session_state:
     st.session_state.username = None
 
 # ----------------------------
-# PATHS
+# Paths
 # ----------------------------
 BASE_PATH = "data"
 
@@ -209,7 +217,7 @@ def get_current_month_folders():
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
     parts = re.split(r"\s*-\s*", name)
-    return any(username.lower() in part.strip() for part in parts)
+    return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
 # Login / Logout Logic
@@ -255,12 +263,24 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    st.success("Welcome To Your Sales Report 👋")
+    st.subheader("👤 Sales Dashboard")
+
+    folders = get_current_month_folders()
+
+    if folders:
+        selected_day = folders[0]
+        st.markdown(f"### 📅 Date: {selected_day}")
+    else:
+        st.warning("No available dates.")
+        selected_day = None
 
     if st.session_state.user_role == "Admin":
+
         st.subheader("🧑‍💼 Admin Dashboard")
 
-        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
+        uploaded_files = st.file_uploader(
+            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+        )
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
@@ -273,25 +293,26 @@ else:
             st.success("✅ Files uploaded successfully")
 
         st.markdown("---")
-        selected_day = st.selectbox("Sales Day", get_current_month_folders())
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
+
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
                 c1, c2, c3 = st.columns([4,1,1])
-                with c1: st.write(file)
+
+                with c1:
+                    st.write(file)
+
                 with c2:
                     if st.button("👁", key=file):
                         st.dataframe(pd.read_excel(path).astype(str))
+
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
 
     else:
-        st.subheader("👤 Sales Dashboard")
-        selected_day = st.selectbox("Date", get_current_month_folders())
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
 
@@ -306,11 +327,13 @@ else:
                 path = os.path.join(folder_path, chosen)
 
                 with open(path, "rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
+                    st.download_button(
+                        "🔽 Download Excel File", f, file_name=chosen
+                    )
             else:
                 st.warning("No files for your line.")
 
-    # ✅ LOGOUT BUTTON
+    # ---------- LOGOUT ----------
     st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
