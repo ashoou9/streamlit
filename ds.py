@@ -104,7 +104,6 @@ def logout():
 # ----------------------------
 st.markdown("""
 <style>
-/* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
@@ -112,12 +111,10 @@ st.markdown("""
     color: black !important;
     border-radius: 8px;
 }
-/* ALL LABELS */
 label[data-baseweb="label"], .stTextInput label {
     color: white !important;
     font-weight: bold !important;
 }
-/* SUBHEADERS & TEXT */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -125,7 +122,6 @@ div[data-testid="stText"] {
     color: white !important;
     font-weight: bold !important;
 }
-/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -140,7 +136,6 @@ div[data-testid="stText"] {
     transform: scale(1.02);
     transition: 0.2s;
 }
-/* DOWNLOAD BUTTON */
 .stDownloadButton button {
     color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
@@ -159,10 +154,7 @@ div[data-testid="stText"] {
 # ----------------------------
 # Page Background
 # ----------------------------
-if st.session_state.logged_in:
-    set_bg_local("data/background.png")
-else:
-    set_bg_local("data/background.png")
+set_bg_local("data/background.png")
 
 # ----------------------------
 # LOGIN PAGE
@@ -180,30 +172,18 @@ if not st.session_state.logged_in:
     st.stop()
 
 # ----------------------------
-# FLOATING Logout + About Us
+# HEADER with Logout + About Us
 # ----------------------------
-st.markdown(f"""
-<div style="position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; align-items: center; gap: 10px;">
-    <button onclick="window.location.reload();" style="
-        height:40px; 
-        border-radius:12px; 
-        background: linear-gradient(90deg, #ff4b4b, #ff0000); 
-        color:white; 
-        border:none;
-        font-weight:bold;
-        cursor:pointer;">🔴 Logout</button>
-    <button onclick="window.location.href='#';" style="
-        height:40px; 
-        border-radius:12px; 
-        background:none;
-        color:white; 
-        border:none;
-        font-weight:bold;
-        text-decoration: underline;
-        cursor:pointer;"
-        >About Us</button>
-</div>
-""", unsafe_allow_html=True)
+header_cols = st.columns([8,1,1])
+with header_cols[0]:
+    st.markdown("### Daily Sales")
+with header_cols[1]:
+    if st.button("🔴 Logout"):
+        logout()
+        st.rerun()
+with header_cols[2]:
+    if st.button("About Us"):
+        st.session_state.page = "About Us"
 
 # ----------------------------
 # NAVIGATION
