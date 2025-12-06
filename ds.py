@@ -48,7 +48,7 @@ def set_bg_local(image_file, login_page=True):
         padding-top: 2rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
-        padding-bottom: 100px !important; /* مساحة كافية للـ Logout */
+        padding-bottom: 120px !important; /* مساحة للـ floating logout */
         max-width: 100% !important;
     }}
 
@@ -64,7 +64,7 @@ def set_bg_local(image_file, login_page=True):
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
-            padding-bottom: 120px !important;
+            padding-bottom: 140px !important;
         }}
     }}
     </style>
@@ -136,32 +136,6 @@ input::placeholder {
     transition: 0.2s;
 }
 
-/* LOGOUT */
-.logout-btn {
-    margin-top: 20px !important;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    clear: both;
-}
-
-.logout-btn button {
-    width: 220px;
-    height: 45px;
-    border-radius: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff4b4b, #ff0000);
-    color: white !important; /* النص واضح دايمًا */
-    border: none;
-}
-
-.logout-btn button:hover {
-    background: linear-gradient(90deg, #cc0000, #990000);
-    transform: scale(1.05);
-    transition: 0.2s;
-}
-
 /* DOWNLOAD BUTTON */
 .stDownloadButton button {
     color: white !important; /* النص واضح طول الوقت */
@@ -175,7 +149,34 @@ input::placeholder {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
     transition: 0.2s;
-    color: white !important; /* يحافظ على النص أبيض */
+    color: white !important;
+}
+
+/* FLOATING LOGOUT BUTTON */
+.logout-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+}
+
+.logout-btn button {
+    width: 220px;
+    height: 45px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background: linear-gradient(90deg, #ff4b4b, #ff0000);
+    color: white !important;
+    border: none;
+}
+
+.logout-btn button:hover {
+    background: linear-gradient(90deg, #cc0000, #990000);
+    transform: scale(1.05);
+    transition: 0.2s;
 }
 
 @media only screen and (max-width: 768px) {
@@ -352,7 +353,7 @@ else:
             else:
                 st.warning("No files for your line.")
 
-    # ---------- LOGOUT ----------
+    # ---------- FLOATING LOGOUT ----------
     st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
