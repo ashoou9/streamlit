@@ -40,7 +40,7 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     [data-testid="stAppViewContainer"] {{
-        padding-top: {padding_top} !important; 
+        padding-top: {padding_top} !important;
         margin: 0 !important;
     }}
 
@@ -84,14 +84,31 @@ st.markdown("""
     margin: 60px auto 0 auto;
 }
 
+/* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
     padding: 10px;
-    color: black !important; 
+    color: black !important;
     border-radius: 8px;
 }
 
+/* ALL LABELS فوق أي Box */
+label[data-baseweb="label"],
+.stSelectbox label,
+.stFileUploader label,
+.stTextInput label,
+.stDateInput label {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* PLACEHOLDER */
+input::placeholder {
+    color: rgba(0,0,0,0.6) !important;
+}
+
+/* LOGIN BUTTON */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -110,14 +127,11 @@ st.markdown("""
 
 /* LOGOUT BUTTON */
 .logout-btn {
-    
-    /* كل ما تقلل الرقم هيطلع لفوق */
-     margin-top: -10px;
-            margin-bottom: 20px;
+    margin-top: -10px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
 }
-
 
 .logout-btn button {
     width: 220px;
@@ -190,8 +204,7 @@ def get_current_month_folders():
     if not os.path.exists(BASE_PATH):
         return []
     today = date.today().strftime("%Y-%m")
-    folders = [f for f in os.listdir(BASE_PATH) if f.startswith(today)]
-    return sorted(folders, reverse=True)
+    return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
     name = filename.replace(".xlsx", "").replace(".xls", "").lower()
@@ -291,8 +304,6 @@ else:
             if allowed_files:
                 chosen = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen)
-
-                ## st.dataframe(pd.read_excel(path).astype(str))
 
                 with open(path, "rb") as f:
                     st.download_button("🔽 Download Excel File", f, file_name=chosen)
