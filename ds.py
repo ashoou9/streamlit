@@ -135,12 +135,14 @@ input::placeholder {
 }
 
 /* LOGOUT */
+/* FIXED LOGOUT BUTTON - BOTTOM */
 .logout-btn {
-    margin-top: -10px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
+    position: fixed;
+    bottom: 20px;     /* المسافة من أسفل الشاشة */
+    right: 30px;      /* مكانه من اليمين */
+    z-index: 9999;
 }
+
 
 .logout-btn button {
     width: 220px;
