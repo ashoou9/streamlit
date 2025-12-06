@@ -228,8 +228,8 @@ if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
 
-    u = st.text_input("Username", placeholder="Enter Username")
-    p = st.text_input("Password", type="password", placeholder="Enter Password")
+    u = st.text_input("", placeholder="Enter Username")
+    p = st.text_input("", type="password", placeholder="Enter Password")
 
     if st.button("Login"):
         if login(u, p):
