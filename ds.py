@@ -254,31 +254,60 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Logout Top-Right (Absolutely Fixed) ----------
+    # ---------- Floating Logout + About Us Top-Right ----------
     st.markdown("""
     <div style="
         position: fixed;
         top: 20px;
         right: 20px;
         z-index: 9999;
+        display: flex;
+        gap: 10px;
     ">
-        <form>
-            <button onclick="window.location.reload();" style="
-                width: 140px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">
-                🔴 Logout
-            </button>
-        </form>
+        <button onclick="window.location.href='?page=about_us';" style="
+            width: 140px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #6a5acd, #836fff);
+            color: white;
+            border: none;
+            cursor: pointer;
+        ">
+            ℹ️ About Us
+        </button>
+
+        <button onclick="window.location.reload();" style="
+            width: 140px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff4b4b, #ff0000);
+            color: white;
+            border: none;
+            cursor: pointer;
+        ">
+            🔴 Logout
+        </button>
     </div>
     """, unsafe_allow_html=True)
+
+    # ---------- About Us Page ----------
+    if st.experimental_get_query_params().get("page", [""])[0] == "about_us":
+        st.title("ℹ️ About Us")
+        st.markdown("""
+        <p style='font-size:16px; line-height:1.6;'>
+            Welcome to the Daily Sales Dashboard!<br>
+            This app allows you to upload, view, and download Excel files for your team.<br>
+            <br>
+            <b>Developed By:</b> Ahmed<br>
+            <b>Version:</b> 1.0.0<br>
+            <b>Contact:</b> ahmed@example.com
+        </p>
+        """, unsafe_allow_html=True)
+        st.stop()
 
     st.subheader("👤 Daily Sales Dashboard")
 
@@ -322,12 +351,10 @@ else:
                     st.write(file)
 
                 with c2:
-                 if st.button("🗑", key="del_"+file):
-                    os.remove(path)
-                    st.warning(f"❌ File '{file}' deleted successfully")
-                    st.rerun()
-
-
+                    if st.button("🗑", key="del_"+file):
+                        os.remove(path)
+                        st.warning(f"❌ File '{file}' deleted successfully")
+                        st.rerun()
 
                 with c3:
                     with open(path, "rb") as f:
