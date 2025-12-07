@@ -71,7 +71,7 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Login + Dashboard UI Style
+# UI Style
 # ----------------------------
 st.markdown("""
 <style>
@@ -85,40 +85,18 @@ st.markdown("""
     margin: 60px auto 0 auto;
 }
 
-/* INPUT BOXES */
 .stTextInput > div > div > input {
-    text-align: left;
     font-size: 16px;
     padding: 10px;
     color: black !important;
     border-radius: 8px;
 }
 
-/* ALL LABELS */
-label[data-baseweb="label"],
-.stSelectbox label,
-.stFileUploader label,
-.stTextInput label,
-.stDateInput label {
+label, h1, h2, h3, h4, p {
     color: white !important;
-    font-weight: bold !important;
+    font-weight: bold;
 }
 
-/* SUBHEADERS & TEXT */
-h1, h2, h3, h4, h5, h6,
-.stSubheader,
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stText"] {
-    color: white !important;
-    font-weight: bold !important;
-}
-
-/* PLACEHOLDER */
-input::placeholder {
-    color: rgba(0,0,0,0.6) !important;
-}
-
-/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -129,29 +107,15 @@ input::placeholder {
     border: none;
 }
 
-.stButton > button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02);
-    transition: 0.2s;
-}
-
-/* DOWNLOAD BUTTON */
 .stDownloadButton button {
-    color: white !important; /* النص واضح طول الوقت */
+    color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     border-radius: 10px;
     height: 45px;
     font-size: 16px;
 }
 
-.stDownloadButton button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02);
-    transition: 0.2s;
-    color: white !important;
-}
-
-/* FLOATING LOGOUT TOP-RIGHT */
+/* LOGOUT */
 .logout-btn {
     position: fixed;
     top: 20px;
@@ -169,25 +133,11 @@ input::placeholder {
     color: white !important;
     border: none;
 }
-
-.logout-btn button:hover {
-    background: linear-gradient(90deg, #cc0000, #990000);
-    transform: scale(1.05);
-    transition: 0.2s;
-}
-
-@media only screen and (max-width: 768px) {
-    .login-box {
-        width: 90%;
-        padding: 25px;
-        margin-top: 60px;
-    }
-}
 </style>
 """, unsafe_allow_html=True)
 
 # ----------------------------
-# Users Database
+# Users
 # ----------------------------
 users = {
     "ahmed": {"password": "1001", "role": "Admin"},
@@ -213,9 +163,11 @@ users = {
 # Session State
 # ----------------------------
 if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-    st.session_state.user_role = None
-    st.session_state.username = None
+    st.session_state.update({
+        "logged_in": False,
+        "user_role": None,
+        "username": None
+    })
 
 # ----------------------------
 # Paths
@@ -237,7 +189,7 @@ def is_file_for_user(filename, username):
     return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
-# Login / Logout Logic
+# Login / Logout
 # ----------------------------
 def login(username, password):
     for key, data in users.items():
@@ -254,18 +206,19 @@ def logout():
     st.session_state.username = None
 
 # ----------------------------
-# UI
+# Background
 # ----------------------------
 if not st.session_state.logged_in:
     set_bg_local("data/background.png", True)
 else:
     set_bg_local("data/background.png", False)
 
-# ---------- LOGIN ----------
+# ----------------------------
+# LOGIN
+# ----------------------------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
     u = st.text_input("", placeholder="Enter Username")
     p = st.text_input("", type="password", placeholder="Enter Password")
 
@@ -274,13 +227,14 @@ if not st.session_state.logged_in:
             st.rerun()
         else:
             st.error("❌ Wrong Username Or Password")
-
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------- DASHBOARD ----------
+# ----------------------------
+# DASHBOARD
+# ----------------------------
 else:
 
-    # ---------- Floating Logout Top-Right ----------
+    # Logout button
     st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
@@ -290,21 +244,19 @@ else:
     st.subheader("👤 Sales Dashboard")
 
     folders = get_current_month_folders()
+    selected_day = folders[0] if folders else None
 
-    if folders:
-        selected_day = folders[0]
+    if selected_day:
         st.markdown(f"### 📅 Date: {selected_day}")
     else:
         st.warning("No available dates.")
-        selected_day = None
 
+    # ================= ADMIN =================
     if st.session_state.user_role == "Admin":
 
         st.subheader("🧑‍💼 Admin Dashboard")
 
-        uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
-        )
+        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
@@ -323,19 +275,37 @@ else:
 
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+
+                c1, c2 = st.columns([5,1])
 
                 with c1:
                     st.write(file)
 
                 with c2:
-                    if st.button("👁", key=file):
-                        st.dataframe(pd.read_excel(path).astype(str))
+                    if st.button("🗑 Delete", key=f"del_{file}"):
+                        st.session_state["delete_file"] = file
+                        st.session_state["delete_path"] = path
 
-                with c3:
-                    with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file)
+        # ---------- DELETE CONFIRM ----------
+        if "delete_file" in st.session_state:
+            st.warning(f"⚠️ Are you sure you want to delete: {st.session_state['delete_file']} ?")
 
+            c1, c2 = st.columns(2)
+
+            with c1:
+                if st.button("✅ Yes, Delete"):
+                    os.remove(st.session_state["delete_path"])
+                    del st.session_state["delete_file"]
+                    del st.session_state["delete_path"]
+                    st.success("✅ File deleted successfully")
+                    st.rerun()
+
+            with c2:
+                if st.button("❌ Cancel"):
+                    del st.session_state["delete_file"]
+                    del st.session_state["delete_path"]
+
+    # ================= USER =================
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -351,8 +321,6 @@ else:
                 path = os.path.join(folder_path, chosen)
 
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File", f, file_name=chosen
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
             else:
                 st.warning("No files for your line.")
