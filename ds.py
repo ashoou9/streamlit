@@ -216,75 +216,29 @@ else:
 
 # ---------- LOGIN ----------
 if not st.session_state.logged_in:
-
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
     u = st.text_input("", placeholder="Enter Username")
     p = st.text_input("", type="password", placeholder="Enter Password")
-
     if st.button("Login"):
         if login(u, p):
             st.experimental_rerun()
         else:
             st.error("❌ Wrong Username Or Password")
-
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD ----------
 else:
     # ---------- Fixed Header ----------
-    st.markdown("""
-    <style>
-    .fixed-header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(0,0,0,0.3);
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 40px;
-        z-index: 9999;
-    }
-    .fixed-header h2 {
-        margin: 0;
-        color: white;
-        font-weight: bold;
-    }
-    .header-buttons button {
-        margin-left: 10px;
-        height: 35px;
-        border-radius: 10px;
-        border: none;
-        font-weight: bold;
-        cursor: pointer;
-        padding: 0 12px;
-    }
-    .logout-btn { background: linear-gradient(90deg, #ff4b4b, #ff0000); color: white; }
-    .about-btn { background: linear-gradient(90deg, #0072ff, #00c6ff); color: white; }
-    </style>
-
-    <div class="fixed-header">
-        <h2>👤 Daily Sales</h2>
-        <div class="header-buttons">
-            <form method="post">
-                <button class="logout-btn" name="logout">🔴 Logout</button>
-            </form>
-            <form method="post">
-                <button class="about-btn" name="about">ℹ️ About Us</button>
-            </form>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ---------- Handle Logout & About Us ----------
-    if st.button("🔴 Logout"):
-        logout()
-        st.experimental_rerun()
-
-    if st.button("ℹ️ About Us"):
-        st.info("Streamlit Dashboard v1.0\nDeveloped by Your Name")
+    header_cols = st.columns([4,1,1])
+    with header_cols[0]:
+        st.markdown("<h2 style='color:white;'>👤 Daily Sales</h2>", unsafe_allow_html=True)
+    with header_cols[1]:
+        if st.button("🔴 Logout"):
+            logout()
+            st.experimental_rerun()
+    with header_cols[2]:
+        if st.button("ℹ️ About Us"):
+            st.info("Streamlit Dashboard v1.0\nDeveloped by Your Name")
 
     folders = get_current_month_folders()
     selected_day = folders[0] if folders else None
@@ -293,59 +247,44 @@ else:
 
     # ---------- Admin or AllViewer/GM ----------
     if st.session_state.user_role == "Admin":
-
         st.subheader("🧑‍💼 Admin Dashboard")
-
         uploaded_files = st.file_uploader(
             "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
         )
-
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
-
             for file in uploaded_files:
                 with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
-
             st.success("✅ Files uploaded successfully")
-
         st.markdown("---")
-
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
                 c1, c2, c3 = st.columns([4,1,1])
-
                 with c1:
                     st.write(file)
-
                 with c2:
                     if st.button("🗑", key="del_"+file):
                         os.remove(path)
                         st.warning(f"❌ File '{file}' deleted successfully")
                         st.experimental_rerun()
-
                 with c3:
                     with open(path, "rb") as f:
                         st.download_button("⬇", f, file_name=file)
-
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             allowed_files = [
                 f for f in os.listdir(folder_path)
                 if st.session_state.user_role == "AllViewer"
                 or is_file_for_user(f, st.session_state.username)
             ]
-
             if allowed_files:
                 chosen = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen)
-
                 with open(path, "rb") as f:
                     st.download_button(
                         "🔽 Download Excel File", f, file_name=chosen
