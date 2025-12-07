@@ -150,32 +150,6 @@ input::placeholder {
     color: white !important;
 }
 
-/* FLOATING LOGOUT TOP-RIGHT */
-.logout-btn-fixed {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-}
-
-.logout-btn-fixed button {
-    width: 140px;
-    height: 40px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: bold;
-    background: linear-gradient(90deg, #ff4b4b, #ff0000);
-    color: white !important;
-    border: none;
-    cursor: pointer;
-}
-
-.logout-btn-fixed button:hover {
-    background: linear-gradient(90deg, #cc0000, #990000);
-    transform: scale(1.05);
-    transition: 0.2s;
-}
-
 @media only screen and (max-width: 768px) {
     .login-box {
         width: 90%;
@@ -280,12 +254,31 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Logout Top-Right (Fixed) ----------
-    st.markdown('<div class="logout-btn-fixed">', unsafe_allow_html=True)
-    if st.button("🔴 Logout"):
-        logout()
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    # ---------- Floating Logout Top-Right (Absolutely Fixed) ----------
+    st.markdown("""
+    <div style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    ">
+        <form>
+            <button onclick="window.location.reload();" style="
+                width: 140px;
+                height: 40px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: bold;
+                background: linear-gradient(90deg, #ff4b4b, #ff0000);
+                color: white;
+                border: none;
+                cursor: pointer;
+            ">
+                🔴 Logout
+            </button>
+        </form>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.subheader("👤 Daily Sales Dashboard")
 
