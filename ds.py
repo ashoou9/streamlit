@@ -21,9 +21,7 @@ def set_bg_local(image_file, login_page=True):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
-
     padding_top = "105px" if login_page else "210px"
-
     page_bg_img = f"""
     <style>
     html, body {{
@@ -33,17 +31,14 @@ def set_bg_local(image_file, login_page=True):
         padding: 0;
         overflow-x: hidden;
     }}
-
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
         background-size: cover;
     }}
-
     [data-testid="stAppViewContainer"] {{
         padding-top: {padding_top} !important;
         margin: 0 !important;
     }}
-
     .block-container {{
         padding-top: 2rem !important;
         padding-left: 30rem !important;
@@ -51,12 +46,10 @@ def set_bg_local(image_file, login_page=True):
         padding-bottom: 100px !important;
         max-width: 100% !important;
     }}
-
     header, footer {{
         visibility: hidden !important;
         height: 0px;
     }}
-
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 160px !important;
@@ -84,8 +77,6 @@ st.markdown("""
     text-align: center;
     margin: 60px auto 0 auto;
 }
-
-/* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
@@ -93,8 +84,6 @@ st.markdown("""
     color: black !important;
     border-radius: 8px;
 }
-
-/* ALL LABELS */
 label[data-baseweb="label"],
 .stSelectbox label,
 .stFileUploader label,
@@ -103,8 +92,6 @@ label[data-baseweb="label"],
     color: white !important;
     font-weight: bold !important;
 }
-
-/* SUBHEADERS & TEXT */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -112,13 +99,9 @@ div[data-testid="stText"] {
     color: white !important;
     font-weight: bold !important;
 }
-
-/* PLACEHOLDER */
 input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
-
-/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -128,14 +111,11 @@ input::placeholder {
     color: white;
     border: none;
 }
-
 .stButton > button:hover {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
     transition: 0.2s;
 }
-
-/* DOWNLOAD BUTTON */
 .stDownloadButton button {
     color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
@@ -143,13 +123,11 @@ input::placeholder {
     height: 45px;
     font-size: 16px;
 }
-
 .stDownloadButton button:hover {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
     color: white !important;
 }
-
 @media only screen and (max-width: 768px) {
     .login-box {
         width: 90%;
@@ -181,7 +159,7 @@ users = {
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
     "All": {"password": "9021", "role": "AllViewer"},
-    "GM": {"password": "0000", "role": "AllViewer"}  # Added GM same as AllViewer
+    "GM": {"password": "0000", "role": "AllViewer"}  # GM same as AllViewer
 }
 
 # ----------------------------
@@ -246,7 +224,7 @@ if not st.session_state.logged_in:
 
     if st.button("Login"):
         if login(u, p):
-            st.rerun()
+            st.experimental_rerun()
         else:
             st.error("❌ Wrong Username Or Password")
 
@@ -254,38 +232,59 @@ if not st.session_state.logged_in:
 
 # ---------- DASHBOARD ----------
 else:
+    # ---------- Fixed Header ----------
+    st.markdown("""
+    <style>
+    .fixed-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 40px;
+        z-index: 9999;
+    }
+    .fixed-header h2 {
+        margin: 0;
+        color: white;
+        font-weight: bold;
+    }
+    .header-buttons button {
+        margin-left: 10px;
+        height: 35px;
+        border-radius: 10px;
+        border: none;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0 12px;
+    }
+    .logout-btn { background: linear-gradient(90deg, #ff4b4b, #ff0000); color: white; }
+    .about-btn { background: linear-gradient(90deg, #0072ff, #00c6ff); color: white; }
+    </style>
 
-    # ---------- Header with Logout & About Us ----------
-    st.markdown(f"""
-    <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;'>
-        <h2 style='color:white;'>👤 Daily Sales Dashboard</h2>
-        <div>
-            <button onclick="window.location.reload();" style="
-                width: 120px;
-                height: 35px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-                margin-right: 10px;
-            ">🔴 Logout</button>
-            <button onclick="alert('About Us: Streamlit Dashboard v1.0');" style="
-                width: 120px;
-                height: 35px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #0072ff, #00c6ff);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">ℹ️ About Us</button>
+    <div class="fixed-header">
+        <h2>👤 Daily Sales</h2>
+        <div class="header-buttons">
+            <form method="post">
+                <button class="logout-btn" name="logout">🔴 Logout</button>
+            </form>
+            <form method="post">
+                <button class="about-btn" name="about">ℹ️ About Us</button>
+            </form>
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+    # ---------- Handle Logout & About Us ----------
+    if st.button("🔴 Logout"):
+        logout()
+        st.experimental_rerun()
+
+    if st.button("ℹ️ About Us"):
+        st.info("Streamlit Dashboard v1.0\nDeveloped by Your Name")
 
     folders = get_current_month_folders()
     selected_day = folders[0] if folders else None
@@ -327,7 +326,7 @@ else:
                     if st.button("🗑", key="del_"+file):
                         os.remove(path)
                         st.warning(f"❌ File '{file}' deleted successfully")
-                        st.rerun()
+                        st.experimental_rerun()
 
                 with c3:
                     with open(path, "rb") as f:
