@@ -58,9 +58,6 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     @media only screen and (max-width: 768px) {{
-        [data-testid="stAppViewContainer"] {{
-            padding-top: 160px !important;
-        }}
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -71,62 +68,42 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# UI Style
+# GLOBAL UI
 # ----------------------------
 st.markdown("""
 <style>
 
-.login-box {
-    width: 420px;
-    padding: 35px;
-    border-radius: 18px;
-    text-align: center;
-    margin: 60px auto 0 auto;
-}
-
-.stTextInput input { color: black !important; }
-
-label, h1, h2, h3, h4, p {
-    color: white !important;
-    font-weight: bold;
-}
-
-.stButton > button {
-    width: 100%;
-    border-radius: 10px;
-    height: 45px;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    color: white;
-}
-
-/* LOGOUT */
-.logout-btn {
+.top-actions {
     position: fixed;
-    top: 20px;
+    top: 15px;
     right: 20px;
-    z-index: 9999;
+    display: flex;
+    gap: 10px;
+    z-index: 100000;
 }
 
-.logout-btn button {
+.top-actions .stButton > button {
     width: 140px;
     height: 40px;
-    background: linear-gradient(90deg, #ff4b4b, #ff0000);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: bold;
     color: white !important;
+    border: none;
 }
 
-/* ABOUT */
-.about-btn {
-    position: fixed;
-    top: 20px;
-    right: 180px;
-    z-index: 9999;
-}
-
-.about-btn button {
-    width: 140px;
-    height: 40px;
+.about-btn .stButton > button {
     background: linear-gradient(90deg, #00c6ff, #0072ff);
+}
+
+.logout-btn .stButton > button {
+    background: linear-gradient(90deg, #ff4b4b, #ff0000);
+}
+
+.stDownloadButton button {
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
     color: white !important;
+    border-radius: 10px;
 }
 
 </style>
@@ -181,8 +158,9 @@ def get_current_month_folders():
     return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
-    name = filename.lower()
-    return username.lower() in name
+    name = filename.replace(".xlsx", "").replace(".xls", "").lower()
+    parts = re.split(r"\s*-\s*", name)
+    return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
 # Login / Logout
@@ -214,54 +192,45 @@ else:
 # LOGIN
 # ----------------------------
 if not st.session_state.logged_in:
-
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
-    u = st.text_input("", placeholder="Enter Username")
-    p = st.text_input("", type="password", placeholder="Enter Password")
+    u = st.text_input("Username")
+    p = st.text_input("Password", type="password")
 
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
-            st.error("❌ Wrong Username Or Password")
-
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.error("Wrong Username Or Password")
 
 # ----------------------------
 # DASHBOARD
 # ----------------------------
 else:
 
-    # ABOUT
-    st.markdown('<div class="about-btn">', unsafe_allow_html=True)
+    # ===== TOP BUTTONS =====
+    st.markdown('<div class="top-actions">', unsafe_allow_html=True)
+
     if st.button("ℹ About Us"):
         st.session_state.page = "about"
         st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
 
-    # LOGOUT
-    st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
         st.rerun()
+
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # -------- ABOUT PAGE --------
+    # ===== ABOUT PAGE =====
     if st.session_state.page == "about":
+        st.subheader("About Us")
+        st.write("Ahmed Mahmoud")
+        st.write("Data Analyst")
+        st.write("Python & Streamlit Developer")
 
-        st.markdown("## 👨‍💻 About Us")
-        st.markdown("""
-        **Ahmed Mahmoud**  
-        Data Analyst  
-        Python & Streamlit Developer
-        """)
-
-        if st.button("⬅ Back To Dashboard"):
+        if st.button("⬅ Back"):
             st.session_state.page = "dashboard"
             st.rerun()
 
-    # -------- MAIN DASHBOARD --------
+    # ===== MAIN DASHBOARD =====
     else:
 
         st.subheader("👤 Sales Dashboard")
@@ -271,9 +240,13 @@ else:
 
         if selected_day:
             st.markdown(f"### 📅 Date: {selected_day}")
+        else:
+            st.warning("No available dates.")
 
-        # ================= ADMIN =================
+        # ========== ADMIN ==========
         if st.session_state.user_role == "Admin":
+
+            st.subheader("🧑‍💼 Admin Dashboard")
 
             uploaded_files = st.file_uploader(
                 "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
@@ -294,8 +267,8 @@ else:
 
                 for file in os.listdir(folder_path):
                     path = os.path.join(folder_path, file)
-                    c1, c2, c3 = st.columns([4,1,1])
 
+                    c1, c2, c3 = st.columns([4,1,1])
                     with c1:
                         st.write(file)
 
@@ -308,7 +281,7 @@ else:
                             os.remove(path)
                             st.rerun()
 
-        # ================= USER =================
+        # ========== USER ==========
         else:
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
@@ -325,3 +298,5 @@ else:
 
                     with open(path, "rb") as f:
                         st.download_button("🔽 Download Excel File", f, file_name=chosen)
+                else:
+                    st.warning("No files for your line.")
