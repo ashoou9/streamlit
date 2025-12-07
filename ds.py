@@ -58,6 +58,9 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     @media only screen and (max-width: 768px) {{
+        [data-testid="stAppViewContainer"] {{
+            padding-top: 160px !important;
+        }}
         .block-container {{
             padding-left: 1rem !important;
             padding-right: 1rem !important;
@@ -68,45 +71,123 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# GLOBAL UI
+# Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
-
-.top-actions {
-    display: flex;
-    gap: 10px;
+.login-box {
+    background: rgba(0, 0, 0, 0.0);
+    width: 420px;
+    max-width: 90%;
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    margin: 60px auto 0 auto;
 }
 
-.top-actions .stButton > button {
+/* INPUT BOXES */
+.stTextInput > div > div > input {
+    text-align: left;
+    font-size: 16px;
+    padding: 10px;
+    color: black !important;
+    border-radius: 8px;
+}
+
+/* ALL LABELS */
+label[data-baseweb="label"],
+.stSelectbox label,
+.stFileUploader label,
+.stTextInput label,
+.stDateInput label {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* SUBHEADERS & TEXT */
+h1, h2, h3, h4, h5, h6,
+.stSubheader,
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stText"] {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* PLACEHOLDER */
+input::placeholder {
+    color: rgba(0,0,0,0.6) !important;
+}
+
+/* BUTTONS */
+.stButton > button {
+    width: 100%;
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    color: white;
+    border: none;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02);
+    transition: 0.2s;
+}
+
+/* DOWNLOAD BUTTON */
+.stDownloadButton button {
+    color: white !important; /* النص واضح طول الوقت */
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.stDownloadButton button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02);
+    transition: 0.2s;
+    color: white !important;
+}
+
+/* FLOATING LOGOUT TOP-RIGHT */
+.logout-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.logout-btn button {
     width: 140px;
     height: 40px;
     border-radius: 12px;
     font-size: 14px;
     font-weight: bold;
+    background: linear-gradient(90deg, #ff4b4b, #ff0000);
     color: white !important;
     border: none;
 }
 
-.about-btn .stButton > button {
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
+.logout-btn button:hover {
+    background: linear-gradient(90deg, #cc0000, #990000);
+    transform: scale(1.05);
+    transition: 0.2s;
 }
 
-.logout-btn .stButton > button {
-    background: linear-gradient(90deg, #ff4b4b, #ff0000);
+@media only screen and (max-width: 768px) {
+    .login-box {
+        width: 90%;
+        padding: 25px;
+        margin-top: 60px;
+    }
 }
-
-.stDownloadButton button {
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    color: white !important;
-    border-radius: 10px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
 # ----------------------------
-# Users
+# Users Database
 # ----------------------------
 users = {
     "ahmed": {"password": "1001", "role": "Admin"},
@@ -136,9 +217,6 @@ if "logged_in" not in st.session_state:
     st.session_state.user_role = None
     st.session_state.username = None
 
-if "page" not in st.session_state:
-    st.session_state.page = "dashboard"
-
 # ----------------------------
 # Paths
 # ----------------------------
@@ -159,7 +237,7 @@ def is_file_for_user(filename, username):
     return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
-# Login / Logout
+# Login / Logout Logic
 # ----------------------------
 def login(username, password):
     for key, data in users.items():
@@ -174,127 +252,107 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-    st.session_state.page = "dashboard"
 
 # ----------------------------
-# Background
+# UI
 # ----------------------------
 if not st.session_state.logged_in:
     set_bg_local("data/background.png", True)
 else:
     set_bg_local("data/background.png", False)
 
-# ----------------------------
-# LOGIN
-# ----------------------------
+# ---------- LOGIN ----------
 if not st.session_state.logged_in:
-    u = st.text_input("Username")
-    p = st.text_input("Password", type="password")
+
+    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+
+    u = st.text_input("", placeholder="Enter Username")
+    p = st.text_input("", type="password", placeholder="Enter Password")
 
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
-            st.error("Wrong Username Or Password")
+            st.error("❌ Wrong Username Or Password")
 
-# ----------------------------
-# DASHBOARD
-# ----------------------------
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------- DASHBOARD ----------
 else:
 
-    # ===== TITLE AND TOP BUTTONS =====
-    col_title, col_buttons = st.columns([4,1])
+    # ---------- Floating Logout Top-Right ----------
+    st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
+    if st.button("🔴 Logout"):
+        logout()
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    with col_title:
-        st.markdown("## Daily Sales")
+    st.subheader("👤 Sales Dashboard")
 
-    with col_buttons:
-        if st.button("ℹ About Us", key="about"):
-            st.session_state.page = "about"
-            st.rerun()
+    folders = get_current_month_folders()
 
-        if st.button("🔴 Logout", key="logout"):
-            logout()
-            st.rerun()
-
-    # ===== ABOUT PAGE =====
-    if st.session_state.page == "about":
-        st.subheader("About Us")
-        st.write("Ahmed Mahmoud")
-        st.write("Data Analyst")
-        st.write("Python & Streamlit Developer")
-
-        if st.button("⬅ Back"):
-            st.session_state.page = "dashboard"
-            st.rerun()
-
-    # ===== MAIN DASHBOARD =====
+    if folders:
+        selected_day = folders[0]
+        st.markdown(f"### 📅 Date: {selected_day}")
     else:
+        st.warning("No available dates.")
+        selected_day = None
 
-        st.subheader("👤 Sales Dashboard")
+    if st.session_state.user_role == "Admin":
 
-        folders = get_current_month_folders()
-        selected_day = folders[0] if folders else None
+        st.subheader("🧑‍💼 Admin Dashboard")
+
+        uploaded_files = st.file_uploader(
+            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+        )
+
+        if uploaded_files:
+            today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
+            os.makedirs(today_folder, exist_ok=True)
+
+            for file in uploaded_files:
+                with open(os.path.join(today_folder, file.name), "wb") as f:
+                    f.write(file.getbuffer())
+
+            st.success("✅ Files uploaded successfully")
+
+        st.markdown("---")
 
         if selected_day:
-            st.markdown(f"### 📅 Date: {selected_day}")
-        else:
-            st.warning("No available dates.")
+            folder_path = os.path.join(BASE_PATH, selected_day)
 
-        # ========== ADMIN ==========
-        if st.session_state.user_role == "Admin":
+            for file in os.listdir(folder_path):
+                path = os.path.join(folder_path, file)
+                c1, c2, c3 = st.columns([4,1,1])
 
-            st.subheader("🧑‍💼 Admin Dashboard")
+                with c1:
+                    st.write(file)
 
-            uploaded_files = st.file_uploader(
-                "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
-            )
+                with c2:
+                    if st.button("👁", key=file):
+                        st.dataframe(pd.read_excel(path).astype(str))
 
-            if uploaded_files:
-                today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
-                os.makedirs(today_folder, exist_ok=True)
-
-                for file in uploaded_files:
-                    with open(os.path.join(today_folder, file.name), "wb") as f:
-                        f.write(file.getbuffer())
-
-                st.success("✅ Files uploaded successfully")
-
-            if selected_day:
-                folder_path = os.path.join(BASE_PATH, selected_day)
-
-                for file in os.listdir(folder_path):
-                    path = os.path.join(folder_path, file)
-
-                    c1, c2, c3 = st.columns([4,1,1])
-                    with c1:
-                        st.write(file)
-
-                    with c2:
-                        with open(path, "rb") as f:
-                            st.download_button("⬇", f, file_name=file)
-
-                    with c3:
-                        if st.button("🗑", key=file):
-                            os.remove(path)
-                            st.rerun()
-
-        # ========== USER ==========
-        else:
-            if selected_day:
-                folder_path = os.path.join(BASE_PATH, selected_day)
-
-                allowed_files = [
-                    f for f in os.listdir(folder_path)
-                    if st.session_state.user_role == "AllViewer"
-                    or is_file_for_user(f, st.session_state.username)
-                ]
-
-                if allowed_files:
-                    chosen = st.selectbox("File Name", allowed_files)
-                    path = os.path.join(folder_path, chosen)
-
+                with c3:
                     with open(path, "rb") as f:
-                        st.download_button("🔽 Download Excel File", f, file_name=chosen)
-                else:
-                    st.warning("No files for your line.")
+                        st.download_button("⬇", f, file_name=file)
+
+    else:
+        if selected_day:
+            folder_path = os.path.join(BASE_PATH, selected_day)
+
+            allowed_files = [
+                f for f in os.listdir(folder_path)
+                if st.session_state.user_role == "AllViewer"
+                or is_file_for_user(f, st.session_state.username)
+            ]
+
+            if allowed_files:
+                chosen = st.selectbox("File Name", allowed_files)
+                path = os.path.join(folder_path, chosen)
+
+                with open(path, "rb") as f:
+                    st.download_button(
+                        "🔽 Download Excel File", f, file_name=chosen
+                    )
+            else:
+                st.warning("No files for your line.")
