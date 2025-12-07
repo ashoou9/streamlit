@@ -21,7 +21,6 @@ def set_bg_local(image_file, login_page=True):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
-
     padding_top = "105px" if login_page else "210px"
 
     page_bg_img = f"""
@@ -85,7 +84,6 @@ st.markdown("""
     margin: 60px auto 0 auto;
 }
 
-/* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
@@ -94,7 +92,6 @@ st.markdown("""
     border-radius: 8px;
 }
 
-/* ALL LABELS */
 label[data-baseweb="label"],
 .stSelectbox label,
 .stFileUploader label,
@@ -104,7 +101,6 @@ label[data-baseweb="label"],
     font-weight: bold !important;
 }
 
-/* SUBHEADERS & TEXT */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -113,12 +109,10 @@ div[data-testid="stText"] {
     font-weight: bold !important;
 }
 
-/* PLACEHOLDER */
 input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
-/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -135,7 +129,6 @@ input::placeholder {
     transition: 0.2s;
 }
 
-/* DOWNLOAD BUTTON */
 .stDownloadButton button {
     color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
@@ -148,14 +141,6 @@ input::placeholder {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
     color: white !important;
-}
-
-@media only screen and (max-width: 768px) {
-    .login-box {
-        width: 90%;
-        padding: 25px;
-        margin-top: 60px;
-    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -237,24 +222,20 @@ else:
 
 # ---------- LOGIN ----------
 if not st.session_state.logged_in:
-
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
-
     u = st.text_input("", placeholder="Enter Username")
     p = st.text_input("", type="password", placeholder="Enter Password")
-
     if st.button("Login"):
         if login(u, p):
             st.rerun()
         else:
             st.error("❌ Wrong Username Or Password")
-
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Logout Top-Right (Absolutely Fixed) ----------
+    # ---------- Floating Logout Top-Right Fixed ----------
     st.markdown("""
     <div style="
         position: fixed;
@@ -283,7 +264,6 @@ else:
     st.subheader("👤 Daily Sales Dashboard")
 
     folders = get_current_month_folders()
-
     if folders:
         selected_day = folders[0]
         st.markdown(f"### 📅 Date: {selected_day}")
@@ -291,64 +271,75 @@ else:
         st.warning("No available dates.")
         selected_day = None
 
+    # ---------- Admin ----------
     if st.session_state.user_role == "Admin":
-
         st.subheader("🧑‍💼 Admin Dashboard")
-
-        uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
-        )
+        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
             os.makedirs(today_folder, exist_ok=True)
-
             for file in uploaded_files:
                 with open(os.path.join(today_folder, file.name), "wb") as f:
                     f.write(file.getbuffer())
-
             st.success("✅ Files uploaded successfully")
 
         st.markdown("---")
 
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1, c2 = st.columns([4,2])  # عمود للملف + عمود للـ Download/Delete
+                c1 = st.container()
+                c1.write(file)
 
-                with c1:
-                    st.write(file)
+                # ---------- Flex Buttons ----------
+                st.markdown(f"""
+                <div style="display:flex; gap:5px; margin-bottom:10px;">
+                    <form style="flex:1;">
+                        <button style="
+                            width:100%;
+                            min-width:80px;
+                            height:40px;
+                            border-radius:8px;
+                            font-size:14px;
+                            font-weight:bold;
+                            background: linear-gradient(90deg, #0072ff, #00c6ff);
+                            color:white;
+                            border:none;
+                            cursor:pointer;
+                        " onclick="alert('Download initiated')">⬇ Download</button>
+                    </form>
+                    <form style="flex:1;">
+                        <button style="
+                            width:100%;
+                            min-width:80px;
+                            height:40px;
+                            border-radius:8px;
+                            font-size:14px;
+                            font-weight:bold;
+                            background: linear-gradient(90deg, #ff4b4b, #ff0000);
+                            color:white;
+                            border:none;
+                            cursor:pointer;
+                        " onclick="alert('Delete clicked')">🗑 Delete</button>
+                    </form>
+                </div>
+                """, unsafe_allow_html=True)
 
-                with c2:
-                    col_dl, col_del = st.columns([1,1])
-                    with col_dl:
-                        with open(path, "rb") as f:
-                            st.download_button("⬇ Download", f, file_name=file)
-                    with col_del:
-                        if st.button("🗑 Delete", key="del_"+file):
-                            os.remove(path)
-                            st.success(f"File {file} deleted")
-                            st.experimental_rerun()
-
+    # ---------- Users ----------
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
-
             allowed_files = [
                 f for f in os.listdir(folder_path)
                 if st.session_state.user_role == "AllViewer"
                 or is_file_for_user(f, st.session_state.username)
             ]
-
             if allowed_files:
                 chosen = st.selectbox("File Name", allowed_files)
                 path = os.path.join(folder_path, chosen)
-
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File", f, file_name=chosen
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
             else:
                 st.warning("No files for your line.")
