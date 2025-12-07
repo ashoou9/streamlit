@@ -176,6 +176,9 @@ if "logged_in" not in st.session_state:
     st.session_state.user_role = None
     st.session_state.username = None
 
+if "logout_pressed" not in st.session_state:
+    st.session_state.logout_pressed = False
+
 # ----------------------------
 # Paths
 # ----------------------------
@@ -211,6 +214,7 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
+    st.session_state.logout_pressed = False
     st.experimental_rerun()
 
 # ----------------------------
@@ -249,7 +253,13 @@ else:
     <div class="logout-btn-fixed"></div>
     """, unsafe_allow_html=True)
 
-    if st.button("🔴 Logout"):
+    # Logout button linked to session_state
+    def press_logout():
+        st.session_state.logout_pressed = True
+
+    st.button("🔴 Logout", on_click=press_logout)
+
+    if st.session_state.logout_pressed:
         logout()
 
     st.subheader("👤 Daily Sales Dashboard")
