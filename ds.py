@@ -180,7 +180,8 @@ users = {
     "DNU": {"password": "2938", "role": "User"},
     "Sildava": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
-    "All": {"password": "9021", "role": "AllViewer"}
+    "All": {"password": "9021", "role": "AllViewer"},
+    "gm": {"password": "9021", "role": "AllViewer"}
 }
 
 # ----------------------------
