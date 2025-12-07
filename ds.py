@@ -316,18 +316,21 @@ else:
 
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+                c1, c2 = st.columns([4,2])  # عمود للملف + عمود للـ Download/Delete
 
                 with c1:
                     st.write(file)
 
                 with c2:
-                    if st.button("👁", key=file):
-                        st.dataframe(pd.read_excel(path).astype(str))
-
-                with c3:
-                    with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file)
+                    col_dl, col_del = st.columns([1,1])
+                    with col_dl:
+                        with open(path, "rb") as f:
+                            st.download_button("⬇ Download", f, file_name=file)
+                    with col_del:
+                        if st.button("🗑 Delete", key="del_"+file):
+                            os.remove(path)
+                            st.success(f"File {file} deleted")
+                            st.experimental_rerun()
 
     else:
         if selected_day:
