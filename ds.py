@@ -75,22 +75,16 @@ def set_bg_local(image_file, login_page=True):
 # ----------------------------
 st.markdown("""
 <style>
+
 .login-box {
-    background: rgba(0, 0, 0, 0.0);
     width: 420px;
-    max-width: 90%;
     padding: 35px;
     border-radius: 18px;
     text-align: center;
     margin: 60px auto 0 auto;
 }
 
-.stTextInput > div > div > input {
-    font-size: 16px;
-    padding: 10px;
-    color: black !important;
-    border-radius: 8px;
-}
+.stTextInput input { color: black !important; }
 
 label, h1, h2, h3, h4, p {
     color: white !important;
@@ -101,18 +95,8 @@ label, h1, h2, h3, h4, p {
     width: 100%;
     border-radius: 10px;
     height: 45px;
-    font-size: 16px;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     color: white;
-    border: none;
-}
-
-.stDownloadButton button {
-    color: white !important;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
 }
 
 /* LOGOUT */
@@ -126,13 +110,25 @@ label, h1, h2, h3, h4, p {
 .logout-btn button {
     width: 140px;
     height: 40px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: bold;
     background: linear-gradient(90deg, #ff4b4b, #ff0000);
     color: white !important;
-    border: none;
 }
+
+/* ABOUT */
+.about-btn {
+    position: fixed;
+    top: 20px;
+    right: 180px;
+    z-index: 9999;
+}
+
+.about-btn button {
+    width: 140px;
+    height: 40px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -167,6 +163,9 @@ if "logged_in" not in st.session_state:
     st.session_state.user_role = None
     st.session_state.username = None
 
+if "page" not in st.session_state:
+    st.session_state.page = "dashboard"
+
 # ----------------------------
 # Paths
 # ----------------------------
@@ -182,9 +181,8 @@ def get_current_month_folders():
     return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
 
 def is_file_for_user(filename, username):
-    name = filename.replace(".xlsx", "").replace(".xls", "").lower()
-    parts = re.split(r"\s*-\s*", name)
-    return any(username.lower() in p.strip() for p in parts)
+    name = filename.lower()
+    return username.lower() in name
 
 # ----------------------------
 # Login / Logout
@@ -202,6 +200,7 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
+    st.session_state.page = "dashboard"
 
 # ----------------------------
 # Background
@@ -234,6 +233,13 @@ if not st.session_state.logged_in:
 # ----------------------------
 else:
 
+    # ABOUT
+    st.markdown('<div class="about-btn">', unsafe_allow_html=True)
+    if st.button("ℹ About Us"):
+        st.session_state.page = "about"
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
     # LOGOUT
     st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
@@ -241,74 +247,81 @@ else:
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.subheader("👤 Sales Dashboard")
+    # -------- ABOUT PAGE --------
+    if st.session_state.page == "about":
 
-    folders = get_current_month_folders()
-    selected_day = folders[0] if folders else None
+        st.markdown("## 👨‍💻 About Us")
+        st.markdown("""
+        **Ahmed Mahmoud**  
+        Data Analyst  
+        Python & Streamlit Developer
+        """)
 
-    if selected_day:
-        st.markdown(f"### 📅 Date: {selected_day}")
+        if st.button("⬅ Back To Dashboard"):
+            st.session_state.page = "dashboard"
+            st.rerun()
+
+    # -------- MAIN DASHBOARD --------
     else:
-        st.warning("No available dates.")
 
-    # ================= ADMIN =================
-    if st.session_state.user_role == "Admin":
+        st.subheader("👤 Sales Dashboard")
 
-        st.subheader("🧑‍💼 Admin Dashboard")
-
-        uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
-        )
-
-        if uploaded_files:
-            today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
-            os.makedirs(today_folder, exist_ok=True)
-
-            for file in uploaded_files:
-                with open(os.path.join(today_folder, file.name), "wb") as f:
-                    f.write(file.getbuffer())
-
-            st.success("✅ Files uploaded successfully")
-
-        st.markdown("---")
+        folders = get_current_month_folders()
+        selected_day = folders[0] if folders else None
 
         if selected_day:
-            folder_path = os.path.join(BASE_PATH, selected_day)
+            st.markdown(f"### 📅 Date: {selected_day}")
 
-            for file in os.listdir(folder_path):
-                path = os.path.join(folder_path, file)
+        # ================= ADMIN =================
+        if st.session_state.user_role == "Admin":
 
-                c1, c2, c3 = st.columns([4,1,1])
+            uploaded_files = st.file_uploader(
+                "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+            )
 
-                with c1:
-                    st.write(file)
+            if uploaded_files:
+                today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
+                os.makedirs(today_folder, exist_ok=True)
 
-                with c2:
+                for file in uploaded_files:
+                    with open(os.path.join(today_folder, file.name), "wb") as f:
+                        f.write(file.getbuffer())
+
+                st.success("✅ Files uploaded successfully")
+
+            if selected_day:
+                folder_path = os.path.join(BASE_PATH, selected_day)
+
+                for file in os.listdir(folder_path):
+                    path = os.path.join(folder_path, file)
+                    c1, c2, c3 = st.columns([4,1,1])
+
+                    with c1:
+                        st.write(file)
+
+                    with c2:
+                        with open(path, "rb") as f:
+                            st.download_button("⬇", f, file_name=file)
+
+                    with c3:
+                        if st.button("🗑", key=file):
+                            os.remove(path)
+                            st.rerun()
+
+        # ================= USER =================
+        else:
+            if selected_day:
+                folder_path = os.path.join(BASE_PATH, selected_day)
+
+                allowed_files = [
+                    f for f in os.listdir(folder_path)
+                    if st.session_state.user_role == "AllViewer"
+                    or is_file_for_user(f, st.session_state.username)
+                ]
+
+                if allowed_files:
+                    chosen = st.selectbox("File Name", allowed_files)
+                    path = os.path.join(folder_path, chosen)
+
                     with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file)
-
-                with c3:
-                    if st.button("🗑", key=f"del_{file}"):
-                        os.remove(path)
-                        st.success(f"✅ Deleted: {file}")
-                        st.rerun()
-
-    # ================= USER =================
-    else:
-        if selected_day:
-            folder_path = os.path.join(BASE_PATH, selected_day)
-
-            allowed_files = [
-                f for f in os.listdir(folder_path)
-                if st.session_state.user_role == "AllViewer"
-                or is_file_for_user(f, st.session_state.username)
-            ]
-
-            if allowed_files:
-                chosen = st.selectbox("File Name", allowed_files)
-                path = os.path.join(folder_path, chosen)
-
-                with open(path, "rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
-            else:
-                st.warning("No files for your line.")
+                        st.download_button("🔽 Download Excel File", f, file_name=chosen)
