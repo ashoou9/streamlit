@@ -163,11 +163,9 @@ users = {
 # Session State
 # ----------------------------
 if "logged_in" not in st.session_state:
-    st.session_state.update({
-        "logged_in": False,
-        "user_role": None,
-        "username": None
-    })
+    st.session_state.logged_in = False
+    st.session_state.user_role = None
+    st.session_state.username = None
 
 # ----------------------------
 # Paths
@@ -219,6 +217,7 @@ else:
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
+
     u = st.text_input("", placeholder="Enter Username")
     p = st.text_input("", type="password", placeholder="Enter Password")
 
@@ -227,6 +226,7 @@ if not st.session_state.logged_in:
             st.rerun()
         else:
             st.error("❌ Wrong Username Or Password")
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------
@@ -234,7 +234,7 @@ if not st.session_state.logged_in:
 # ----------------------------
 else:
 
-    # Logout button
+    # LOGOUT
     st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
@@ -256,7 +256,9 @@ else:
 
         st.subheader("🧑‍💼 Admin Dashboard")
 
-        uploaded_files = st.file_uploader("Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True)
+        uploaded_files = st.file_uploader(
+            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+        )
 
         if uploaded_files:
             today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
@@ -276,34 +278,20 @@ else:
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
 
-                c1, c2 = st.columns([5,1])
+                c1, c2, c3 = st.columns([4,1,1])
 
                 with c1:
                     st.write(file)
 
                 with c2:
-                    if st.button("🗑 Delete", key=f"del_{file}"):
-                        st.session_state["delete_file"] = file
-                        st.session_state["delete_path"] = path
+                    with open(path, "rb") as f:
+                        st.download_button("⬇", f, file_name=file)
 
-        # ---------- DELETE CONFIRM ----------
-        # if "delete_file" in st.session_state:
-        #     st.warning(f"⚠️ Are you sure you want to delete: {st.session_state['delete_file']} ?")
-
-        #     c1, c2 = st.columns(2)
-
-        #     with c1:
-        #         if st.button("✅ Yes, Delete"):
-        #             os.remove(st.session_state["delete_path"])
-        #             del st.session_state["delete_file"]
-        #             del st.session_state["delete_path"]
-        #             st.success("✅ File deleted successfully")
-        #             st.rerun()
-
-        #     with c2:
-        #         if st.button("❌ Cancel"):
-        #             del st.session_state["delete_file"]
-        #             del st.session_state["delete_path"]
+                with c3:
+                    if st.button("🗑", key=f"del_{file}"):
+                        os.remove(path)
+                        st.success(f"✅ Deleted: {file}")
+                        st.rerun()
 
     # ================= USER =================
     else:
