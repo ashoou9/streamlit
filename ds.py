@@ -322,8 +322,11 @@ else:
                     st.write(file)
 
                 with c2:
-                    with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file, key="admindl_"+file)
+                 if st.button("🗑", key="del_"+file):
+                    os.remove(path)
+                    st.warning(f"❌ File '{file}' deleted successfully")
+                    st.rerun()
+
 
 
                 with c3:
