@@ -237,20 +237,23 @@ if not st.session_state.logged_in:
 else:
 
     # ---------- Floating Logout Top-Right Fixed ----------
-    st.markdown("""
-    <style>
-    .logout-btn-fixed {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-    }
-    </style>
-    <div class="logout-btn-fixed"></div>
-    """, unsafe_allow_html=True)
+st.markdown("""
+<style>
+.logout-btn-fixed {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+</style>
+<div class="logout-btn-fixed">
+</div>
+""", unsafe_allow_html=True)
 
-    if st.button("🔴 Logout"):
-        logout()
+# الزر الحقيقي للـ Streamlit (شغال فعليًا)
+if st.button("🔴 Logout"):
+    logout()
+
 
     st.subheader("👤 Daily Sales Dashboard")
 
