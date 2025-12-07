@@ -74,12 +74,8 @@ st.markdown("""
 <style>
 
 .top-actions {
-    position: fixed;
-    top: 15px;
-    right: 20px;
     display: flex;
     gap: 10px;
-    z-index: 100000;
 }
 
 .top-actions .stButton > button {
@@ -206,18 +202,20 @@ if not st.session_state.logged_in:
 # ----------------------------
 else:
 
-    # ===== TOP BUTTONS =====
-    st.markdown('<div class="top-actions">', unsafe_allow_html=True)
+    # ===== TITLE AND TOP BUTTONS =====
+    col_title, col_buttons = st.columns([4,1])
 
-    if st.button("ℹ About Us"):
-        st.session_state.page = "about"
-        st.rerun()
+    with col_title:
+        st.markdown("## Daily Sales")
 
-    if st.button("🔴 Logout"):
-        logout()
-        st.rerun()
+    with col_buttons:
+        if st.button("ℹ About Us", key="about"):
+            st.session_state.page = "about"
+            st.rerun()
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("🔴 Logout", key="logout"):
+            logout()
+            st.rerun()
 
     # ===== ABOUT PAGE =====
     if st.session_state.page == "about":
