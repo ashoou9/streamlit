@@ -211,6 +211,7 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
+    st.experimental_rerun()
 
 # ----------------------------
 # UI
@@ -243,21 +244,17 @@ else:
         right: 20px;
         z-index: 9999;
     ">
-        <form>
-            <button onclick="window.location.reload();" style="
-                width: 140px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">
-                🔴 Logout
-            </button>
-        </form>
+        <button onclick="window.location.reload();" style="
+            width: 140px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff4b4b, #ff0000);
+            color: white;
+            border: none;
+            cursor: pointer;
+        ">🔴 Logout</button>
     </div>
     """, unsafe_allow_html=True)
 
@@ -290,42 +287,18 @@ else:
             folder_path = os.path.join(BASE_PATH, selected_day)
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1 = st.container()
-                c1.write(file)
+                st.markdown(f"<p style='font-weight:bold;'>{file}</p>", unsafe_allow_html=True)
 
-                # ---------- Flex Buttons ----------
-                st.markdown(f"""
-                <div style="display:flex; gap:5px; margin-bottom:10px;">
-                    <form style="flex:1;">
-                        <button style="
-                            width:100%;
-                            min-width:80px;
-                            height:40px;
-                            border-radius:8px;
-                            font-size:14px;
-                            font-weight:bold;
-                            background: linear-gradient(90deg, #0072ff, #00c6ff);
-                            color:white;
-                            border:none;
-                            cursor:pointer;
-                        " onclick="alert('Download initiated')">⬇ Download</button>
-                    </form>
-                    <form style="flex:1;">
-                        <button style="
-                            width:100%;
-                            min-width:80px;
-                            height:40px;
-                            border-radius:8px;
-                            font-size:14px;
-                            font-weight:bold;
-                            background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                            color:white;
-                            border:none;
-                            cursor:pointer;
-                        " onclick="alert('Delete clicked')">🗑 Delete</button>
-                    </form>
-                </div>
-                """, unsafe_allow_html=True)
+                # ---------- Responsive Buttons ----------
+                col1, col2 = st.columns([1,1])
+                with col1:
+                    with open(path, "rb") as f:
+                        st.download_button("⬇ Download", f, file_name=file)
+                with col2:
+                    if st.button("🗑 Delete", key="del_"+file):
+                        os.remove(path)
+                        st.success(f"File {file} deleted")
+                        st.experimental_rerun()
 
     # ---------- Users ----------
     else:
