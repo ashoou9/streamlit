@@ -137,7 +137,7 @@ input::placeholder {
 
 /* DOWNLOAD BUTTON */
 .stDownloadButton button {
-    color: white !important; /* النص واضح طول الوقت */
+    color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     border-radius: 10px;
     height: 45px;
@@ -147,19 +147,18 @@ input::placeholder {
 .stDownloadButton button:hover {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
-    transition: 0.2s;
     color: white !important;
 }
 
 /* FLOATING LOGOUT TOP-RIGHT */
-.logout-btn {
+.logout-btn-fixed {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 9999;
 }
 
-.logout-btn button {
+.logout-btn-fixed button {
     width: 140px;
     height: 40px;
     border-radius: 12px;
@@ -168,9 +167,10 @@ input::placeholder {
     background: linear-gradient(90deg, #ff4b4b, #ff0000);
     color: white !important;
     border: none;
+    cursor: pointer;
 }
 
-.logout-btn button:hover {
+.logout-btn-fixed button:hover {
     background: linear-gradient(90deg, #cc0000, #990000);
     transform: scale(1.05);
     transition: 0.2s;
@@ -280,14 +280,14 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Logout Top-Right ----------
-    st.markdown('<div class="logout-btn">', unsafe_allow_html=True)
+    # ---------- Floating Logout Top-Right (Fixed) ----------
+    st.markdown('<div class="logout-btn-fixed">', unsafe_allow_html=True)
     if st.button("🔴 Logout"):
         logout()
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.subheader("👤 Sales Dashboard")
+    st.subheader("👤 Daily Sales Dashboard")
 
     folders = get_current_month_folders()
 
