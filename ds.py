@@ -191,6 +191,9 @@ if "logged_in" not in st.session_state:
     st.session_state.user_role = None
     st.session_state.username = None
 
+if "page" not in st.session_state:
+    st.session_state.page = "dashboard"
+
 # ----------------------------
 # Paths
 # ----------------------------
@@ -226,16 +229,43 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
+    st.session_state.page = "dashboard"
 
 # ----------------------------
-# UI
+# Floating Button Endpoints
+# ----------------------------
+from streamlit.web.server import server
+
+def register_endpoint(name, callback):
+    srv = server.Server.get_current()
+    if not hasattr(srv, "_registered_endpoints"):
+        srv._registered_endpoints = set()
+    if name not in srv._registered_endpoints:
+        srv._registered_endpoints.add(name)
+        srv.register_route(name, callback)
+
+def logout_endpoint(request):
+    logout()
+    return "done"
+
+def about_endpoint(request):
+    st.session_state.page = "about"
+    return "done"
+
+register_endpoint("/logout_redirect", logout_endpoint)
+register_endpoint("/about_redirect", about_endpoint)
+
+# ----------------------------
+# UI Background
 # ----------------------------
 if not st.session_state.logged_in:
     set_bg_local("data/background.png", True)
 else:
     set_bg_local("data/background.png", False)
 
-# ---------- LOGIN ----------
+# ----------------------------
+# LOGIN PAGE
+# ----------------------------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
@@ -251,32 +281,63 @@ if not st.session_state.logged_in:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------- DASHBOARD ----------
+# ----------------------------
+# ABOUT US PAGE
+# ----------------------------
+elif st.session_state.page == "about":
+
+    st.title("ℹ️ About Us")
+    st.markdown("""
+    ## Team Information
+    سيتم وضع معلومات الفريق هنا عند إرسالها ❤️
+    """)
+    
+    if st.button("⬅️ Back"):
+        st.session_state.page = "dashboard"
+        st.rerun()
+
+# ----------------------------
+# DASHBOARD PAGE
+# ----------------------------
 else:
 
-    # ---------- Floating Logout Top-Right (Absolutely Fixed) ----------
+    # Floating Buttons (About + Logout)
     st.markdown("""
     <div style="
         position: fixed;
         top: 20px;
         right: 20px;
         z-index: 9999;
+        display: flex;
+        gap: 10px;
     ">
-        <form>
-            <button onclick="window.location.reload();" style="
-                width: 140px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">
-                🔴 Logout
-            </button>
-        </form>
+        <button onclick="fetch('/about_redirect', {method: 'POST'}).then(()=>window.location.reload());" style="
+            width: 140px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white;
+            border: none;
+            cursor: pointer;
+        ">
+            ℹ️ About Us
+        </button>
+
+        <button onclick="fetch('/logout_redirect', {method: 'POST'}).then(()=>window.location.reload());" style="
+            width: 140px;
+            height: 40px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff4b4b, #ff0000);
+            color: white;
+            border: none;
+            cursor: pointer;
+        ">
+            🔴 Logout
+        </button>
     </div>
     """, unsafe_allow_html=True)
 
@@ -291,12 +352,13 @@ else:
         st.warning("No available dates.")
         selected_day = None
 
+    # ----------------- ADMIN -----------------
     if st.session_state.user_role == "Admin":
 
         st.subheader("🧑‍💼 Admin Dashboard")
 
         uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+            "Upload Excel Files", type=["xlsx", "xls"], accept_multiple_files=True
         )
 
         if uploaded_files:
@@ -321,18 +383,19 @@ else:
                 with c1:
                     st.write(file)
 
+                # DELETE BUTTON
                 with c2:
-                 if st.button("🗑", key="del_"+file):
-                    os.remove(path)
-                    st.warning(f"❌ File '{file}' deleted successfully")
-                    st.rerun()
+                    if st.button("🗑", key="del_"+file):
+                        os.remove(path)
+                        st.warning(f"❌ File '{file}' deleted successfully")
+                        st.rerun()
 
-
-
+                # DOWNLOAD BUTTON
                 with c3:
                     with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file)
+                        st.download_button("⬇", f, file_name=file, key="dl_"+file)
 
+    # ----------------- USER -----------------
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -348,8 +411,6 @@ else:
                 path = os.path.join(folder_path, chosen)
 
                 with open(path, "rb") as f:
-                    st.download_button(
-                        "🔽 Download Excel File", f, file_name=chosen
-                    )
+                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
             else:
                 st.warning("No files for your line.")
