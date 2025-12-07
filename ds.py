@@ -322,8 +322,9 @@ else:
                     st.write(file)
 
                 with c2:
-                    if st.button("👁", key=file):
-                        st.dataframe(pd.read_excel(path).astype(str))
+                    with open(path, "rb") as f:
+                        st.download_button("⬇", f, file_name=file, key="admindl_"+file)
+
 
                 with c3:
                     with open(path, "rb") as f:
