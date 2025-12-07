@@ -238,25 +238,19 @@ else:
 
     # ---------- Floating Logout Top-Right Fixed ----------
     st.markdown("""
-    <div style="
+    <style>
+    .logout-btn-fixed {
         position: fixed;
         top: 20px;
         right: 20px;
         z-index: 9999;
-    ">
-        <button onclick="window.location.reload();" style="
-            width: 140px;
-            height: 40px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            background: linear-gradient(90deg, #ff4b4b, #ff0000);
-            color: white;
-            border: none;
-            cursor: pointer;
-        ">🔴 Logout</button>
-    </div>
+    }
+    </style>
+    <div class="logout-btn-fixed"></div>
     """, unsafe_allow_html=True)
+
+    if st.button("🔴 Logout"):
+        logout()
 
     st.subheader("👤 Daily Sales Dashboard")
 
