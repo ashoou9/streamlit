@@ -190,7 +190,6 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-
 if "page" not in st.session_state:
     st.session_state.page = "dashboard"
 
@@ -214,28 +213,14 @@ def is_file_for_user(filename, username):
     return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
-# Login Logic
-# ----------------------------
-def login(username, password):
-    for key, data in users.items():
-        if username.lower() == key.lower() and password == data["password"]:
-            st.session_state.logged_in = True
-            st.session_state.user_role = data["role"]
-            st.session_state.username = key
-            return True
-    return False
-
-# ----------------------------
-# UI Background
+# UI
 # ----------------------------
 if not st.session_state.logged_in:
     set_bg_local("data/background.png", True)
 else:
     set_bg_local("data/background.png", False)
 
-# ----------------------------
-# LOGIN PAGE
-# ----------------------------
+# ---------- LOGIN ----------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
@@ -244,54 +229,84 @@ if not st.session_state.logged_in:
     p = st.text_input("", type="password", placeholder="Enter Password")
 
     if st.button("Login"):
-        if login(u, p):
+        if u in users and p == users[u]["password"]:
+            st.session_state.logged_in = True
+            st.session_state.user_role = users[u]["role"]
+            st.session_state.username = u
             st.rerun()
         else:
             st.error("❌ Wrong Username Or Password")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ----------------------------
-# FLOATING BUTTONS (ABOUT + LOGOUT)
-# ----------------------------
-elif st.session_state.logged_in:
-    colA, colB = st.columns([7, 1])
-
-    with colB:
-        about_clicked = st.button("ℹ️ About Us", key="about_btn")
-        logout_clicked = st.button("🔴 Logout", key="logout_btn")
-
-    if about_clicked:
-        st.session_state.page = "about"
-        st.rerun()
-
-    if logout_clicked:
-        st.session_state.logged_in = False
-        st.session_state.page = "dashboard"
-        st.rerun()
-
-# ----------------------------
-# ABOUT US PAGE
-# ----------------------------
-if st.session_state.page == "about":
-
+# ---------- ABOUT PAGE ----------
+elif st.session_state.page == "about":
     st.title("ℹ️ About Us")
-    st.markdown("""
-    ## Team Information
-    سيتم وضع معلومات الفريق هنا عند إرسالها ❤️
-    """)
+    st.markdown("### سيتم إضافة معلومات الفريق هنا ❤️")
 
     if st.button("⬅️ Back"):
         st.session_state.page = "dashboard"
         st.rerun()
 
-    st.stop()
+# ---------- DASHBOARD ----------
+else:
 
-# ----------------------------
-# DASHBOARD PAGE
-# ----------------------------
-if st.session_state.page == "dashboard" and st.session_state.logged_in:
+    # -------------------- TOP RIGHT FIXED BUTTONS --------------------
+    st.markdown("""
+    <style>
+    .top-right-buttons {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 99999;
+        display: flex;
+        gap: 10px;
+    }
+    .custom-btn {
+        width: 140px;
+        height: 40px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        cursor: pointer;
+    }
+    .about-btn {
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: white;
+    }
+    .logout-btn {
+        background: linear-gradient(90deg, #ff4b4b, #ff0000);
+        color: white;
+    }
+    </style>
 
+    <div class="top-right-buttons">
+        <button class="custom-btn about-btn" onclick="window.location.href='?page=about'">
+            ℹ️ About Us
+        </button>
+        <button class="custom-btn logout-btn" onclick="window.location.href='?page=logout'">
+            🔴 Logout
+        </button>
+    </div>
+    """, unsafe_allow_html=True)
+
+    query_params = st.experimental_get_query_params()
+    if "page" in query_params:
+        action = query_params["page"][0]
+
+        if action == "about":
+            st.session_state.page = "about"
+            st.experimental_set_query_params()
+            st.rerun()
+
+        elif action == "logout":
+            st.session_state.logged_in = False
+            st.session_state.page = "dashboard"
+            st.experimental_set_query_params()
+            st.rerun()
+
+    # -------------------- PAGE TITLE --------------------
     st.subheader("👤 Daily Sales Dashboard")
 
     folders = get_current_month_folders()
@@ -303,13 +318,13 @@ if st.session_state.page == "dashboard" and st.session_state.logged_in:
         st.warning("No available dates.")
         selected_day = None
 
-    # ----------------- ADMIN -----------------
+    # -------------------- ADMIN --------------------
     if st.session_state.user_role == "Admin":
 
         st.subheader("🧑‍💼 Admin Dashboard")
 
         uploaded_files = st.file_uploader(
-            "Upload Excel Files", type=["xlsx", "xls"], accept_multiple_files=True
+            "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
         )
 
         if uploaded_files:
@@ -329,24 +344,22 @@ if st.session_state.page == "dashboard" and st.session_state.logged_in:
 
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4, 1, 1])
+                c1, c2, c3 = st.columns([4,1,1])
 
                 with c1:
                     st.write(file)
 
-                # DELETE BUTTON
                 with c2:
                     if st.button("🗑", key="del_"+file):
                         os.remove(path)
                         st.warning(f"❌ File '{file}' deleted successfully")
                         st.rerun()
 
-                # DOWNLOAD BUTTON
                 with c3:
                     with open(path, "rb") as f:
-                        st.download_button("⬇", f, file_name=file, key="dl_"+file)
+                        st.download_button("⬇", f, file_name=file)
 
-    # ----------------- USER -----------------
+    # -------------------- USER --------------------
     else:
         if selected_day:
             folder_path = os.path.join(BASE_PATH, selected_day)
@@ -362,6 +375,8 @@ if st.session_state.page == "dashboard" and st.session_state.logged_in:
                 path = os.path.join(folder_path, chosen)
 
                 with open(path, "rb") as f:
-                    st.download_button("🔽 Download Excel File", f, file_name=chosen)
+                    st.download_button(
+                        "🔽 Download Excel File", f, file_name=chosen
+                    )
             else:
                 st.warning("No files for your line.")
