@@ -287,23 +287,23 @@ else:
                         st.session_state["delete_path"] = path
 
         # ---------- DELETE CONFIRM ----------
-        if "delete_file" in st.session_state:
-            st.warning(f"⚠️ Are you sure you want to delete: {st.session_state['delete_file']} ?")
+        # if "delete_file" in st.session_state:
+        #     st.warning(f"⚠️ Are you sure you want to delete: {st.session_state['delete_file']} ?")
 
-            c1, c2 = st.columns(2)
+        #     c1, c2 = st.columns(2)
 
-            with c1:
-                if st.button("✅ Yes, Delete"):
-                    os.remove(st.session_state["delete_path"])
-                    del st.session_state["delete_file"]
-                    del st.session_state["delete_path"]
-                    st.success("✅ File deleted successfully")
-                    st.rerun()
+        #     with c1:
+        #         if st.button("✅ Yes, Delete"):
+        #             os.remove(st.session_state["delete_path"])
+        #             del st.session_state["delete_file"]
+        #             del st.session_state["delete_path"]
+        #             st.success("✅ File deleted successfully")
+        #             st.rerun()
 
-            with c2:
-                if st.button("❌ Cancel"):
-                    del st.session_state["delete_file"]
-                    del st.session_state["delete_path"]
+        #     with c2:
+        #         if st.button("❌ Cancel"):
+        #             del st.session_state["delete_file"]
+        #             del st.session_state["delete_path"]
 
     # ================= USER =================
     else:
