@@ -214,7 +214,7 @@ def is_file_for_user(filename, username):
     return any(username.lower() in p.strip() for p in parts)
 
 # ----------------------------
-# Login / Logout Logic
+# Login Logic
 # ----------------------------
 def login(username, password):
     for key, data in users.items():
@@ -224,36 +224,6 @@ def login(username, password):
             st.session_state.username = key
             return True
     return False
-
-def logout():
-    st.session_state.logged_in = False
-    st.session_state.user_role = None
-    st.session_state.username = None
-    st.session_state.page = "dashboard"
-
-# ----------------------------
-# Floating Button Endpoints
-# ----------------------------
-from streamlit.web.server import server
-
-def register_endpoint(name, callback):
-    srv = server.Server.get_current()
-    if not hasattr(srv, "_registered_endpoints"):
-        srv._registered_endpoints = set()
-    if name not in srv._registered_endpoints:
-        srv._registered_endpoints.add(name)
-        srv.register_route(name, callback)
-
-def logout_endpoint(request):
-    logout()
-    return "done"
-
-def about_endpoint(request):
-    st.session_state.page = "about"
-    return "done"
-
-register_endpoint("/logout_redirect", logout_endpoint)
-register_endpoint("/about_redirect", about_endpoint)
 
 # ----------------------------
 # UI Background
@@ -282,64 +252,45 @@ if not st.session_state.logged_in:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------
+# FLOATING BUTTONS (ABOUT + LOGOUT)
+# ----------------------------
+elif st.session_state.logged_in:
+    colA, colB = st.columns([7, 1])
+
+    with colB:
+        about_clicked = st.button("ℹ️ About Us", key="about_btn")
+        logout_clicked = st.button("🔴 Logout", key="logout_btn")
+
+    if about_clicked:
+        st.session_state.page = "about"
+        st.rerun()
+
+    if logout_clicked:
+        st.session_state.logged_in = False
+        st.session_state.page = "dashboard"
+        st.rerun()
+
+# ----------------------------
 # ABOUT US PAGE
 # ----------------------------
-elif st.session_state.page == "about":
+if st.session_state.page == "about":
 
     st.title("ℹ️ About Us")
     st.markdown("""
     ## Team Information
     سيتم وضع معلومات الفريق هنا عند إرسالها ❤️
     """)
-    
+
     if st.button("⬅️ Back"):
         st.session_state.page = "dashboard"
         st.rerun()
 
+    st.stop()
+
 # ----------------------------
 # DASHBOARD PAGE
 # ----------------------------
-else:
-
-    # Floating Buttons (About + Logout)
-    st.markdown("""
-    <div style="
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        gap: 10px;
-    ">
-        <button onclick="fetch('/about_redirect', {method: 'POST'}).then(()=>window.location.reload());" style="
-            width: 140px;
-            height: 40px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            background: linear-gradient(90deg, #00c6ff, #0072ff);
-            color: white;
-            border: none;
-            cursor: pointer;
-        ">
-            ℹ️ About Us
-        </button>
-
-        <button onclick="fetch('/logout_redirect', {method: 'POST'}).then(()=>window.location.reload());" style="
-            width: 140px;
-            height: 40px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            background: linear-gradient(90deg, #ff4b4b, #ff0000);
-            color: white;
-            border: none;
-            cursor: pointer;
-        ">
-            🔴 Logout
-        </button>
-    </div>
-    """, unsafe_allow_html=True)
+if st.session_state.page == "dashboard" and st.session_state.logged_in:
 
     st.subheader("👤 Daily Sales Dashboard")
 
@@ -378,7 +329,7 @@ else:
 
             for file in os.listdir(folder_path):
                 path = os.path.join(folder_path, file)
-                c1, c2, c3 = st.columns([4,1,1])
+                c1, c2, c3 = st.columns([4, 1, 1])
 
                 with c1:
                     st.write(file)
