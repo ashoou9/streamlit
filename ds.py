@@ -310,7 +310,7 @@ def plot_total_ach_pie(selected_day):
         title="📊 Total Ach %"
     )
 
-    st.altair_chart(chart, use_container_width=False, width=300, height=150)
+    st.altair_chart(chart, use_container_width=False, width=270, height=170)
 
 
 # ----------------------------
