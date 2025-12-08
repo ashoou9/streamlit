@@ -22,7 +22,7 @@ def set_bg_local(image_file, login_page=True):
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
 
-    padding_top = "105px" if login_page else "50"
+    padding_top = "105px" if login_page else "210px"
 
     page_bg_img = f"""
     <style>
@@ -252,52 +252,17 @@ def logout():
 # Navigation Buttons (Top-Right)
 # ----------------------------
 def top_right_buttons():
-    st.markdown("""
-    <style>
-    .stFloatingBtns {
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 9999;
-    }
-
-    .stFloatingBtns .stButton > button {
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        color: white;
-        border: none;
-        border-radius: 7px;
-        padding: 6px 12px;
-        font-size: 14px;
-        height: 36px;
-        cursor: pointer;
-    }
-
-    .stFloatingBtns .stButton > button:hover {
-        background: linear-gradient(90deg, #0051cc, #0099cc);
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    # container ثابت
-    with st.container():
-        st.markdown('<div class="stFloatingBtns">', unsafe_allow_html=True)
-        c1, c2, c3 = st.columns([1,1,1])
-
-        with c1:
-            if st.button("💬 Feedback", key="fb_btn"):
-                st.session_state.current_page = "feedback"
-
-        with c2:
-            if st.button("ℹ About Us", key="about_btn"):
-                st.session_state.current_page = "about"
-
-        with c3:
-            if st.button("🔴 Logout", key="logout_btn"):
-                logout()
-                st.rerun()
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
+    col1, col2, col3 = st.columns([1,1,1])
+    with col1:
+        if st.button("💬 Feedback Inbox"):
+            st.session_state.current_page = "feedback"
+    with col2:
+        if st.button("ℹ About Us"):
+            st.session_state.current_page = "about"
+    with col3:
+        if st.button("🔴 Logout"):
+            logout()
+            st.rerun()
 
 # ----------------------------
 # UI
