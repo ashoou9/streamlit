@@ -988,41 +988,49 @@ else:
     
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
-        st.markdown('<h3 class="medical-header">🩺 Pharmaceutical Dashboard</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 class="medical-header">🩺 Pharmaceutical Dashboard</h3>', unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h1 style="color: #1a2980; font-size: 2.5rem; margin-bottom: 10px;">KANDAA</h1>
+        <h2 style="color: #26d0ce; font-size: 1.8rem; margin-bottom: 20px;">Pharmaceutical Dashboard</h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="medical-card">
+        <h4 style="color: #26d0ce; margin-bottom: 15px;">🩺 About This System</h4>
+        <p>Advanced pharmaceutical sales management system designed for medical teams to streamline operations and improve patient care.</p>
         
-        st.markdown("""
-        <div class="medical-card">
-            <h4 style="color: #26d0ce; margin-bottom: 15px;">💊 About This System</h4>
-            <p>Advanced pharmaceutical sales management system designed for medical teams.</p>
-            
-            <h5 style="color: #26d0ce; margin-top: 20px;">🏥 Medical Departments</h5>
-            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
-                <div><span style="color: #FF5252;">•</span> CNS - Neuroscience</div>
-                <div><span style="color: #FF5252;">•</span> GIT - Gastroenterology</div>
-                <div><span style="color: #FF5252;">•</span> CVM - Cardiology</div>
-                <div><span style="color: #FF5252;">•</span> Orthopedics</div>
-                <div><span style="color: #FF5252;">•</span> Primary Care</div>
-                <div><span style="color: #FF5252;">•</span> Special Teams</div>
-            </div>
-            
-            <h5 style="color: #26d0ce; margin-top: 20px;">✨ Medical Features</h5>
-            <p>✅ Secure pharmaceutical data access</p>
-            <p>✅ Medical report management</p>
-            <p>✅ Department-specific views</p>
-            <p>✅ HIPAA-compliant design</p>
-            <p>✅ Medical feedback system</p>
-            
-            <div style="margin-top: 25px; padding: 15px; background: rgba(38, 208, 206, 0.1); border-radius: 10px;">
-                <div style="text-align: center;">
-                    <div style="font-size: 40px; margin-bottom: 10px;">💊 🩺 🌡️</div>
-                    <p style="margin: 0; font-size: 1.1rem;">
-                        <strong>Improving Healthcare Through Data</strong>
-                    </p>
-                    <p style="margin: 5px 0 0 0; opacity: 0.8;">Version 2.0 • Medical Edition</p>
-                </div>
+        <h5 style="color: #26d0ce; margin-top: 20px;">🏥 Medical Departments</h5>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
+            <div><span style="color: #FF5252;">•</span> CNS - Neuroscience</div>
+            <div><span style="color: #FF5252;">•</span> GIT - Gastroenterology</div>
+            <div><span style="color: #FF5252;">•</span> CVM - Cardiology</div>
+            <div><span style="color: #FF5252;">•</span> Orthopedics</div>
+            <div><span style="color: #FF5252;">•</span> Primary Care</div>
+            <div><span style="color: #FF5252;">•</span> Special Teams</div>
+        </div>
+        
+        <h5 style="color: #26d0ce; margin-top: 20px;">✨ Medical Features</h5>
+        <p>✅ Secure pharmaceutical data access</p>
+        <p>✅ Medical report management</p>
+        <p>✅ Department-specific views</p>
+        <p>✅ HIPAA-compliant design</p>
+        <p>✅ Medical feedback system</p>
+        
+        <div style="margin-top: 25px; padding: 15px; background: rgba(38, 208, 206, 0.1); border-radius: 10px;">
+            <div style="text-align: center;">
+                <h5 style="color: #1a2980; margin-bottom: 10px;">Commercial Excellence Team</h5>
+                <div style="font-size: 40px; margin-bottom: 10px;">💊 🩺 🌡️</div>
+                <p style="margin: 0; font-size: 1.1rem;">
+                    <strong>Improving Healthcare Through Data Excellence</strong>
+                </p>
+                <p style="margin: 5px 0 0 0; opacity: 0.8;">Version 2.0 • Medical Edition</p>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
 # ----------------------------
 # Medical Footer
