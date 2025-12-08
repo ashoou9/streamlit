@@ -252,22 +252,17 @@ def logout():
 # Navigation Buttons (Top-Right)
 # ----------------------------
 def top_right_buttons():
-    with st.container():
-        col_space, col1, col2, col3 = st.columns([8,8,8,8])
-
-        with col1:
-            if st.button("💬 Feedback Inbox"):
-                st.session_state.current_page = "feedback"
-
-        with col2:
-            if st.button("ℹ About Us"):
-                st.session_state.current_page = "about"
-
-        with col3:
-            if st.button("🔴 Logout"):
-                logout()
-                st.rerun()
-
+    col1, col2, col3 = st.columns([1,1,1])
+    with col1:
+        if st.button("💬 Feedback Inbox"):
+            st.session_state.current_page = "feedback"
+    with col2:
+        if st.button("ℹ About Us"):
+            st.session_state.current_page = "about"
+    with col3:
+        if st.button("🔴 Logout"):
+            logout()
+            st.rerun()
 
 # ----------------------------
 # UI
