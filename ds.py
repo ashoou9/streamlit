@@ -268,7 +268,8 @@ def top_right_buttons():
 # ----------------------------
 # Total Ach Chart
 # ----------------------------
-def plot_total_ach_chart(selected_day):
+def plot_total_ach_pie(selected_day):
+
     if not selected_day:
         return
 
