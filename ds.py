@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import datetime, date
 import re
 import base64
-import altair as alt  # لإضافة الـ Chart
+import altair as alt
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -265,8 +265,10 @@ def top_right_buttons():
             logout()
             st.rerun()
 
-# ---------- ACH % Chart ----------
-def plot_ach_chart(selected_day):
+# ----------------------------
+# Total Ach Chart
+# ----------------------------
+def plot_total_ach_chart(selected_day):
     if not selected_day:
         return
 
@@ -276,35 +278,35 @@ def plot_ach_chart(selected_day):
     if st.session_state.user_role in ["AllViewer", "Admin", "managers"]:
         all_files = [f for f in os.listdir(folder_path) if "all" in f.lower()]
         if not all_files:
-            st.warning("No 'All' file found for ACH %")
+            st.warning("No 'All' file found for Total Ach")
             return
         file_path = os.path.join(folder_path, all_files[0])
     else:
         user_files = [f for f in os.listdir(folder_path) if is_file_for_user(f, st.session_state.username)]
         if not user_files:
-            st.warning("No file found for your line for ACH %")
+            st.warning("No file found for your line for Total Ach")
             return
         file_path = os.path.join(folder_path, user_files[0])
 
     df = pd.read_excel(file_path)
 
-    if "ACH %" not in df.columns:
-        st.warning("Column 'ACH %' not found in the file")
+    if "Total Ach" not in df.columns:
+        st.warning("Column 'Total Ach' not found in the file")
         return
 
-    df['ACH %'] = pd.to_numeric(df['ACH %'], errors='coerce')
-    ach_value = df['ACH %'].mean()
+    # الرقم النهائي كما هو
+    total_ach_value = df["Total Ach"].iloc[-1]
 
     chart_data = pd.DataFrame({
-        "Metric": ["ACH %"],
-        "Value": [ach_value]
+        "Metric": ["Total Ach"],
+        "Value": [total_ach_value]
     })
 
-    chart = alt.Chart(chart_data).mark_bar(color="#0072ff").encode(
+    chart = alt.Chart(chart_data).mark_bar(color="#00c6ff").encode(
         x="Metric",
         y="Value"
     ).properties(
-        title="📊 ACH %"
+        title="📊 Total Ach"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -319,6 +321,7 @@ else:
 
 # ---------- LOGIN ----------
 if not st.session_state.logged_in:
+
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
 
     u = st.text_input("", placeholder="Enter Username")
@@ -334,6 +337,7 @@ if not st.session_state.logged_in:
 
 # ---------- DASHBOARD ----------
 else:
+
     top_right_buttons()  # Buttons appear top-right
 
     if st.session_state.current_page == "dashboard":
@@ -344,11 +348,11 @@ else:
         if folders:
             selected_day = folders[0]
             st.markdown(f"### 📅 Date: {selected_day}")
-            # ----- نضيف الـ ACH % Chart -----
-            plot_ach_chart(selected_day)
         else:
             st.warning("No available dates.")
             selected_day = None
+
+        plot_total_ach_chart(selected_day)  # إضافة Chart هنا
 
         if st.session_state.user_role == "Admin":
 
