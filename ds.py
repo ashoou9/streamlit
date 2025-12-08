@@ -6,8 +6,7 @@ import pandas as pd
 from datetime import datetime, date
 import re
 import base64
-import time
-import random
+import time  # Added for animations
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -24,7 +23,7 @@ def set_bg_local(image_file, login_page=True):
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
 
-    padding_top = "105px" if login_page else "180px"
+    padding_top = "105px" if login_page else "210px"
 
     page_bg_img = f"""
     <style>
@@ -47,7 +46,7 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     .block-container {{
-        padding-top: 1rem !important;
+        padding-top: 2rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
         padding-bottom: 100px !important;
@@ -61,65 +60,27 @@ def set_bg_local(image_file, login_page=True):
 
     /* Animation for welcome message */
     @keyframes welcomeAnimation {{
-        0% {{ transform: translateY(-20px); opacity: 0; }}
-        100% {{ transform: translateY(0); opacity: 1; }}
+        0% {{ transform: scale(0.8); opacity: 0; }}
+        70% {{ transform: scale(1.05); }}
+        100% {{ transform: scale(1); opacity: 1; }}
     }}
 
     .welcome-container {{
         animation: welcomeAnimation 1s ease-out;
     }}
 
-    @keyframes pulse {{
-        0% {{ transform: scale(1); }}
-        50% {{ transform: scale(1.05); }}
-        100% {{ transform: scale(1); }}
+    @keyframes slideIn {{
+        from {{ transform: translateY(-30px); opacity: 0; }}
+        to {{ transform: translateY(0); opacity: 1; }}
     }}
 
-    .pulse-animation {{
-        animation: pulse 2s infinite;
-    }}
-
-    @keyframes float {{
-        0%, 100% {{ transform: translateY(0px); }}
-        50% {{ transform: translateY(-10px); }}
-    }}
-
-    .float-animation {{
-        animation: float 3s ease-in-out infinite;
-    }}
-
-    @keyframes shimmer {{
-        0% {{ background-position: -200% center; }}
-        100% {{ background-position: 200% center; }}
-    }}
-
-    .shimmer-effect {{
-        background: linear-gradient(90deg, 
-            rgba(255,255,255,0) 0%, 
-            rgba(255,255,255,0.2) 50%, 
-            rgba(255,255,255,0) 100%);
-        background-size: 200% auto;
-        animation: shimmer 3s infinite linear;
-    }}
-
-    @keyframes fadeInUp {{
-        from {{ 
-            opacity: 0;
-            transform: translateY(30px);
-        }}
-        to {{ 
-            opacity: 1;
-            transform: translateY(0);
-        }}
-    }}
-
-    .fadeInUp {{
-        animation: fadeInUp 0.8s ease-out;
+    .slide-in {{
+        animation: slideIn 0.8s ease-out;
     }}
 
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
-            padding-top: 140px !important;
+            padding-top: 160px !important;
         }}
         .block-container {{
             padding-left: 1rem !important;
@@ -131,191 +92,35 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Custom Animations Functions
-# ----------------------------
-def show_confetti_animation():
-    """Show confetti animation effect"""
-    confetti_html = """
-    <style>
-    .confetti {
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background-color: #f00;
-        top: 0;
-        opacity: 0;
-    }
-    @keyframes confetti-fall {
-        0% {
-            top: -100px;
-            opacity: 1;
-            transform: rotate(0deg);
-        }
-        100% {
-            top: 100vh;
-            opacity: 0;
-            transform: rotate(360deg);
-        }
-    }
-    </style>
-    <script>
-    function createConfetti() {
-        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
-        for(let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.width = Math.random() * 10 + 5 + 'px';
-            confetti.style.height = Math.random() * 10 + 5 + 'px';
-            confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
-            document.body.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 5000);
-        }
-    }
-    setTimeout(createConfetti, 100);
-    </script>
-    """
-    st.components.v1.html(confetti_html, height=0)
-
-def show_fireworks_animation():
-    """Show fireworks animation"""
-    fireworks_html = """
-    <canvas id="fireworksCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999;"></canvas>
-    <script>
-    const canvas = document.getElementById('fireworksCanvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    const particles = [];
-    const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF'];
-    
-    class Particle {
-        constructor(x, y) {
-            this.x = x;
-            this.y = y;
-            this.size = Math.random() * 3 + 1;
-            this.speedX = Math.random() * 6 - 3;
-            this.speedY = Math.random() * 6 - 3;
-            this.color = colors[Math.floor(Math.random() * colors.length)];
-            this.life = 100;
-        }
-        
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-            this.life--;
-            this.size *= 0.97;
-        }
-        
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-    
-    function createFirework(x, y) {
-        for(let i = 0; i < 50; i++) {
-            particles.push(new Particle(x, y));
-        }
-    }
-    
-    // Create multiple fireworks
-    setTimeout(() => createFirework(canvas.width/4, canvas.height/3), 100);
-    setTimeout(() => createFirework(canvas.width/2, canvas.height/3), 300);
-    setTimeout(() => createFirework(canvas.width*3/4, canvas.height/3), 500);
-    
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        for(let i = 0; i < particles.length; i++) {
-            particles[i].update();
-            particles[i].draw();
-            
-            if(particles[i].life <= 0 || particles[i].size <= 0.5) {
-                particles.splice(i, 1);
-                i--;
-            }
-        }
-        
-        if(particles.length > 0) {
-            requestAnimationFrame(animate);
-        } else {
-            canvas.remove();
-        }
-    }
-    
-    animate();
-    </script>
-    """
-    st.components.v1.html(fireworks_html, height=0)
-
-def show_loading_animation(text="Loading..."):
-    """Show custom loading animation"""
-    loading_html = f"""
-    <div style="text-align: center; padding: 20px;">
-        <div style="
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 15px;
-            border: 5px solid rgba(0, 198, 255, 0.3);
-            border-top: 5px solid #00c6ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        "></div>
-        <p style="color: white; font-weight: bold;">{text}</p>
-        <style>
-        @keyframes spin {{
-            0% {{ transform: rotate(0deg); }}
-            100% {{ transform: rotate(360deg); }}
-        }}
-        </style>
-    </div>
-    """
-    return st.markdown(loading_html, unsafe_allow_html=True)
-
-# ----------------------------
 # Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
-/* Welcome Message - Fixed in Dashboard */
-.welcome-fixed {
+/* Welcome Message Special Styling */
+.welcome-message {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    padding: 20px !important;
+    padding: 25px !important;
     border-radius: 15px !important;
     text-align: center !important;
-    margin: 0 auto 25px auto !important;
+    margin: 20px auto !important;
     color: white !important;
-    font-size: 1.3rem !important;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
+    font-size: 1.4rem !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
     border: 2px solid rgba(255,255,255,0.3) !important;
     backdrop-filter: blur(10px) !important;
     max-width: 600px !important;
 }
 
-.welcome-fixed h3 {
+.welcome-message h2 {
     color: white !important;
-    margin-bottom: 8px !important;
-    font-size: 1.8rem !important;
+    margin-bottom: 10px !important;
+    font-size: 2rem !important;
 }
 
-.welcome-fixed p {
+.welcome-message p {
     color: rgba(255,255,255,0.9) !important;
-    margin-top: 8px !important;
-    font-size: 1rem !important;
-}
-
-/* Success Message with Animation */
-.success-animated {
-    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
-    padding: 15px !important;
-    border-radius: 10px !important;
-    border: none !important;
-    animation: pulse 2s infinite !important;
+    margin-top: 10px !important;
+    font-size: 1.1rem !important;
 }
 
 /* INPUT BOXES */
@@ -325,7 +130,6 @@ st.markdown("""
     padding: 10px;
     color: black !important;
     border-radius: 8px;
-    background: rgba(255,255,255,0.9) !important;
 }
 
 /* ALL LABELS */
@@ -364,7 +168,7 @@ input::placeholder {
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
-    animation: fadeInUp 0.8s ease-out !important;
+    animation: slideIn 0.8s ease-out !important;
 }
 
 /* BUTTONS */
@@ -398,7 +202,6 @@ input::placeholder {
     border-radius: 10px;
     height: 45px;
     font-size: 16px;
-    transition: all 0.3s ease !important;
 }
 
 .stDownloadButton button:hover {
@@ -412,14 +215,11 @@ input::placeholder {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
 }
 
-/* CARD STYLING */
-.custom-card {
-    background: rgba(255, 255, 255, 0.1) !important;
-    padding: 20px !important;
-    border-radius: 15px !important;
-    border-left: 5px solid #00c6ff !important;
-    margin-bottom: 15px !important;
-    backdrop-filter: blur(10px) !important;
+/* SUCCESS MESSAGE STYLING */
+.stSuccess {
+    background: rgba(0, 200, 83, 0.1) !important;
+    border-left: 5px solid #00C853 !important;
+    border-radius: 10px !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -429,14 +229,14 @@ input::placeholder {
         margin-top: 60px;
     }
     
-    .welcome-fixed {
-        padding: 15px !important;
-        margin: 0 10px 20px 10px !important;
-        font-size: 1.1rem !important;
+    .welcome-message {
+        padding: 20px !important;
+        margin: 15px !important;
+        font-size: 1.2rem !important;
     }
     
-    .welcome-fixed h3 {
-        font-size: 1.4rem !important;
+    .welcome-message h2 {
+        font-size: 1.6rem !important;
     }
 }
 </style>
@@ -477,11 +277,8 @@ if "logged_in" not in st.session_state:
 if "current_page" not in st.session_state:
     st.session_state.current_page = "dashboard"
 
-if "show_welcome" not in st.session_state:
-    st.session_state.show_welcome = True
-
-if "animation_shown" not in st.session_state:
-    st.session_state.animation_shown = False
+if "welcome_shown" not in st.session_state:
+    st.session_state.welcome_shown = False
 
 # ----------------------------
 # Paths
@@ -522,35 +319,46 @@ def load_feedback():
     else:
         return pd.DataFrame(columns=["username","comment","datetime"])
 
-def show_login_animation(username):
-    """Show animation during login"""
-    # Choose random animation
-    animations = [
-        "confetti", 
-        "fireworks", 
-        "loading", 
-        "pulse"
-    ]
+def show_welcome_animation(username):
+    """Display animated welcome message"""
+    # Balloon animation
+    st.balloons()
     
-    selected_animation = random.choice(animations)
+    # Animated welcome message
+    welcome_container = st.empty()
     
-    # Show loading animation first
-    loading_placeholder = st.empty()
-    loading_placeholder.markdown(show_loading_animation(f"Welcome {username} Team! 🚀"), unsafe_allow_html=True)
+    # Animated progress bar
+    progress_text = f"🚀 Preparing dashboard for {username} Team..."
+    progress_bar = st.progress(0, text=progress_text)
     
-    time.sleep(1.5)
+    # Simulate loading animation
+    for i in range(100):
+        progress_bar.progress(i + 1, text=progress_text)
+        time.sleep(0.02)  # Adjust speed
     
-    # Clear loading
-    loading_placeholder.empty()
+    # Clear progress bar
+    progress_bar.empty()
     
-    # Show success message
-    st.success(f"✅ Login successful! Welcome {username} Team! 👋")
+    # Show final welcome message
+    welcome_container.markdown(f"""
+    <div class="welcome-container">
+        <div class="welcome-message">
+            <h2>🎉 Welcome {username} Team! 👋</h2>
+            <p>🌟 Ready to explore today's sales data</p>
+            <div style="margin-top: 15px; font-size: 2rem;">
+                🚀 📊 💼
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+                Dashboard loaded successfully!
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
-    # Mark animation as shown
-    st.session_state.animation_shown = True
-    
-    # Small delay before redirect
-    time.sleep(1)
+    # Hold the message for 2 seconds
+    time.sleep(2)
+    welcome_container.empty()
+    st.session_state.welcome_shown = True
 
 # ----------------------------
 # Login / Logout Logic
@@ -562,7 +370,6 @@ def login(username, password):
             st.session_state.logged_in = True
             st.session_state.user_role = data["role"]
             st.session_state.username = key
-            st.session_state.show_welcome = True
             return True
     return False
 
@@ -572,8 +379,7 @@ def logout():
     st.session_state.user_role = None
     st.session_state.username = None
     st.session_state.current_page = "dashboard"
-    st.session_state.show_welcome = True
-    st.session_state.animation_shown = False
+    st.session_state.welcome_shown = False
 
 # ----------------------------
 # Navigation Buttons (Top-Right)
@@ -582,73 +388,15 @@ def top_right_buttons():
     """Display navigation buttons at top-right"""
     col1, col2, col3 = st.columns([1,1,1])
     with col1:
-        if st.button("💬 Feedback"):
+        if st.button("💬 Feedback Inbox"):
             st.session_state.current_page = "feedback"
     with col2:
-        if st.button("ℹ️ About"):
+        if st.button("ℹ About Us"):
             st.session_state.current_page = "about"
     with col3:
-        if st.button("🚪 Logout"):
+        if st.button("🔴 Logout"):
             logout()
             st.rerun()
-
-# ----------------------------
-# Welcome Message Component
-# ----------------------------
-def show_welcome_message():
-    """Display welcome message that stays in dashboard"""
-    if st.session_state.show_welcome and st.session_state.logged_in:
-        # Different messages based on team
-        team_messages = {
-            "Admin": "🎯 Admin Dashboard - Full Control",
-            "CHC": "🏥 CHC Team - Healthcare Division",
-            "CNS": "🧠 CNS Team - Neuroscience Division", 
-            "GIT": "🩺 GIT Team - Gastroenterology",
-            "Primary Care": "👨‍⚕️ Primary Care - General Medicine",
-            "CVM": "❤️ CVM Team - Cardiology",
-            "Power Team": "⚡ Power Team - Special Operations",
-            "DGU": "🔧 DGU Team - Technical Division",
-            "DNU": "📊 DNU Team - Data Analysis",
-            "Sildava": "🌟 Sildava Team",
-            "Ortho": "🦴 Ortho Team - Orthopedics",
-            "All": "👁️ All Viewer - Full Access",
-            "managers": "👨‍💼 Management View"
-        }
-        
-        # Get appropriate message
-        username = st.session_state.username
-        message = team_messages.get(username.split()[0] if ' ' in username else username, 
-                                   f"👋 Welcome {username} Team!")
-        
-        # Emojis based on team
-        team_emojis = {
-            "Admin": "👑",
-            "CHC": "🏥",
-            "CNS": "🧠", 
-            "GIT": "🩺",
-            "Primary": "👨‍⚕️",
-            "CVM": "❤️",
-            "Power": "⚡",
-            "DGU": "🔧",
-            "DNU": "📊",
-            "Sildava": "🌟",
-            "Ortho": "🦴"
-        }
-        
-        emoji = team_emojis.get(username.split()[0] if ' ' in username else username, "👋")
-        
-        # Display welcome message
-        st.markdown(f"""
-        <div class="welcome-container">
-            <div class="welcome-fixed">
-                <h3>{emoji} Hello {username} Team!</h3>
-                <p>{message}</p>
-                <div style="margin-top: 10px; font-size: 1.2rem;">
-                    📅 {date.today().strftime('%B %d, %Y')}
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
 
 # ----------------------------
 # Main Application UI
@@ -674,269 +422,252 @@ if not st.session_state.logged_in:
     u = st.text_input("", placeholder="👤 Username")
     p = st.text_input("", type="password", placeholder="🔒 Password")
     
-    # Login button
+    # Login button with special styling
     st.markdown('<div class="login-btn">', unsafe_allow_html=True)
     if st.button("🚀 Login to Dashboard"):
         if u and p:
             if login(u, p):
-                # Show animation during login
-                show_login_animation(u)
+                # Show welcome animation
+                show_welcome_animation(u)
                 st.rerun()
             else:
                 st.error("❌ Wrong Username Or Password")
         else:
-            st.warning("⚠️ Please enter both username and password")
+            st.warning("⚠ Please enter both username and password")
     st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD (Logged In) ----------
 else:
-    # Show navigation buttons
-    top_right_buttons()
+    # Display welcome message only once
+    if not st.session_state.welcome_shown:
+        st.markdown(f"""
+        <div class="slide-in">
+            <div class="welcome-message">
+                <h2>👋 Hello {st.session_state.username} Team!</h2>
+                <p>🌟 Welcome to Daily Sales Dashboard</p>
+                <div style="margin-top: 10px; font-size: 1.5rem;">
+                    📊 🚀 💼
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Show welcome message (ALWAYS VISIBLE in dashboard)
-    show_welcome_message()
+    top_right_buttons()
     
     # ----- DASHBOARD PAGE -----
     if st.session_state.current_page == "dashboard":
         st.subheader("📊 Daily Sales Dashboard")
         
-        # Stats Card
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.markdown("""
-            <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">📅 Today</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">{date}</p>
-            </div>
-            """.format(date=date.today().strftime('%d %b')), unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown("""
-            <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">👤 Role</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">{role}</p>
-            </div>
-            """.format(role=st.session_state.user_role), unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown("""
-            <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">🚀 Status</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">Active ✅</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        # Get available data
         folders = get_current_month_folders()
         
         if folders:
-            selected_day = st.selectbox(
-                "📅 Select Date:",
-                folders,
-                format_func=lambda x: f"📅 {x}",
-                index=0
+            selected_day = folders[0]
+            st.markdown(f"### 📅 Date: {selected_day}")
+        else:
+            st.warning("No available dates.")
+            selected_day = None
+        
+        # ----- ADMIN DASHBOARD -----
+        if st.session_state.user_role == "Admin":
+            st.markdown("---")
+            st.subheader("👨‍💼 Admin Dashboard")
+            
+            # File upload section
+            uploaded_files = st.file_uploader(
+                "📤 Upload Excel Files", 
+                type=["xlsx","xls"], 
+                accept_multiple_files=True,
+                help="Upload daily sales Excel files"
             )
             
+            if uploaded_files:
+                today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
+                os.makedirs(today_folder, exist_ok=True)
+                
+                success_count = 0
+                for file in uploaded_files:
+                    with open(os.path.join(today_folder, file.name), "wb") as f:
+                        f.write(file.getbuffer())
+                    success_count += 1
+                
+                st.success(f"✅ {success_count} file(s) uploaded successfully!")
+                st.balloons()
+            
+            st.markdown("---")
+            
+            # File management section
+            if selected_day:
+                folder_path = os.path.join(BASE_PATH, selected_day)
+                st.subheader("📁 File Management")
+                
+                if os.path.exists(folder_path):
+                    files = os.listdir(folder_path)
+                    if files:
+                        for file in files:
+                            path = os.path.join(folder_path, file)
+                            c1, c2, c3 = st.columns([4,1,1])
+                            
+                            with c1:
+                                st.write(f"📄 {file}")
+                            
+                            with c2:
+                                if st.button("🗑️", key=f"del_{file}"):
+                                    os.remove(path)
+                                    st.warning(f"❌ File '{file}' deleted successfully")
+                                    time.sleep(1)
+                                    st.rerun()
+                            
+                            with c3:
+                                with open(path, "rb") as f:
+                                    st.download_button(
+                                        "⬇️ Download",
+                                        f,
+                                        file_name=file,
+                                        key=f"download_{file}"
+                                    )
+                    else:
+                        st.info("📭 No files in this folder yet.")
+                else:
+                    st.info("📁 Folder doesn't exist yet.")
+        
+        # ----- USER DASHBOARD -----
+        else:
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
                 
-                # ----- ADMIN DASHBOARD -----
-                if st.session_state.user_role == "Admin":
-                    st.markdown("---")
-                    st.subheader("👨‍💼 Admin Controls")
+                if os.path.exists(folder_path):
+                    allowed_files = [
+                        f for f in os.listdir(folder_path)
+                        if st.session_state.user_role == "AllViewer"
+                        or is_file_for_user(f, st.session_state.username)
+                    ]
                     
-                    # File upload section
-                    with st.expander("📤 Upload Files", expanded=True):
-                        uploaded_files = st.file_uploader(
-                            "Choose Excel files", 
-                            type=["xlsx","xls"], 
-                            accept_multiple_files=True,
-                            key="admin_uploader"
+                    if allowed_files:
+                        st.markdown("### 📥 Download Your Files")
+                        chosen = st.selectbox(
+                            "Select a file:",
+                            allowed_files,
+                            format_func=lambda x: f"📄 {x}"
                         )
                         
-                        if uploaded_files and st.button("🚀 Upload Files", type="primary"):
-                            today_folder = os.path.join(BASE_PATH, selected_day)
-                            os.makedirs(today_folder, exist_ok=True)
+                        if chosen:
+                            path = os.path.join(folder_path, chosen)
+                            with open(path, "rb") as f:
+                                file_bytes = f.read()
                             
-                            success_count = 0
-                            for file in uploaded_files:
-                                with open(os.path.join(today_folder, file.name), "wb") as f:
-                                    f.write(file.getbuffer())
-                                success_count += 1
-                            
-                            st.success(f"✅ {success_count} file(s) uploaded successfully!")
-                            st.balloons()
-                            time.sleep(1)
-                            st.rerun()
-                    
-                    # File management section
-                    st.markdown("---")
-                    st.subheader("📁 File Management")
-                    
-                    if os.path.exists(folder_path):
-                        files = os.listdir(folder_path)
-                        if files:
-                            for file in files:
-                                path = os.path.join(folder_path, file)
-                                with st.container():
-                                    c1, c2, c3 = st.columns([6, 1, 2])
-                                    
-                                    with c1:
-                                        st.write(f"📄 **{file}**")
-                                    
-                                    with c2:
-                                        if st.button("🗑️", key=f"del_{file}"):
-                                            os.remove(path)
-                                            st.warning(f"Deleted: {file}")
-                                            time.sleep(1)
-                                            st.rerun()
-                                    
-                                    with c3:
-                                        with open(path, "rb") as f:
-                                            st.download_button(
-                                                "📥 Download",
-                                                f,
-                                                file_name=file,
-                                                key=f"dl_{file}"
-                                            )
-                        else:
-                            st.info("📭 No files available for this date.")
+                            col1, col2 = st.columns([3,1])
+                            with col1:
+                                st.info(f"Selected: **{chosen}**")
+                            with col2:
+                                st.download_button(
+                                    "🔽 Download File",
+                                    data=file_bytes,
+                                    file_name=chosen,
+                                    key="user_download"
+                                )
                     else:
-                        st.info("📁 Folder doesn't exist yet.")
-                
-                # ----- USER DASHBOARD -----
+                        st.warning("📭 No files available for your team yet.")
                 else:
-                    st.markdown("---")
-                    
-                    if os.path.exists(folder_path):
-                        allowed_files = [
-                            f for f in os.listdir(folder_path)
-                            if st.session_state.user_role == "AllViewer"
-                            or is_file_for_user(f, st.session_state.username)
-                        ]
-                        
-                        if allowed_files:
-                            st.subheader("📥 Your Files")
-                            
-                            # Display files in a nice grid
-                            cols = st.columns(2)
-                            for idx, file in enumerate(allowed_files):
-                                with cols[idx % 2]:
-                                    with st.container():
-                                        st.markdown(f"""
-                                        <div style="
-                                            background: rgba(255,255,255,0.1);
-                                            padding: 15px;
-                                            border-radius: 10px;
-                                            margin-bottom: 10px;
-                                        ">
-                                            <p style="margin: 0;"><strong>📄 {file}</strong></p>
-                                        </div>
-                                        """, unsafe_allow_html=True)
-                                        
-                                        path = os.path.join(folder_path, file)
-                                        with open(path, "rb") as f:
-                                            file_bytes = f.read()
-                                        
-                                        st.download_button(
-                                            "Download",
-                                            data=file_bytes,
-                                            file_name=file,
-                                            key=f"user_file_{idx}",
-                                            use_container_width=True
-                                        )
-                        else:
-                            st.warning("📭 No files available for your team yet.")
-                    else:
-                        st.warning("📁 No data available for this date.")
-        else:
-            st.info("📅 No data available for current month.")
+                    st.warning("📁 No data available for this date.")
     
     # ----- FEEDBACK PAGE -----
     elif st.session_state.current_page == "feedback":
-        st.subheader("💬 Feedback System")
+        st.subheader("💬 Feedback Inbox")
         
         if st.session_state.user_role == "Admin":
             df = load_feedback()
             if not df.empty:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
-                # Display feedback cards
-                for idx, row in df.sort_values("datetime", ascending=False).iterrows():
+                # Add filters for admin
+                col1, col2 = st.columns(2)
+                with col1:
+                    users_filter = st.multiselect(
+                        "Filter by user:",
+                        df['username'].unique()
+                    )
+                
+                if users_filter:
+                    df = df[df['username'].isin(users_filter)]
+                
+                # Display feedback
+                df_sorted = df.sort_values("datetime", ascending=False)
+                for idx, row in df_sorted.iterrows():
                     with st.container():
                         st.markdown(f"""
-                        <div class="fadeInUp">
-                            <div class="custom-card">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <p><strong>👤 {row['username']}</strong></p>
-                                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
-                                        📅 {row['datetime']}
-                                    </p>
-                                </div>
-                                <p style="margin-top: 10px;">{row['comment']}</p>
-                            </div>
+                        <div style="background: rgba(255,255,255,0.1);
+                                    padding: 15px;
+                                    border-radius: 10px;
+                                    margin-bottom: 10px;
+                                    border-left: 4px solid #00c6ff;">
+                            <p><strong>👤 {row['username']}</strong></p>
+                            <p>{row['comment']}</p>
+                            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+                                📅 {row['datetime']}
+                            </p>
                         </div>
                         """, unsafe_allow_html=True)
             else:
                 st.info("📭 No feedback yet.")
         else:
-            # User feedback form
-            with st.form("feedback_form", clear_on_submit=True):
-                st.markdown("### 📝 Share Your Thoughts")
-                
+            # User feedback submission
+            st.markdown("### 📝 Share Your Feedback")
+            
+            with st.form("feedback_form"):
                 comment = st.text_area(
-                    "Your feedback:",
-                    placeholder="What's on your mind? Suggestions, issues, or comments...",
+                    "Your message:",
+                    placeholder="Type your feedback, suggestions, or issues here...",
                     height=150
                 )
                 
-                col1, col2 = st.columns([1, 4])
-                with col1:
-                    submit = st.form_submit_button("📤 Submit", type="primary")
+                submit = st.form_submit_button("📤 Submit Feedback")
                 
-                if submit and comment.strip():
-                    add_feedback(st.session_state.username, comment.strip())
-                    st.success("✅ Thank you for your feedback! 🌟")
-                    time.sleep(1.5)
-                    st.session_state.current_page = "dashboard"
-                    st.rerun()
-                elif submit:
-                    st.warning("⚠️ Please write something before submitting.")
+                if submit:
+                    if comment.strip():
+                        add_feedback(st.session_state.username, comment.strip())
+                        st.success("✅ Feedback submitted successfully! Thank you! 🌟")
+                        time.sleep(1.5)
+                        st.session_state.current_page = "dashboard"
+                        st.rerun()
+                    else:
+                        st.warning("⚠ Please write something before submitting.")
     
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
-        st.subheader("ℹ️ About This Dashboard")
+        st.subheader("ℹ️ About Us")
         
         st.markdown("""
-        <div class="fadeInUp">
-            <div class="custom-card">
-                <h3 style="color: #00c6ff;">🎯 Mission</h3>
-                <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
-                
-                <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
-                <p>• <strong>Admin</strong> - Full system control</p>
-                <p>• <strong>CHC</strong> - Healthcare Division</p>
-                <p>• <strong>CNS</strong> - Neuroscience Division</p>
-                <p>• <strong>GIT</strong> - Gastroenterology</p>
-                <p>• <strong>Primary Care</strong> - General Medicine</p>
-                <p>• <strong>CVM</strong> - Cardiology Division</p>
-                <p>• <strong>Power Team</strong> - Special Operations</p>
-                <p>• <strong>All Teams</strong> - Comprehensive access</p>
-                
-                <h3 style="color: #00c6ff; margin-top: 20px;">✨ Features</h3>
-                <p>✅ Secure role-based access</p>
-                <p>✅ Daily file management</p>
-                <p>✅ Feedback system</p>
-                <p>✅ Mobile responsive</p>
-                <p>✅ Real-time updates</p>
-                
-                <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
-                    <p style="text-align: center; margin: 0; font-size: 1.1rem;">
-                        🚀 <strong>Empowering Teams Since 2024</strong>
-                    </p>
-                </div>
+        <div style="background: rgba(255,255,255,0.1);
+                    padding: 25px;
+                    border-radius: 15px;
+                    margin-top: 20px;">
+            <h3 style="color: #00c6ff;">👨‍💼 Our Team</h3>
+            <p>• <strong>Ahmed</strong> – Admin</p>
+            <p>• <strong>CHC Team</strong> – Sales Operations</p>
+            <p>• <strong>CNS Teams</strong> – Central Nervous System Division</p>
+            <p>• <strong>GIT Teams</strong> – Gastrointestinal Division</p>
+            <p>• <strong>Primary Care</strong> – General Medicine</p>
+            <p>• <strong>CVM</strong> – Cardiovascular Division</p>
+            <p>• <strong>Power Team</strong> – Special Operations</p>
+            <p>• And more dedicated professionals...</p>
+            
+            <h3 style="color: #00c6ff; margin-top: 30px;">🎯 Description</h3>
+            <p>This dashboard is designed to manage daily sales files and feedback efficiently across all teams. 
+            It provides secure access, easy file management, and a streamlined communication system.</p>
+            
+            <h3 style="color: #00c6ff; margin-top: 30px;">📈 Features</h3>
+            <p>✅ Secure login system with role-based access</p>
+            <p>✅ Daily sales file management</p>
+            <p>✅ Feedback collection system</p>
+            <p>✅ Admin controls for file management</p>
+            <p>✅ Mobile-responsive design</p>
+            
+            <div style="margin-top: 30px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
+                <p style="text-align: center; margin: 0;">
+                    🚀 <strong>Streamlining sales operations since 2024</strong>
+                </p>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -947,7 +678,11 @@ else:
 if st.session_state.logged_in:
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
-        <p>📊 Sales Dashboard v2.0 | © 2024 | 🔒 Secure Access</p>
+    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 20px;">
+        <p>📊 Daily Sales Dashboard v1.0 | © 2024 All Rights Reserved</p>
+        <p>👤 Logged in as: <strong>{username}</strong> | Role: <strong>{role}</strong></p>
     </div>
-    """, unsafe_allow_html=True)
+    """.format(
+        username=st.session_state.username,
+        role=st.session_state.user_role
+    ), unsafe_allow_html=True)
