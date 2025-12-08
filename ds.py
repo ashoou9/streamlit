@@ -253,7 +253,7 @@ def logout():
 # ----------------------------
 def top_right_buttons():
     with st.container():
-        col_space, col1, col2, col3 = st.columns([2,2,2,2])
+        col_space, col1, col2, col3 = st.columns([2,4,4,4])
 
         with col1:
             if st.button("💬 Feedback Inbox"):
