@@ -191,12 +191,15 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-    st.session_state.page = "dashboard"
+
+if "current_page" not in st.session_state:
+    st.session_state.current_page = "dashboard"
 
 # ----------------------------
 # Paths
 # ----------------------------
 BASE_PATH = "data"
+FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
 
 # ----------------------------
 # Helpers
@@ -212,6 +215,21 @@ def is_file_for_user(filename, username):
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in p.strip() for p in parts)
 
+def add_feedback(username, comment):
+    os.makedirs(BASE_PATH, exist_ok=True)
+    if os.path.exists(FEEDBACK_FILE):
+        df = pd.read_csv(FEEDBACK_FILE)
+    else:
+        df = pd.DataFrame(columns=["username","comment","datetime"])
+    df = pd.concat([df, pd.DataFrame([{"username": username,"comment":comment,"datetime":datetime.now()}])], ignore_index=True)
+    df.to_csv(FEEDBACK_FILE, index=False)
+
+def load_feedback():
+    if os.path.exists(FEEDBACK_FILE):
+        return pd.read_csv(FEEDBACK_FILE)
+    else:
+        return pd.DataFrame(columns=["username","comment","datetime"])
+
 # ----------------------------
 # Login / Logout Logic
 # ----------------------------
@@ -221,7 +239,6 @@ def login(username, password):
             st.session_state.logged_in = True
             st.session_state.user_role = data["role"]
             st.session_state.username = key
-            st.session_state.page = "dashboard"
             return True
     return False
 
@@ -229,8 +246,23 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-    st.session_state.page = "dashboard"
-    st.experimental_rerun()
+    st.session_state.current_page = "dashboard"
+
+# ----------------------------
+# Navigation Buttons (Top-Right)
+# ----------------------------
+def top_right_buttons():
+    col1, col2, col3 = st.columns([1,1,1])
+    with col1:
+        if st.button("💬 Feedback Inbox"):
+            st.session_state.current_page = "feedback"
+    with col2:
+        if st.button("ℹ About Us"):
+            st.session_state.current_page = "about"
+    with col3:
+        if st.button("🔴 Logout"):
+            logout()
+            st.rerun()
 
 # ----------------------------
 # UI
@@ -250,7 +282,7 @@ if not st.session_state.logged_in:
 
     if st.button("Login"):
         if login(u, p):
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.error("❌ Wrong Username Or Password")
 
@@ -259,64 +291,13 @@ if not st.session_state.logged_in:
 # ---------- DASHBOARD ----------
 else:
 
-    # ---------- Floating Top-Right Buttons ----------
-    st.markdown("""
-    <div style="
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        gap: 10px;
-    ">
-        <form>
-            <button onclick="window.location.reload();" style="
-                width: 120px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">🔴 Logout</button>
-            <button id="aboutBtn" style="
-                width: 120px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #0072ff, #00c6ff);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">ℹ️ About Us</button>
-            <button id="feedbackBtn" style="
-                width: 160px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #00c851, #007e33);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">📥 Feedback Inbox</button>
-        </form>
-    </div>
-    <script>
-        const aboutBtn = window.parent.document.getElementById('aboutBtn');
-        const feedbackBtn = window.parent.document.getElementById('feedbackBtn');
-        aboutBtn.onclick = () => {{ window.location.href = '/?page=about'; }};
-        feedbackBtn.onclick = () => {{ window.location.href = '/?page=feedback'; }};
-    </script>
-    """, unsafe_allow_html=True)
+    top_right_buttons()  # Buttons appear top-right
 
-    # ---------- Handle Pages ----------
-    if st.session_state.page == "dashboard":
+    if st.session_state.current_page == "dashboard":
         st.subheader("👤 Daily Sales Dashboard")
+
         folders = get_current_month_folders()
+
         if folders:
             selected_day = folders[0]
             st.markdown(f"### 📅 Date: {selected_day}")
@@ -325,58 +306,94 @@ else:
             selected_day = None
 
         if st.session_state.user_role == "Admin":
+
             st.subheader("🧑‍💼 Admin Dashboard")
+
             uploaded_files = st.file_uploader(
                 "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
             )
+
             if uploaded_files:
                 today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
                 os.makedirs(today_folder, exist_ok=True)
+
                 for file in uploaded_files:
                     with open(os.path.join(today_folder, file.name), "wb") as f:
                         f.write(file.getbuffer())
+
                 st.success("✅ Files uploaded successfully")
 
             st.markdown("---")
+
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
+
                 for file in os.listdir(folder_path):
                     path = os.path.join(folder_path, file)
                     c1, c2, c3 = st.columns([4,1,1])
+
                     with c1:
                         st.write(file)
+
                     with c2:
                         if st.button("🗑", key="del_"+file):
                             os.remove(path)
                             st.warning(f"❌ File '{file}' deleted successfully")
-                            st.experimental_rerun()
+                            st.rerun()
+
                     with c3:
                         with open(path, "rb") as f:
                             st.download_button("⬇", f, file_name=file)
+
         else:
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
+
                 allowed_files = [
                     f for f in os.listdir(folder_path)
                     if st.session_state.user_role == "AllViewer"
                     or is_file_for_user(f, st.session_state.username)
                 ]
+
                 if allowed_files:
                     chosen = st.selectbox("File Name", allowed_files)
                     path = os.path.join(folder_path, chosen)
+
                     with open(path, "rb") as f:
-                        st.download_button("🔽 Download Excel File", f, file_name=chosen)
+                        st.download_button(
+                            "🔽 Download Excel File", f, file_name=chosen
+                        )
                 else:
                     st.warning("No files for your line.")
 
-    elif st.session_state.page == "about":
-        st.title("ℹ️ About Us")
-        st.write("هنا تفاصيل عن التيم والفريق...")
-        if st.button("Back to Dashboard"):
-            st.session_state.page = "dashboard"
+    elif st.session_state.current_page == "feedback":
+        st.subheader("💬 Feedback Inbox")
 
-    elif st.session_state.page == "feedback":
-        st.title("📥 Feedback Inbox")
-        st.write("هنا الرسائل و الكومنتات من اليوزرز...")
-        if st.button("Back to Dashboard"):
-            st.session_state.page = "dashboard"
+        if st.session_state.user_role == "Admin":
+            df = load_feedback()
+            if not df.empty:
+                st.dataframe(df.sort_values("datetime", ascending=False))
+            else:
+                st.info("No feedback yet.")
+        else:
+            comment = st.text_area("Enter your feedback:")
+            if st.button("Submit"):
+                if comment.strip():
+                    add_feedback(st.session_state.username, comment.strip())
+                    st.success("✅ Feedback submitted!")
+                else:
+                    st.warning("⚠ Please write something before submitting.")
+
+    elif st.session_state.current_page == "about":
+        st.subheader("ℹ About Us")
+        st.markdown("""
+        **Our Team:**
+        - Ahmed – Admin
+        - CHC Team
+        - CNS Teams
+        - GIT Teams
+        - More…
+
+        **Description:**
+        This dashboard is designed to manage daily sales files and feedback efficiently.
+        """)
