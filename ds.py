@@ -7,6 +7,9 @@ from datetime import datetime, date
 import re
 import base64
 
+# ----------------------------
+# Hide Warnings and Logs
+# ----------------------------
 warnings.filterwarnings("ignore")
 logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
@@ -82,6 +85,7 @@ st.markdown("""
     margin: 60px auto 0 auto;
 }
 
+/* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
@@ -90,6 +94,7 @@ st.markdown("""
     border-radius: 8px;
 }
 
+/* ALL LABELS */
 label[data-baseweb="label"],
 .stSelectbox label,
 .stFileUploader label,
@@ -99,6 +104,7 @@ label[data-baseweb="label"],
     font-weight: bold !important;
 }
 
+/* SUBHEADERS & TEXT */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -107,10 +113,12 @@ div[data-testid="stText"] {
     font-weight: bold !important;
 }
 
+/* PLACEHOLDER */
 input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
+/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -125,6 +133,21 @@ input::placeholder {
     background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02);
     transition: 0.2s;
+}
+
+/* DOWNLOAD BUTTON */
+.stDownloadButton button {
+    color: white !important;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.stDownloadButton button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02);
+    color: white !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -173,7 +196,42 @@ if "current_page" not in st.session_state:
     st.session_state.current_page = "dashboard"
 
 # ----------------------------
-# Login / Logout
+# Paths
+# ----------------------------
+BASE_PATH = "data"
+FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
+
+# ----------------------------
+# Helpers
+# ----------------------------
+def get_current_month_folders():
+    if not os.path.exists(BASE_PATH):
+        return []
+    today = date.today().strftime("%Y-%m")
+    return sorted([f for f in os.listdir(BASE_PATH) if f.startswith(today)], reverse=True)
+
+def is_file_for_user(filename, username):
+    name = filename.replace(".xlsx", "").replace(".xls", "").lower()
+    parts = re.split(r"\s*-\s*", name)
+    return any(username.lower() in p.strip() for p in parts)
+
+def add_feedback(username, comment):
+    os.makedirs(BASE_PATH, exist_ok=True)
+    if os.path.exists(FEEDBACK_FILE):
+        df = pd.read_csv(FEEDBACK_FILE)
+    else:
+        df = pd.DataFrame(columns=["username","comment","datetime"])
+    df = pd.concat([df, pd.DataFrame([{"username": username,"comment":comment,"datetime":datetime.now()}])], ignore_index=True)
+    df.to_csv(FEEDBACK_FILE, index=False)
+
+def load_feedback():
+    if os.path.exists(FEEDBACK_FILE):
+        return pd.read_csv(FEEDBACK_FILE)
+    else:
+        return pd.DataFrame(columns=["username","comment","datetime"])
+
+# ----------------------------
+# Login / Logout Logic
 # ----------------------------
 def login(username, password):
     for key, data in users.items():
@@ -191,35 +249,20 @@ def logout():
     st.session_state.current_page = "dashboard"
 
 # ----------------------------
-# ✅ Buttons (Logout Top / About Bottom Right)
+# Navigation Buttons (Top-Right)
 # ----------------------------
 def top_right_buttons():
-
-    col1, col2 = st.columns([8,1])
+    col1, col2, col3 = st.columns([1,1,1])
+    with col1:
+        if st.button("💬 Feedback Inbox"):
+            st.session_state.current_page = "feedback"
     with col2:
+        if st.button("ℹ About Us"):
+            st.session_state.current_page = "about"
+    with col3:
         if st.button("🔴 Logout"):
             logout()
             st.rerun()
-
-    # About Us fixed bottom right
-    st.markdown("""
-        <style>
-        .about-btn {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            z-index: 9999;
-            width: 160px;
-        }
-        </style>
-        <div class="about-btn">
-    """, unsafe_allow_html=True)
-
-    if st.button("ℹ About Us", key="about_fixed"):
-        st.session_state.current_page = "about"
-        st.rerun()
-
-    st.markdown("</div>", unsafe_allow_html=True)
 
 # ----------------------------
 # UI
@@ -229,9 +272,11 @@ if not st.session_state.logged_in:
 else:
     set_bg_local("data/Untitled.png", False)
 
+# ---------- LOGIN ----------
 if not st.session_state.logged_in:
 
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
+
     u = st.text_input("", placeholder="Enter Username")
     p = st.text_input("", type="password", placeholder="Enter Password")
 
@@ -243,22 +288,112 @@ if not st.session_state.logged_in:
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+# ---------- DASHBOARD ----------
 else:
 
-    top_right_buttons()
+    top_right_buttons()  # Buttons appear top-right
 
     if st.session_state.current_page == "dashboard":
         st.subheader("👤 Daily Sales Dashboard")
+
+        folders = get_current_month_folders()
+
+        if folders:
+            selected_day = folders[0]
+            st.markdown(f"### 📅 Date: {selected_day}")
+        else:
+            st.warning("No available dates.")
+            selected_day = None
+
+        if st.session_state.user_role == "Admin":
+
+            st.subheader("🧑‍💼 Admin Dashboard")
+
+            uploaded_files = st.file_uploader(
+                "Upload Excel Files", type=["xlsx","xls"], accept_multiple_files=True
+            )
+
+            if uploaded_files:
+                today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
+                os.makedirs(today_folder, exist_ok=True)
+
+                for file in uploaded_files:
+                    with open(os.path.join(today_folder, file.name), "wb") as f:
+                        f.write(file.getbuffer())
+
+                st.success("✅ Files uploaded successfully")
+
+            st.markdown("---")
+
+            if selected_day:
+                folder_path = os.path.join(BASE_PATH, selected_day)
+
+                for file in os.listdir(folder_path):
+                    path = os.path.join(folder_path, file)
+                    c1, c2, c3 = st.columns([4,1,1])
+
+                    with c1:
+                        st.write(file)
+
+                    with c2:
+                        if st.button("🗑", key="del_"+file):
+                            os.remove(path)
+                            st.warning(f"❌ File '{file}' deleted successfully")
+                            st.rerun()
+
+                    with c3:
+                        with open(path, "rb") as f:
+                            st.download_button("⬇", f, file_name=file)
+
+        else:
+            if selected_day:
+                folder_path = os.path.join(BASE_PATH, selected_day)
+
+                allowed_files = [
+                    f for f in os.listdir(folder_path)
+                    if st.session_state.user_role == "AllViewer"
+                    or is_file_for_user(f, st.session_state.username)
+                ]
+
+                if allowed_files:
+                    chosen = st.selectbox("File Name", allowed_files)
+                    path = os.path.join(folder_path, chosen)
+
+                    with open(path, "rb") as f:
+                        st.download_button(
+                            "🔽 Download Excel File", f, file_name=chosen
+                        )
+                else:
+                    st.warning("No files for your line.")
+
+    elif st.session_state.current_page == "feedback":
+        st.subheader("💬 Feedback Inbox")
+
+        if st.session_state.user_role == "Admin":
+            df = load_feedback()
+            if not df.empty:
+                st.dataframe(df.sort_values("datetime", ascending=False))
+            else:
+                st.info("No feedback yet.")
+        else:
+            comment = st.text_area("Enter your feedback:")
+            if st.button("Submit"):
+                if comment.strip():
+                    add_feedback(st.session_state.username, comment.strip())
+                    st.success("✅ Feedback submitted!")
+                else:
+                    st.warning("⚠ Please write something before submitting.")
 
     elif st.session_state.current_page == "about":
         st.subheader("ℹ About Us")
         st.markdown("""
         **Our Team:**
-        - Ahmed – Admin  
-        - CHC Team  
-        - CNS Teams  
-        - GIT Teams  
+        - Ahmed – Admin
+        - CHC Team
+        - CNS Teams
+        - GIT Teams
+        - More…
 
-        **Description:**  
+        **Description:**
         This dashboard is designed to manage daily sales files and feedback efficiently.
         """)
