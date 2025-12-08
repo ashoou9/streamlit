@@ -6,7 +6,8 @@ import pandas as pd
 from datetime import datetime, date
 import re
 import base64
-import time  # Added for animations
+import time
+import random
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -23,7 +24,7 @@ def set_bg_local(image_file, login_page=True):
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
 
-    padding_top = "105px" if login_page else "210px"
+    padding_top = "105px" if login_page else "180px"
 
     page_bg_img = f"""
     <style>
@@ -46,7 +47,7 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     .block-container {{
-        padding-top: 2rem !important;
+        padding-top: 1rem !important;
         padding-left: 30rem !important;
         padding-right: 30rem !important;
         padding-bottom: 100px !important;
@@ -58,29 +59,59 @@ def set_bg_local(image_file, login_page=True):
         height: 0px;
     }}
 
-    /* Animation for welcome message */
-    @keyframes welcomeAnimation {{
-        0% {{ transform: scale(0.8); opacity: 0; }}
-        70% {{ transform: scale(1.05); }}
-        100% {{ transform: scale(1); opacity: 1; }}
+    /* Medical Animations */
+    @keyframes pillFloat {{
+        0% {{ transform: translateY(100vh) rotate(0deg); opacity: 0; }}
+        10% {{ opacity: 1; }}
+        90% {{ opacity: 1; }}
+        100% {{ transform: translateY(-100px) rotate(360deg); opacity: 0; }}
     }}
 
-    .welcome-container {{
-        animation: welcomeAnimation 1s ease-out;
+    @keyframes syringeFloat {{
+        0% {{ transform: translateX(-100px) rotate(-45deg); opacity: 0; }}
+        20% {{ opacity: 1; }}
+        80% {{ opacity: 1; }}
+        100% {{ transform: translateX(100vw) rotate(45deg); opacity: 0; }}
     }}
 
-    @keyframes slideIn {{
-        from {{ transform: translateY(-30px); opacity: 0; }}
-        to {{ transform: translateY(0); opacity: 1; }}
+    @keyframes heartbeat {{
+        0% {{ transform: scale(1); }}
+        25% {{ transform: scale(1.1); }}
+        50% {{ transform: scale(1); }}
+        75% {{ transform: scale(1.05); }}
+        100% {{ transform: scale(1); }}
     }}
 
-    .slide-in {{
-        animation: slideIn 0.8s ease-out;
+    @keyframes dnaSpin {{
+        0% {{ transform: rotate(0deg); }}
+        100% {{ transform: rotate(360deg); }}
     }}
+
+    @keyframes stethoscopeMove {{
+        0% {{ transform: translateX(0) rotate(0deg); }}
+        50% {{ transform: translateX(20px) rotate(10deg); }}
+        100% {{ transform: translateX(0) rotate(0deg); }}
+    }}
+
+    @keyframes capsuleBounce {{
+        0%, 100% {{ transform: translateY(0); }}
+        50% {{ transform: translateY(-20px); }}
+    }}
+
+    @keyframes welcomeSlide {{
+        0% {{ transform: translateX(-100%); opacity: 0; }}
+        100% {{ transform: translateX(0); opacity: 1; }}
+    }}
+
+    .heartbeat {{ animation: heartbeat 1.5s infinite; }}
+    .dna-spin {{ animation: dnaSpin 10s linear infinite; }}
+    .stethoscope {{ animation: stethoscopeMove 2s ease-in-out infinite; }}
+    .capsule {{ animation: capsuleBounce 2s ease-in-out infinite; }}
+    .welcome-slide {{ animation: welcomeSlide 1s ease-out; }}
 
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
-            padding-top: 160px !important;
+            padding-top: 140px !important;
         }}
         .block-container {{
             padding-left: 1rem !important;
@@ -92,151 +123,401 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
+# Medical Animations Functions
+# ----------------------------
+def show_medical_welcome(username):
+    """Show medical-themed welcome animation"""
+    
+    # Create pills floating animation
+    pills_html = """
+    <div id="pillsContainer" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998;"></div>
+    <script>
+    function createPill() {
+        const container = document.getElementById('pillsContainer');
+        const pill = document.createElement('div');
+        
+        // Random pill styles
+        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF'];
+        const shapes = ['pill', 'capsule', 'round'];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        
+        pill.style.position = 'absolute';
+        pill.style.left = Math.random() * 100 + 'vw';
+        pill.style.width = Math.random() * 30 + 20 + 'px';
+        pill.style.height = Math.random() * 15 + 10 + 'px';
+        pill.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        pill.style.borderRadius = shape === 'round' ? '50%' : (shape === 'capsule' ? '50px' : '10px');
+        pill.style.opacity = '0.7';
+        pill.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+        
+        // Animation
+        const duration = Math.random() * 3 + 2;
+        pill.style.animation = `pillFloat ${duration}s linear forwards`;
+        
+        container.appendChild(pill);
+        setTimeout(() => pill.remove(), duration * 1000);
+    }
+    
+    // Create multiple pills
+    for(let i = 0; i < 15; i++) {
+        setTimeout(() => createPill(), i * 200);
+    }
+    </script>
+    """
+    
+    # DNA Helix Animation
+    dna_html = """
+    <div style="position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); z-index:9997; opacity:0.1;">
+        <div style="font-size: 100px;" class="dna-spin">
+        🧬
+        </div>
+    </div>
+    """
+    
+    # Show animations
+    st.components.v1.html(pills_html, height=0)
+    st.markdown(dna_html, unsafe_allow_html=True)
+    
+    # Success message with medical theme
+    success_msg = st.empty()
+    success_msg.markdown(f"""
+    <div style="
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        color: white;
+        margin: 20px auto;
+        max-width: 500px;
+        animation: welcomeSlide 1s ease-out;
+    ">
+        <div style="font-size: 50px; margin-bottom: 10px;">💊 🩺</div>
+        <h2 style="margin: 10px 0;">Welcome {username} Team!</h2>
+        <p style="opacity: 0.9;">Accessing Pharmaceutical Dashboard...</p>
+        <div style="margin-top: 15px; font-size: 24px;">
+            <span class="heartbeat" style="display: inline-block;">❤️</span>
+            <span class="capsule" style="display: inline-block; animation-delay: 0.5s;">💊</span>
+            <span class="stethoscope" style="display: inline-block; animation-delay: 1s;">🩺</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    time.sleep(2.5)
+    success_msg.empty()
+
+def show_prescription_animation():
+    """Show prescription writing animation"""
+    prescription_html = """
+    <div style="
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 10000;
+        animation: writePrescription 3s ease-in-out forwards;
+        max-width: 400px;
+    ">
+        <div style="text-align: center;">
+            <div style="font-size: 40px; margin-bottom: 15px;">📝</div>
+            <h3 style="color: #333; margin: 0;">Prescription Ready!</h3>
+            <p style="color: #666; margin-top: 10px;">Data loaded successfully</p>
+        </div>
+    </div>
+    <style>
+    @keyframes writePrescription {
+        0% { 
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+        30% { 
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+        70% { 
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        100% { 
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+        }
+    }
+    </style>
+    """
+    st.components.v1.html(prescription_html, height=0)
+
+def show_medicine_drop():
+    """Show medicine drop animation"""
+    drop_html = """
+    <div id="dropsContainer" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998;"></div>
+    <script>
+    function createMedicineDrop() {
+        const container = document.getElementById('dropsContainer');
+        const drop = document.createElement('div');
+        
+        // Random drop styles
+        const medicines = ['💊', '💉', '🧪', '🧫', '🩹', '🩺', '🌡️', '💊', '💊'];
+        const medicine = medicines[Math.floor(Math.random() * medicines.length)];
+        
+        drop.innerHTML = medicine;
+        drop.style.position = 'absolute';
+        drop.style.left = Math.random() * 100 + 'vw';
+        drop.style.fontSize = Math.random() * 20 + 20 + 'px';
+        drop.style.opacity = '0';
+        
+        // Animation
+        const duration = Math.random() * 2 + 1;
+        drop.style.animation = `
+            dropFall ${duration}s ease-in forwards,
+            fadeInOut ${duration}s ease-in-out forwards
+        `;
+        
+        container.appendChild(drop);
+        setTimeout(() => drop.remove(), duration * 1000);
+    }
+    
+    // Create multiple drops
+    for(let i = 0; i < 20; i++) {
+        setTimeout(() => createMedicineDrop(), i * 100);
+    }
+    
+    // CSS for animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes dropFall {
+            0% { transform: translateY(-100px) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.8; }
+        }
+    `;
+    document.head.appendChild(style);
+    </script>
+    """
+    st.components.v1.html(drop_html, height=0)
+
+def show_heartbeat_loader(text="Loading Health Data..."):
+    """Show heartbeat loading animation"""
+    heartbeat_html = f"""
+    <div style="text-align: center; padding: 30px;">
+        <div style="
+            display: inline-block;
+            animation: heartbeat 1.5s infinite;
+            font-size: 60px;
+            margin-bottom: 20px;
+        ">
+            ❤️
+        </div>
+        <p style="color: white; font-weight: bold; font-size: 18px;">{text}</p>
+        <div style="
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 20px auto;
+            overflow: hidden;
+        ">
+            <div style="
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, #FF5252, #FF4081);
+                animation: loadingBar 2s ease-in-out infinite;
+            "></div>
+        </div>
+        <style>
+        @keyframes loadingBar {{
+            0%, 100% {{ transform: translateX(-100%); }}
+            50% {{ transform: translateX(100%); }}
+        }}
+        </style>
+    </div>
+    """
+    return st.markdown(heartbeat_html, unsafe_allow_html=True)
+
+# ----------------------------
 # Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
-/* Welcome Message Special Styling */
-.welcome-message {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    padding: 25px !important;
+/* Medical Theme Welcome Message */
+.welcome-medical {
+    background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%) !important;
+    padding: 20px !important;
     border-radius: 15px !important;
     text-align: center !important;
-    margin: 20px auto !important;
+    margin: 0 auto 25px auto !important;
     color: white !important;
-    font-size: 1.4rem !important;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2) !important;
+    font-size: 1.3rem !important;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
     border: 2px solid rgba(255,255,255,0.3) !important;
     backdrop-filter: blur(10px) !important;
     max-width: 600px !important;
+    position: relative;
+    overflow: hidden;
 }
 
-.welcome-message h2 {
+.welcome-medical::before {
+    content: "💊 🩺 🌡️";
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 60px;
+    opacity: 0.1;
+    transform: rotate(15deg);
+}
+
+.welcome-medical h3 {
     color: white !important;
-    margin-bottom: 10px !important;
-    font-size: 2rem !important;
+    margin-bottom: 8px !important;
+    font-size: 1.8rem !important;
+    position: relative;
+    z-index: 2;
 }
 
-.welcome-message p {
+.welcome-medical p {
     color: rgba(255,255,255,0.9) !important;
-    margin-top: 10px !important;
-    font-size: 1.1rem !important;
+    margin-top: 8px !important;
+    font-size: 1rem !important;
+    position: relative;
+    z-index: 2;
+}
+
+/* Medical Cards */
+.medical-card {
+    background: rgba(255, 255, 255, 0.1) !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
+    border-left: 5px solid #26d0ce !important;
+    margin-bottom: 15px !important;
+    backdrop-filter: blur(10px) !important;
+    transition: transform 0.3s ease !important;
+}
+
+.medical-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important;
+}
+
+/* Medical Buttons */
+.medical-btn {
+    background: linear-gradient(90deg, #1a2980, #26d0ce) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 10px 20px !important;
+    transition: all 0.3s ease !important;
+}
+
+.medical-btn:hover {
+    background: linear-gradient(90deg, #0d1a66, #1cb5b3) !important;
+    transform: scale(1.05) !important;
+}
+
+/* Medical Icons */
+.medical-icon {
+    font-size: 24px !important;
+    margin-right: 10px !important;
+    vertical-align: middle !important;
 }
 
 /* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
-    padding: 10px;
+    padding: 12px;
     color: black !important;
-    border-radius: 8px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.95) !important;
+    border: 2px solid #26d0ce !important;
 }
 
-/* ALL LABELS */
-label[data-baseweb="label"],
-.stSelectbox label,
-.stFileUploader label,
-.stTextInput label,
-.stDateInput label {
-    color: white !important;
-    font-weight: bold !important;
-}
-
-/* SUBHEADERS & TEXT */
-h1, h2, h3, h4, h5, h6,
-.stSubheader,
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stText"] {
-    color: white !important;
-    font-weight: bold !important;
-}
-
-/* PLACEHOLDER */
-input::placeholder {
-    color: rgba(0,0,0,0.6) !important;
-}
-
-/* LOGIN BOX */
-.login-box {
-    background: rgba(255, 255, 255, 0.1) !important;
+/* LOGIN BOX - Medical Theme */
+.login-medical-box {
+    background: rgba(255, 255, 255, 0.15) !important;
     width: 420px;
     max-width: 90%;
-    padding: 35px;
-    border-radius: 18px;
+    padding: 40px;
+    border-radius: 20px;
     text-align: center;
     margin: 60px auto 0 auto;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
-    animation: slideIn 0.8s ease-out !important;
+    backdrop-filter: blur(15px) !important;
+    border: 1px solid rgba(255,255,255,0.3) !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    animation: welcomeSlide 1s ease-out !important;
 }
 
-/* BUTTONS */
-.stButton > button {
-    width: 100%;
-    border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    color: white;
-    border: none;
-    transition: all 0.3s ease !important;
+.login-medical-box::before {
+    content: "💊 🩺";
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 40px;
+    opacity: 0.2;
 }
 
-.stButton > button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02) !important;
-    box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
-}
-
-/* LOGIN BUTTON SPECIAL */
-.login-btn {
-    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-    margin-top: 20px !important;
-}
-
-/* DOWNLOAD BUTTON */
-.stDownloadButton button {
+/* MEDICAL SUCCESS MESSAGE */
+.medical-success {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
+    padding: 15px 25px !important;
+    border-radius: 12px !important;
+    border: none !important;
     color: white !important;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    font-weight: bold !important;
+    animation: heartbeat 2s infinite !important;
+    border-left: 5px solid white !important;
+}
+
+/* MEDICAL HEADERS */
+.medical-header {
+    background: linear-gradient(90deg, #1a2980, #26d0ce) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    padding: 10px 0 !important;
+    border-bottom: 3px solid #26d0ce !important;
+    display: inline-block !important;
+    margin-bottom: 20px !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
     border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
 }
 
-.stDownloadButton button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02) !important;
-    color: white !important;
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #1a2980, #26d0ce);
+    border-radius: 10px;
 }
 
-/* PROGRESS BAR STYLING */
-.stProgress > div > div > div > div {
-    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-}
-
-/* SUCCESS MESSAGE STYLING */
-.stSuccess {
-    background: rgba(0, 200, 83, 0.1) !important;
-    border-left: 5px solid #00C853 !important;
-    border-radius: 10px !important;
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #0d1a66, #1cb5b3);
 }
 
 @media only screen and (max-width: 768px) {
-    .login-box {
+    .login-medical-box {
         width: 90%;
         padding: 25px;
         margin-top: 60px;
     }
     
-    .welcome-message {
-        padding: 20px !important;
-        margin: 15px !important;
-        font-size: 1.2rem !important;
+    .welcome-medical {
+        padding: 15px !important;
+        margin: 0 10px 20px 10px !important;
+        font-size: 1.1rem !important;
     }
     
-    .welcome-message h2 {
-        font-size: 1.6rem !important;
+    .welcome-medical h3 {
+        font-size: 1.4rem !important;
     }
 }
 </style>
@@ -277,8 +558,11 @@ if "logged_in" not in st.session_state:
 if "current_page" not in st.session_state:
     st.session_state.current_page = "dashboard"
 
-if "welcome_shown" not in st.session_state:
-    st.session_state.welcome_shown = False
+if "show_welcome" not in st.session_state:
+    st.session_state.show_welcome = True
+
+if "medical_animation_shown" not in st.session_state:
+    st.session_state.medical_animation_shown = False
 
 # ----------------------------
 # Paths
@@ -319,47 +603,6 @@ def load_feedback():
     else:
         return pd.DataFrame(columns=["username","comment","datetime"])
 
-def show_welcome_animation(username):
-    """Display animated welcome message"""
-    # Balloon animation
-    st.balloons()
-    
-    # Animated welcome message
-    welcome_container = st.empty()
-    
-    # Animated progress bar
-    progress_text = f"🚀 Preparing dashboard for {username} Team..."
-    progress_bar = st.progress(0, text=progress_text)
-    
-    # Simulate loading animation
-    for i in range(100):
-        progress_bar.progress(i + 1, text=progress_text)
-        time.sleep(0.02)  # Adjust speed
-    
-    # Clear progress bar
-    progress_bar.empty()
-    
-    # Show final welcome message
-    welcome_container.markdown(f"""
-    <div class="welcome-container">
-        <div class="welcome-message">
-            <h2>🎉 Welcome {username} Team! 👋</h2>
-            <p>🌟 Ready to explore today's sales data</p>
-            <div style="margin-top: 15px; font-size: 2rem;">
-                🚀 📊 💼
-            </div>
-            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
-                Dashboard loaded successfully!
-            </p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Hold the message for 2 seconds
-    time.sleep(2)
-    welcome_container.empty()
-    st.session_state.welcome_shown = True
-
 # ----------------------------
 # Login / Logout Logic
 # ----------------------------
@@ -370,6 +613,7 @@ def login(username, password):
             st.session_state.logged_in = True
             st.session_state.user_role = data["role"]
             st.session_state.username = key
+            st.session_state.show_welcome = True
             return True
     return False
 
@@ -379,7 +623,8 @@ def logout():
     st.session_state.user_role = None
     st.session_state.username = None
     st.session_state.current_page = "dashboard"
-    st.session_state.welcome_shown = False
+    st.session_state.show_welcome = True
+    st.session_state.medical_animation_shown = False
 
 # ----------------------------
 # Navigation Buttons (Top-Right)
@@ -388,15 +633,95 @@ def top_right_buttons():
     """Display navigation buttons at top-right"""
     col1, col2, col3 = st.columns([1,1,1])
     with col1:
-        if st.button("💬 Feedback Inbox"):
+        if st.button("💊 Feedback"):
             st.session_state.current_page = "feedback"
     with col2:
-        if st.button("ℹ About Us"):
+        if st.button("🩺 About"):
             st.session_state.current_page = "about"
     with col3:
-        if st.button("🔴 Logout"):
+        if st.button("🚪 Logout"):
             logout()
             st.rerun()
+
+# ----------------------------
+# Medical Welcome Message Component
+# ----------------------------
+def show_medical_welcome_message():
+    """Display medical-themed welcome message"""
+    if st.session_state.show_welcome and st.session_state.logged_in:
+        # Medical department emojis and messages
+        department_info = {
+            "CHC": {"emoji": "🏥", "message": "Healthcare Division"},
+            "CNS": {"emoji": "🧠", "message": "Neuroscience Division"}, 
+            "GIT": {"emoji": "🩺", "message": "Gastroenterology"},
+            "Primary Care": {"emoji": "👨‍⚕️", "message": "General Medicine"},
+            "CVM": {"emoji": "❤️", "message": "Cardiology Division"},
+            "Power Team": {"emoji": "⚡", "message": "Special Operations"},
+            "DGU": {"emoji": "🔧", "message": "Technical Division"},
+            "DNU": {"emoji": "📊", "message": "Data Analysis"},
+            "Sildava": {"emoji": "🌟", "message": "Sildava Team"},
+            "Ortho": {"emoji": "🦴", "message": "Orthopedics"},
+            "Admin": {"emoji": "👑", "message": "Pharmaceutical Admin"},
+            "All": {"emoji": "👁️", "message": "Full Access"},
+            "managers": {"emoji": "👨‍💼", "message": "Management View"}
+        }
+        
+        username = st.session_state.username
+        dept_key = username.split()[0] if ' ' in username else username
+        info = department_info.get(dept_key, {"emoji": "💊", "message": "Medical Team"})
+        
+        # Display medical welcome message
+        st.markdown(f"""
+        <div class="welcome-slide">
+            <div class="welcome-medical">
+                <h3>{info['emoji']} Welcome {username}!</h3>
+                <p>{info['message']} • Pharmaceutical Dashboard</p>
+                <div style="margin-top: 15px; font-size: 24px; opacity: 0.8;">
+                    <span class="heartbeat">❤️</span>
+                    <span class="capsule" style="animation-delay: 0.3s;">💊</span>
+                    <span class="stethoscope" style="animation-delay: 0.6s;">🩺</span>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                    📅 {date.today().strftime('%B %d, %Y')} | 👤 {st.session_state.user_role}
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ----------------------------
+# Medical Stats Cards
+# ----------------------------
+def show_medical_stats():
+    """Display medical statistics cards"""
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown(f"""
+        <div class="medical-card">
+            <div style="font-size: 30px; color: #26d0ce; margin-bottom: 10px;">💊</div>
+            <h4 style="margin: 0; color: white;">Today's Data</h4>
+            <p style="font-size: 1.8rem; margin: 10px 0; color: #26d0ce;">{date.today().strftime('%d %b')}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div class="medical-card">
+            <div style="font-size: 30px; color: #FF5252; margin-bottom: 10px;">🩺</div>
+            <h4 style="margin: 0; color: white;">Department</h4>
+            <p style="font-size: 1.5rem; margin: 10px 0; color: #FF5252;">{st.session_state.username}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        status_emoji = "✅" if st.session_state.logged_in else "❌"
+        st.markdown(f"""
+        <div class="medical-card">
+            <div style="font-size: 30px; color: #00C853; margin-bottom: 10px;">🌡️</div>
+            <h4 style="margin: 0; color: white;">System Status</h4>
+            <p style="font-size: 1.5rem; margin: 10px 0; color: #00C853;">Active {status_emoji}</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ----------------------------
 # Main Application UI
@@ -408,281 +733,307 @@ else:
 
 # ---------- LOGIN PAGE ----------
 if not st.session_state.logged_in:
-    st.markdown('<div class="login-box">', unsafe_allow_html=True)
+    st.markdown('<div class="login-medical-box">', unsafe_allow_html=True)
     
-    # Login Header
+    # Medical Login Header
     st.markdown("""
     <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="color: white; margin-bottom: 5px;">🔐 Login</h2>
-        <p style="color: rgba(255,255,255,0.8);">Enter your credentials</p>
+        <div style="font-size: 50px; margin-bottom: 10px;">💊 🩺</div>
+        <h2 style="color: white; margin-bottom: 5px;">Pharmaceutical Access</h2>
+        <p style="color: rgba(255,255,255,0.8);">Medical Dashboard Login</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Input fields
-    u = st.text_input("", placeholder="👤 Username")
-    p = st.text_input("", type="password", placeholder="🔒 Password")
+    # Input fields with medical icons
+    u = st.text_input("", placeholder="👤 Medical ID / Username")
+    p = st.text_input("", type="password", placeholder="🔒 Secure Password")
     
-    # Login button with special styling
-    st.markdown('<div class="login-btn">', unsafe_allow_html=True)
-    if st.button("🚀 Login to Dashboard"):
+    # Medical-themed login button
+    if st.button("💉 Access Dashboard", use_container_width=True):
         if u and p:
             if login(u, p):
-                # Show welcome animation
-                show_welcome_animation(u)
+                # Show medical animations
+                show_medical_welcome(u)
+                st.session_state.medical_animation_shown = True
+                time.sleep(2)
                 st.rerun()
             else:
-                st.error("❌ Wrong Username Or Password")
+                st.error("❌ Invalid Medical Credentials")
         else:
-            st.warning("⚠ Please enter both username and password")
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.warning("⚠️ Please enter both credentials")
     
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- DASHBOARD (Logged In) ----------
 else:
-    # Display welcome message only once
-    if not st.session_state.welcome_shown:
-        st.markdown(f"""
-        <div class="slide-in">
-            <div class="welcome-message">
-                <h2>👋 Hello {st.session_state.username} Team!</h2>
-                <p>🌟 Welcome to Daily Sales Dashboard</p>
-                <div style="margin-top: 10px; font-size: 1.5rem;">
-                    📊 🚀 💼
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
+    # Show medical navigation buttons
     top_right_buttons()
+    
+    # Show medical welcome message
+    show_medical_welcome_message()
     
     # ----- DASHBOARD PAGE -----
     if st.session_state.current_page == "dashboard":
-        st.subheader("📊 Daily Sales Dashboard")
+        # Medical stats cards
+        show_medical_stats()
         
+        st.markdown('<h3 class="medical-header">📊 Pharmaceutical Sales Dashboard</h3>', unsafe_allow_html=True)
+        
+        # Get available data
         folders = get_current_month_folders()
         
         if folders:
-            selected_day = folders[0]
-            st.markdown(f"### 📅 Date: {selected_day}")
-        else:
-            st.warning("No available dates.")
-            selected_day = None
-        
-        # ----- ADMIN DASHBOARD -----
-        if st.session_state.user_role == "Admin":
-            st.markdown("---")
-            st.subheader("👨‍💼 Admin Dashboard")
-            
-            # File upload section
-            uploaded_files = st.file_uploader(
-                "📤 Upload Excel Files", 
-                type=["xlsx","xls"], 
-                accept_multiple_files=True,
-                help="Upload daily sales Excel files"
+            selected_day = st.selectbox(
+                "📅 Select Medical Report Date:",
+                folders,
+                format_func=lambda x: f"📅 {x}",
+                index=0
             )
             
-            if uploaded_files:
-                today_folder = os.path.join(BASE_PATH, datetime.today().strftime("%Y-%m-%d"))
-                os.makedirs(today_folder, exist_ok=True)
-                
-                success_count = 0
-                for file in uploaded_files:
-                    with open(os.path.join(today_folder, file.name), "wb") as f:
-                        f.write(file.getbuffer())
-                    success_count += 1
-                
-                st.success(f"✅ {success_count} file(s) uploaded successfully!")
-                st.balloons()
-            
-            st.markdown("---")
-            
-            # File management section
-            if selected_day:
-                folder_path = os.path.join(BASE_PATH, selected_day)
-                st.subheader("📁 File Management")
-                
-                if os.path.exists(folder_path):
-                    files = os.listdir(folder_path)
-                    if files:
-                        for file in files:
-                            path = os.path.join(folder_path, file)
-                            c1, c2, c3 = st.columns([4,1,1])
-                            
-                            with c1:
-                                st.write(f"📄 {file}")
-                            
-                            with c2:
-                                if st.button("🗑️", key=f"del_{file}"):
-                                    os.remove(path)
-                                    st.warning(f"❌ File '{file}' deleted successfully")
-                                    time.sleep(1)
-                                    st.rerun()
-                            
-                            with c3:
-                                with open(path, "rb") as f:
-                                    st.download_button(
-                                        "⬇️ Download",
-                                        f,
-                                        file_name=file,
-                                        key=f"download_{file}"
-                                    )
-                    else:
-                        st.info("📭 No files in this folder yet.")
-                else:
-                    st.info("📁 Folder doesn't exist yet.")
-        
-        # ----- USER DASHBOARD -----
-        else:
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
                 
-                if os.path.exists(folder_path):
-                    allowed_files = [
-                        f for f in os.listdir(folder_path)
-                        if st.session_state.user_role == "AllViewer"
-                        or is_file_for_user(f, st.session_state.username)
-                    ]
+                # ----- ADMIN DASHBOARD -----
+                if st.session_state.user_role == "Admin":
+                    st.markdown("---")
+                    st.markdown('<h3 class="medical-header">👨‍⚕️ Admin Controls</h3>', unsafe_allow_html=True)
                     
-                    if allowed_files:
-                        st.markdown("### 📥 Download Your Files")
-                        chosen = st.selectbox(
-                            "Select a file:",
-                            allowed_files,
-                            format_func=lambda x: f"📄 {x}"
+                    # File upload section with medical theme
+                    with st.expander("💾 Upload Medical Reports", expanded=True):
+                        uploaded_files = st.file_uploader(
+                            "Select medical report files", 
+                            type=["xlsx","xls"], 
+                            accept_multiple_files=True,
+                            key="medical_uploader"
                         )
                         
-                        if chosen:
-                            path = os.path.join(folder_path, chosen)
-                            with open(path, "rb") as f:
-                                file_bytes = f.read()
-                            
-                            col1, col2 = st.columns([3,1])
-                            with col1:
-                                st.info(f"Selected: **{chosen}**")
-                            with col2:
-                                st.download_button(
-                                    "🔽 Download File",
-                                    data=file_bytes,
-                                    file_name=chosen,
-                                    key="user_download"
-                                )
+                        if uploaded_files:
+                            if st.button("💊 Upload Medical Reports", type="primary", use_container_width=True):
+                                today_folder = os.path.join(BASE_PATH, selected_day)
+                                os.makedirs(today_folder, exist_ok=True)
+                                
+                                success_count = 0
+                                for file in uploaded_files:
+                                    with open(os.path.join(today_folder, file.name), "wb") as f:
+                                        f.write(file.getbuffer())
+                                    success_count += 1
+                                
+                                # Show prescription animation on successful upload
+                                show_prescription_animation()
+                                st.success(f"✅ {success_count} medical report(s) uploaded!")
+                                time.sleep(2)
+                                st.rerun()
+                    
+                    # File management section
+                    st.markdown("---")
+                    st.markdown('<h3 class="medical-header">📁 Medical Report Management</h3>', unsafe_allow_html=True)
+                    
+                    if os.path.exists(folder_path):
+                        files = os.listdir(folder_path)
+                        if files:
+                            for file in files:
+                                path = os.path.join(folder_path, file)
+                                with st.container():
+                                    st.markdown(f"""
+                                    <div class="medical-card">
+                                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div>
+                                                <span style="font-size: 20px;">📄</span>
+                                                <strong style="margin-left: 10px;">{file}</strong>
+                                            </div>
+                                            <div>
+                                                <button onclick="showMedicineDrop()" style="
+                                                    background: #26d0ce;
+                                                    color: white;
+                                                    border: none;
+                                                    padding: 5px 10px;
+                                                    border-radius: 5px;
+                                                    margin-right: 10px;
+                                                    cursor: pointer;
+                                                ">Preview</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    """, unsafe_allow_html=True)
+                                    
+                                    col1, col2 = st.columns([1, 1])
+                                    with col1:
+                                        with open(path, "rb") as f:
+                                            st.download_button(
+                                                "📥 Download Report",
+                                                f,
+                                                file_name=file,
+                                                use_container_width=True
+                                            )
+                                    with col2:
+                                        if st.button("🗑️ Delete", key=f"del_{file}", use_container_width=True):
+                                            os.remove(path)
+                                            st.warning(f"Deleted: {file}")
+                                            show_medicine_drop()
+                                            time.sleep(1)
+                                            st.rerun()
+                        else:
+                            st.info("📭 No medical reports available for this date.")
                     else:
-                        st.warning("📭 No files available for your team yet.")
+                        st.info("📁 No reports folder found for this date.")
+                
+                # ----- USER DASHBOARD -----
                 else:
-                    st.warning("📁 No data available for this date.")
+                    st.markdown("---")
+                    
+                    if os.path.exists(folder_path):
+                        allowed_files = [
+                            f for f in os.listdir(folder_path)
+                            if st.session_state.user_role == "AllViewer"
+                            or is_file_for_user(f, st.session_state.username)
+                        ]
+                        
+                        if allowed_files:
+                            st.markdown('<h3 class="medical-header">📋 Your Medical Reports</h3>', unsafe_allow_html=True)
+                            
+                            # Display files in medical cards
+                            for file in allowed_files:
+                                with st.container():
+                                    path = os.path.join(folder_path, file)
+                                    with open(path, "rb") as f:
+                                        file_bytes = f.read()
+                                    
+                                    st.markdown(f"""
+                                    <div class="medical-card">
+                                        <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                            <span style="font-size: 24px; margin-right: 15px;">💊</span>
+                                            <div>
+                                                <h4 style="margin: 0; color: white;">{file}</h4>
+                                                <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 0.9rem;">
+                                                    📅 {selected_day} | 👤 {st.session_state.username}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    """, unsafe_allow_html=True)
+                                    
+                                    if st.download_button(
+                                        "📥 Download Medical Report",
+                                        data=file_bytes,
+                                        file_name=file,
+                                        use_container_width=True,
+                                        key=f"dl_{file}"
+                                    ):
+                                        # Show animation when downloading
+                                        show_medicine_drop()
+                        else:
+                            st.warning("📭 No medical reports available for your department.")
+                    else:
+                        st.warning("📁 No medical data available for this date.")
+        else:
+            st.info("📅 No medical reports available for current month.")
     
     # ----- FEEDBACK PAGE -----
     elif st.session_state.current_page == "feedback":
-        st.subheader("💬 Feedback Inbox")
+        st.markdown('<h3 class="medical-header">💬 Pharmaceutical Feedback</h3>', unsafe_allow_html=True)
         
         if st.session_state.user_role == "Admin":
             df = load_feedback()
             if not df.empty:
-                st.markdown(f"### 📋 Total Feedback: {len(df)}")
+                st.markdown(f"### 📋 Total Feedback Records: {len(df)}")
                 
-                # Add filters for admin
-                col1, col2 = st.columns(2)
-                with col1:
-                    users_filter = st.multiselect(
-                        "Filter by user:",
-                        df['username'].unique()
-                    )
-                
-                if users_filter:
-                    df = df[df['username'].isin(users_filter)]
-                
-                # Display feedback
-                df_sorted = df.sort_values("datetime", ascending=False)
-                for idx, row in df_sorted.iterrows():
+                # Display feedback in medical cards
+                for idx, row in df.sort_values("datetime", ascending=False).iterrows():
                     with st.container():
                         st.markdown(f"""
-                        <div style="background: rgba(255,255,255,0.1);
-                                    padding: 15px;
-                                    border-radius: 10px;
-                                    margin-bottom: 10px;
-                                    border-left: 4px solid #00c6ff;">
-                            <p><strong>👤 {row['username']}</strong></p>
-                            <p>{row['comment']}</p>
-                            <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
-                                📅 {row['datetime']}
-                            </p>
+                        <div class="medical-card">
+                            <div style="display: flex; align-items: start;">
+                                <span style="font-size: 24px; margin-right: 15px;">👤</span>
+                                <div style="flex: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <strong style="color: #26d0ce;">{row['username']}</strong>
+                                        <small style="opacity: 0.7;">{row['datetime']}</small>
+                                    </div>
+                                    <p style="margin-top: 10px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px;">
+                                        {row['comment']}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                         """, unsafe_allow_html=True)
             else:
-                st.info("📭 No feedback yet.")
+                st.info("📭 No feedback records yet.")
         else:
-            # User feedback submission
-            st.markdown("### 📝 Share Your Feedback")
-            
-            with st.form("feedback_form"):
+            # Medical feedback form
+            with st.form("medical_feedback", clear_on_submit=True):
+                st.markdown("### 📝 Medical Feedback Form")
+                
+                feedback_type = st.selectbox(
+                    "Type of Feedback:",
+                    ["Medication Report", "System Issue", "Data Accuracy", "Feature Request", "Other"]
+                )
+                
                 comment = st.text_area(
-                    "Your message:",
-                    placeholder="Type your feedback, suggestions, or issues here...",
+                    "Details:",
+                    placeholder="Describe your feedback regarding pharmaceutical data...",
                     height=150
                 )
                 
-                submit = st.form_submit_button("📤 Submit Feedback")
-                
-                if submit:
+                if st.form_submit_button("💊 Submit Medical Feedback", use_container_width=True):
                     if comment.strip():
-                        add_feedback(st.session_state.username, comment.strip())
-                        st.success("✅ Feedback submitted successfully! Thank you! 🌟")
-                        time.sleep(1.5)
+                        full_comment = f"[{feedback_type}] {comment}"
+                        add_feedback(st.session_state.username, full_comment)
+                        st.success("✅ Thank you for your medical feedback! 🩺")
+                        show_prescription_animation()
+                        time.sleep(2)
                         st.session_state.current_page = "dashboard"
                         st.rerun()
                     else:
-                        st.warning("⚠ Please write something before submitting.")
+                        st.warning("⚠️ Please provide feedback details.")
     
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
-        st.subheader("ℹ️ About Us")
+        st.markdown('<h3 class="medical-header">🩺 Pharmaceutical Dashboard</h3>', unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: rgba(255,255,255,0.1);
-                    padding: 25px;
-                    border-radius: 15px;
-                    margin-top: 20px;">
-            <h3 style="color: #00c6ff;">👨‍💼 Our Team</h3>
-            <p>• <strong>Ahmed</strong> – Admin</p>
-            <p>• <strong>CHC Team</strong> – Sales Operations</p>
-            <p>• <strong>CNS Teams</strong> – Central Nervous System Division</p>
-            <p>• <strong>GIT Teams</strong> – Gastrointestinal Division</p>
-            <p>• <strong>Primary Care</strong> – General Medicine</p>
-            <p>• <strong>CVM</strong> – Cardiovascular Division</p>
-            <p>• <strong>Power Team</strong> – Special Operations</p>
-            <p>• And more dedicated professionals...</p>
+        <div class="medical-card">
+            <h4 style="color: #26d0ce; margin-bottom: 15px;">💊 About This System</h4>
+            <p>Advanced pharmaceutical sales management system designed for medical teams.</p>
             
-            <h3 style="color: #00c6ff; margin-top: 30px;">🎯 Description</h3>
-            <p>This dashboard is designed to manage daily sales files and feedback efficiently across all teams. 
-            It provides secure access, easy file management, and a streamlined communication system.</p>
+            <h5 style="color: #26d0ce; margin-top: 20px;">🏥 Medical Departments</h5>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 15px 0;">
+                <div><span style="color: #FF5252;">•</span> CNS - Neuroscience</div>
+                <div><span style="color: #FF5252;">•</span> GIT - Gastroenterology</div>
+                <div><span style="color: #FF5252;">•</span> CVM - Cardiology</div>
+                <div><span style="color: #FF5252;">•</span> Orthopedics</div>
+                <div><span style="color: #FF5252;">•</span> Primary Care</div>
+                <div><span style="color: #FF5252;">•</span> Special Teams</div>
+            </div>
             
-            <h3 style="color: #00c6ff; margin-top: 30px;">📈 Features</h3>
-            <p>✅ Secure login system with role-based access</p>
-            <p>✅ Daily sales file management</p>
-            <p>✅ Feedback collection system</p>
-            <p>✅ Admin controls for file management</p>
-            <p>✅ Mobile-responsive design</p>
+            <h5 style="color: #26d0ce; margin-top: 20px;">✨ Medical Features</h5>
+            <p>✅ Secure pharmaceutical data access</p>
+            <p>✅ Medical report management</p>
+            <p>✅ Department-specific views</p>
+            <p>✅ HIPAA-compliant design</p>
+            <p>✅ Medical feedback system</p>
             
-            <div style="margin-top: 30px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
-                <p style="text-align: center; margin: 0;">
-                    🚀 <strong>Streamlining sales operations since 2024</strong>
-                </p>
+            <div style="margin-top: 25px; padding: 15px; background: rgba(38, 208, 206, 0.1); border-radius: 10px;">
+                <div style="text-align: center;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">💊 🩺 🌡️</div>
+                    <p style="margin: 0; font-size: 1.1rem;">
+                        <strong>Improving Healthcare Through Data</strong>
+                    </p>
+                    <p style="margin: 5px 0 0 0; opacity: 0.8;">Version 2.0 • Medical Edition</p>
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
 # ----------------------------
-# Footer
+# Medical Footer
 # ----------------------------
 if st.session_state.logged_in:
     st.markdown("---")
     st.markdown("""
-    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 20px;">
-        <p>📊 Daily Sales Dashboard v1.0 | © 2024 All Rights Reserved</p>
-        <p>👤 Logged in as: <strong>{username}</strong> | Role: <strong>{role}</strong></p>
+    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
+        <p>💊 Pharmaceutical Dashboard v2.0 • Medical Data System • © 2024</p>
+        <p style="font-size: 0.8rem; opacity: 0.5; margin-top: 5px;">
+            🩺 Secure • Compliant • Reliable
+        </p>
     </div>
-    """.format(
-        username=st.session_state.username,
-        role=st.session_state.user_role
-    ), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
