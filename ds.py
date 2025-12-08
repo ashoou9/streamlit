@@ -353,7 +353,7 @@ else:
             st.warning("No available dates.")
             selected_day = None
 
-        plot_total_ach_chart(selected_day)  # إضافة Chart هنا
+        plot_total_ach_pie(selected_day)  # إضافة Chart هنا
 
         if st.session_state.user_role == "Admin":
 
