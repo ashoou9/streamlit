@@ -248,25 +248,7 @@ def logout():
     st.session_state.username = None
     st.session_state.current_page = "dashboard"
 
-# ----------------------------
-# Navigation Buttons (Top-Right)
-# ----------------------------
-def top_right_buttons():
-    with st.container():
-        col_space, col1, col2, col3 = st.columns([6,2,2,2])
 
-        with col1:
-            if st.button("💬 Feedback Inbox"):
-                st.session_state.current_page = "feedback"
-
-        with col2:
-            if st.button("ℹ About Us"):
-                st.session_state.current_page = "about"
-
-        with col3:
-            if st.button("🔴 Logout"):
-                logout()
-                st.rerun()
 
 
 # ----------------------------
@@ -276,6 +258,24 @@ if not st.session_state.logged_in:
     set_bg_local("data/Untitled.png", True)
 else:
     set_bg_local("data/Untitled.png", False)
+
+    def top_right_buttons():
+        with st.container():
+            col_space, col1, col2, col3 = st.columns([6,2,2,2])
+
+            with col1:
+                if st.button("💬 Feedback Inbox"):
+                    st.session_state.current_page = "feedback"
+
+            with col2:
+                if st.button("ℹ About Us"):
+                    st.session_state.current_page = "about"
+
+            with col3:
+                if st.button("🔴 Logout"):
+                    logout()
+                    st.rerun()
+
 
 # ---------- LOGIN ----------
 if not st.session_state.logged_in:
