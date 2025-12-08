@@ -21,7 +21,9 @@ def set_bg_local(image_file, login_page=True):
     with open(image_file, "rb") as f:
         img_bytes = f.read()
     b64 = base64.b64encode(img_bytes).decode()
+
     padding_top = "105px" if login_page else "210px"
+
     page_bg_img = f"""
     <style>
     html, body {{
@@ -31,14 +33,17 @@ def set_bg_local(image_file, login_page=True):
         padding: 0;
         overflow-x: hidden;
     }}
+
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
         background-size: cover;
     }}
+
     [data-testid="stAppViewContainer"] {{
         padding-top: {padding_top} !important;
         margin: 0 !important;
     }}
+
     .block-container {{
         padding-top: 2rem !important;
         padding-left: 30rem !important;
@@ -46,10 +51,12 @@ def set_bg_local(image_file, login_page=True):
         padding-bottom: 100px !important;
         max-width: 100% !important;
     }}
+
     header, footer {{
         visibility: hidden !important;
         height: 0px;
     }}
+
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 160px !important;
@@ -62,24 +69,6 @@ def set_bg_local(image_file, login_page=True):
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
-
-# ----------------------------
-# Login + Dashboard UI Style
-# ----------------------------
-st.markdown("""
-<style>
-.login-box { background: rgba(0,0,0,0); width:420px; max-width:90%; padding:35px; border-radius:18px; text-align:center; margin:60px auto 0 auto;}
-.stTextInput > div > div > input {text-align:left; font-size:16px; padding:10px; color:black !important; border-radius:8px;}
-label[data-baseweb="label"], .stSelectbox label, .stFileUploader label, .stTextInput label, .stDateInput label {color:white !important; font-weight:bold !important;}
-h1, h2, h3, h4, h5, h6, .stSubheader, div[data-testid="stMarkdownContainer"] p, div[data-testid="stText"] {color:white !important; font-weight:bold !important;}
-input::placeholder {color: rgba(0,0,0,0.6) !important;}
-.stButton > button {width:100%; border-radius:10px; height:45px; font-size:16px; background: linear-gradient(90deg, #0072ff, #00c6ff); color:white; border:none;}
-.stButton > button:hover {background: linear-gradient(90deg, #0051cc, #0099cc); transform: scale(1.02); transition:0.2s;}
-.stDownloadButton button {color:white !important; background: linear-gradient(90deg, #0072ff, #00c6ff); border-radius:10px; height:45px; font-size:16px;}
-.stDownloadButton button:hover {background: linear-gradient(90deg, #0051cc, #0099cc); transform: scale(1.02); color:white !important;}
-@media only screen and (max-width:768px){.login-box{width:90%; padding:25px; margin-top:60px;}}
-</style>
-""", unsafe_allow_html=True)
 
 # ----------------------------
 # Users Database
@@ -112,13 +101,16 @@ if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-    st.session_state.current_page = "dashboard"
+    st.session_state.page = "dashboard"  # default page
 
 # ----------------------------
 # Paths
 # ----------------------------
 BASE_PATH = "data"
 FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
+os.makedirs(BASE_PATH, exist_ok=True)
+if not os.path.exists(FEEDBACK_FILE):
+    pd.DataFrame(columns=["User","Date","Feedback"]).to_csv(FEEDBACK_FILE, index=False)
 
 # ----------------------------
 # Helpers
@@ -134,16 +126,12 @@ def is_file_for_user(filename, username):
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in p.strip() for p in parts)
 
-# ----------------------------
-# Login / Logout Logic
-# ----------------------------
 def login(username, password):
     for key, data in users.items():
         if username.lower() == key.lower() and password == data["password"]:
             st.session_state.logged_in = True
             st.session_state.user_role = data["role"]
             st.session_state.username = key
-            st.session_state.current_page = "dashboard"
             return True
     return False
 
@@ -151,11 +139,11 @@ def logout():
     st.session_state.logged_in = False
     st.session_state.user_role = None
     st.session_state.username = None
-    st.session_state.current_page = "dashboard"
+    st.session_state.page = "dashboard"
     st.experimental_rerun()
 
 # ----------------------------
-# UI
+# UI Setup
 # ----------------------------
 if not st.session_state.logged_in:
     set_bg_local("data/Untitled.png", True)
@@ -174,64 +162,24 @@ if not st.session_state.logged_in:
             st.error("❌ Wrong Username Or Password")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# ---------- DASHBOARD / Pages ----------
+# ---------- DASHBOARD / Other Pages ----------
 else:
+    # ---------- Top Right Buttons ----------
+    top_col1, top_col2, top_col3 = st.columns([1,1,1])
+    with top_col1:
+        if st.button("🔴 Logout"):
+            logout()
+    with top_col2:
+        if st.button("ℹ️ About Us"):
+            st.session_state.page = "about"
+            st.experimental_rerun()
+    with top_col3:
+        if st.button("📥 Feedback Inbox"):
+            st.session_state.page = "feedback"
+            st.experimental_rerun()
 
-    # ---------- Floating Top-Right Buttons ----------
-    st.markdown("""
-    <div style="
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 9999;
-        display: flex;
-        gap: 10px;
-    ">
-        <form>
-            <button onclick="window.parent.postMessage({isFeedback:true}, '*')" style="
-                width: 130px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #0072ff, #00c6ff);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">💬 Feedback Inbox</button>
-        </form>
-        <form>
-            <button onclick="window.parent.postMessage({isAbout:true}, '*')" style="
-                width: 100px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #00c6ff, #0072ff);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">ℹ About Us</button>
-        </form>
-        <form>
-            <button onclick="window.location.reload();" style="
-                width: 100px;
-                height: 40px;
-                border-radius: 12px;
-                font-size: 14px;
-                font-weight: bold;
-                background: linear-gradient(90deg, #ff4b4b, #ff0000);
-                color: white;
-                border: none;
-                cursor: pointer;
-            ">🔴 Logout</button>
-        </form>
-    </div>
-    """, unsafe_allow_html=True)
-
-    # ---------- Page Navigation ----------
-    # Dashboard Page
-    if st.session_state.current_page == "dashboard":
+    # ---------- Page Routing ----------
+    if st.session_state.page == "dashboard":
         st.subheader("👤 Daily Sales Dashboard")
         folders = get_current_month_folders()
         if folders:
@@ -285,35 +233,29 @@ else:
                 else:
                     st.warning("No files for your line.")
 
-    # Feedback Page
-    elif st.session_state.current_page == "feedback":
-        st.subheader("💬 Feedback Inbox")
-        if not os.path.exists(FEEDBACK_FILE):
-            pd.DataFrame(columns=["timestamp","username","message"]).to_csv(FEEDBACK_FILE, index=False)
-        df = pd.read_csv(FEEDBACK_FILE)
-        st.write(df)
-        if st.button("Back to Dashboard"):
-            st.session_state.current_page = "dashboard"
-            st.experimental_rerun()
-
-    # About Page
-    elif st.session_state.current_page == "about":
-        st.subheader("ℹ About Us")
-        st.markdown("""
-        **Team:** Daily Sales Dashboard Team  
-        **Version:** 1.0  
-        **Description:** Dashboard to upload, download and track daily sales files.
+    elif st.session_state.page == "about":
+        st.subheader("ℹ️ About Us")
+        st.write("""
+        **Team:** CHC Sales Analytics  
+        **Members:** Ahmed, CNS Teams, GIT Teams, etc.  
+        **Purpose:** Daily sales dashboard to monitor and download line-specific files.
         """)
-        if st.button("Back to Dashboard"):
-            st.session_state.current_page = "dashboard"
+        if st.button("⬅ Back to Dashboard"):
+            st.session_state.page = "dashboard"
             st.experimental_rerun()
 
-# ---------- JavaScript listener for buttons ----------
-st.components.v1.html("""
-<script>
-window.addEventListener('message', event => {
-    if(event.data.isFeedback){window.parent.location.href = window.parent.location.href + '#feedback';}
-    if(event.data.isAbout){window.parent.location.href = window.parent.location.href + '#about';}
-});
-</script>
-""", height=0)
+    elif st.session_state.page == "feedback":
+        st.subheader("📥 Feedback Inbox")
+        st.write("Submit your feedback below:")
+        feedback_text = st.text_area("Your Feedback")
+        if st.button("Submit Feedback"):
+            if feedback_text.strip():
+                df = pd.read_csv(FEEDBACK_FILE)
+                df.loc[len(df)] = [st.session_state.username, datetime.now().strftime("%Y-%m-%d %H:%M"), feedback_text]
+                df.to_csv(FEEDBACK_FILE, index=False)
+                st.success("✅ Feedback submitted successfully!")
+            else:
+                st.warning("Please enter some feedback before submitting.")
+        if st.button("⬅ Back to Dashboard"):
+            st.session_state.page = "dashboard"
+            st.experimental_rerun()
