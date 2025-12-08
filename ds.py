@@ -914,7 +914,6 @@ else:
             <div class="custom-card">
                 <h3 style="color: #00c6ff;">🎯 Mission</h3>
                 <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
-                
                 <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
                 <p>• <strong>Admin</strong> - Full system control</p>
                 <p>• <strong>CHC</strong> - Healthcare Division</p>
