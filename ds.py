@@ -923,7 +923,6 @@ else:
                 <p>• <strong>CVM</strong> - Cardiology Division</p>
                 <p>• <strong>Power Team</strong> - Special Operations</p>
                 <p>• <strong>All Teams</strong> - Comprehensive access</p>
-                
                 <h3 style="color: #00c6ff; margin-top: 20px;">✨ Features</h3>
                 <p>✅ Secure role-based access</p>
                 <p>✅ Daily file management</p>
