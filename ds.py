@@ -929,7 +929,6 @@ else:
                 <p>✅ Feedback system</p>
                 <p>✅ Mobile responsive</p>
                 <p>✅ Real-time updates</p>
-                
                 <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
                     <p style="text-align: center; margin: 0; font-size: 1.1rem;">
                         🚀 <strong>Empowering Teams Since 2024</strong>
