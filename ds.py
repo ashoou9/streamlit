@@ -303,15 +303,17 @@ def plot_total_ach_pie(selected_day):
     })
 
     chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
-        theta=alt.Theta(field="Value", type="quantitative"),
-        color=alt.Color(field="Category", type="nominal", scale=alt.Scale(range=["#00c6ff", "#d3d3d3"])),
-        tooltip=["Category", "Value"]
-    ).properties(
-        title="📊 Total Ach %",
-         background=None
-    )
-
-    st.altair_chart(chart, use_container_width=False, width=270, height=170)
+    theta=alt.Theta(field="Value", type="quantitative"),
+    color=alt.Color(field="Category", type="nominal", scale=alt.Scale(range=["#00c6ff", "#d3d3d3"])),
+    tooltip=["Category", "Value"]
+).properties(
+    title="📊 Total Ach Pie Chart",
+    width=300,
+    height=300,
+    background=None  # هنا نخلي الخلفية شفافة
+).configure_view(
+    fill=None  # برضه للتأكد من الشفافية
+)
 
 
 # ----------------------------
