@@ -6,7 +6,6 @@ import pandas as pd
 from datetime import datetime, date
 import re
 import base64
-import altair as alt
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -266,55 +265,6 @@ def top_right_buttons():
             st.rerun()
 
 # ----------------------------
-# Total Ach Pie Chart
-# ----------------------------
-def plot_total_ach_pie(selected_day):
-    if not selected_day:
-        return
-
-    folder_path = os.path.join(BASE_PATH, selected_day)
-
-    # تحديد الشيت حسب ال role
-    if st.session_state.user_role in ["AllViewer", "Admin", "managers"]:
-        all_files = [f for f in os.listdir(folder_path) if "all" in f.lower()]
-        if not all_files:
-            st.warning("No 'All' file found for Total Ach")
-            return
-        file_path = os.path.join(folder_path, all_files[0])
-    else:
-        user_files = [f for f in os.listdir(folder_path) if is_file_for_user(f, st.session_state.username)]
-        if not user_files:
-            st.warning("No file found for your line for Total Ach")
-            return
-        file_path = os.path.join(folder_path, user_files[0])
-
-    df = pd.read_excel(file_path)
-
-    if "Total Ach" not in df.columns:
-        st.warning("Column 'Total Ach' not found in the file")
-        return
-
-    # الرقم النهائي كما هو
-    total_ach_value = df["Total Ach"].iloc[-1]
-
-    chart_data = pd.DataFrame({
-        "Category": ["Achieved", "Remaining"],
-        "Value": [total_ach_value, max(0, 100-total_ach_value)]
-    })
-
-    chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
-        theta=alt.Theta(field="Value", type="quantitative"),
-        color=alt.Color(field="Category", type="nominal", scale=alt.Scale(range=["#00c6ff", "#d3d3d3"])),
-        tooltip=["Category", "Value"]
-    ).properties(
-        title="📊 Total Ach %",
-         background=None
-    )
-
-    st.altair_chart(chart, use_container_width=False, width=270, height=170)
-
-
-# ----------------------------
 # UI
 # ----------------------------
 if not st.session_state.logged_in:
@@ -354,9 +304,6 @@ else:
         else:
             st.warning("No available dates.")
             selected_day = None
-
-        # عرض Pie Chart للـ Total Ach
-        plot_total_ach_pie(selected_day)
 
         if st.session_state.user_role == "Admin":
 
