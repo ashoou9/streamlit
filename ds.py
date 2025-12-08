@@ -254,16 +254,14 @@ def logout():
 def top_right_buttons():
     st.markdown("""
     <style>
-    .stTopRight > div {
+    .stFloatingBtns {
         position: fixed;
         top: 10px;
         right: 10px;
-        display: flex;
-        gap: 8px;
         z-index: 9999;
     }
 
-    .stTopRight button {
+    .stFloatingBtns .stButton > button {
         background: linear-gradient(90deg, #0072ff, #00c6ff);
         color: white;
         border: none;
@@ -274,24 +272,29 @@ def top_right_buttons():
         cursor: pointer;
     }
 
-    .stTopRight button:hover {
+    .stFloatingBtns .stButton > button:hover {
         background: linear-gradient(90deg, #0051cc, #0099cc);
     }
     </style>
     """, unsafe_allow_html=True)
 
+    # container ثابت
     with st.container():
-        st.markdown('<div class="stTopRight">', unsafe_allow_html=True)
+        st.markdown('<div class="stFloatingBtns">', unsafe_allow_html=True)
+        c1, c2, c3 = st.columns([1,1,1])
 
-        if st.button("💬 Feedback", key="feedback_top"):
-            st.session_state.current_page = "feedback"
+        with c1:
+            if st.button("💬 Feedback", key="fb_btn"):
+                st.session_state.current_page = "feedback"
 
-        if st.button("ℹ About Us", key="about_top"):
-            st.session_state.current_page = "about"
+        with c2:
+            if st.button("ℹ About Us", key="about_btn"):
+                st.session_state.current_page = "about"
 
-        if st.button("🔴 Logout", key="logout_top"):
-            logout()
-            st.rerun()
+        with c3:
+            if st.button("🔴 Logout", key="logout_btn"):
+                logout()
+                st.rerun()
 
         st.markdown('</div>', unsafe_allow_html=True)
 
