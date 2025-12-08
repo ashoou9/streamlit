@@ -266,10 +266,9 @@ def top_right_buttons():
             st.rerun()
 
 # ----------------------------
-# Total Ach Chart
+# Total Ach Pie Chart
 # ----------------------------
 def plot_total_ach_pie(selected_day):
-
     if not selected_day:
         return
 
@@ -299,15 +298,16 @@ def plot_total_ach_pie(selected_day):
     total_ach_value = df["Total Ach"].iloc[-1]
 
     chart_data = pd.DataFrame({
-        "Metric": ["Total Ach"],
-        "Value": [total_ach_value]
+        "Category": ["Achieved", "Remaining"],
+        "Value": [total_ach_value, max(0, 100-total_ach_value)]
     })
 
-    chart = alt.Chart(chart_data).mark_bar(color="#00c6ff").encode(
-        x="Metric",
-        y="Value"
+    chart = alt.Chart(chart_data).mark_arc(innerRadius=50).encode(
+        theta=alt.Theta(field="Value", type="quantitative"),
+        color=alt.Color(field="Category", type="nominal", scale=alt.Scale(range=["#00c6ff", "#d3d3d3"])),
+        tooltip=["Category", "Value"]
     ).properties(
-        title="📊 Total Ach"
+        title="📊 Total Ach Pie Chart"
     )
 
     st.altair_chart(chart, use_container_width=True)
@@ -353,7 +353,8 @@ else:
             st.warning("No available dates.")
             selected_day = None
 
-        plot_total_ach_pie(selected_day)  # إضافة Chart هنا
+        # عرض Pie Chart للـ Total Ach
+        plot_total_ach_pie(selected_day)
 
         if st.session_state.user_role == "Admin":
 
