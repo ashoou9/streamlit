@@ -258,32 +258,40 @@ def top_right_buttons():
     .floating-btns {
         position: fixed;
         top: 15px;
-        right: 20px;
+        right: 15px;
         z-index: 9999;
         display: flex;
+        flex-direction: row;
         gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .floating-btns .stButton > button {
+        background: linear-gradient(90deg, #0072ff, #00c6ff);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 14px;
+        height: 38px;
     }
     </style>
     """, unsafe_allow_html=True)
 
     st.markdown('<div class="floating-btns">', unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1,1,1])
+    if st.button("💬 Feedback", key="fb_btn"):
+        st.session_state.current_page = "feedback"
 
-    with col1:
-        if st.button("💬 Feedback"):
-            st.session_state.current_page = "feedback"
+    if st.button("ℹ About Us", key="about_btn"):
+        st.session_state.current_page = "about"
 
-    with col2:
-        if st.button("ℹ About Us"):
-            st.session_state.current_page = "about"
-
-    with col3:
-        if st.button("🔴 Logout"):
-            logout()
-            st.rerun()
+    if st.button("🔴 Logout", key="logout_btn"):
+        logout()
+        st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ----------------------------
 # UI
