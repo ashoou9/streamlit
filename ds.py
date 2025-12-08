@@ -232,9 +232,9 @@ def logout():
 # UI
 # ----------------------------
 if not st.session_state.logged_in:
-    set_bg_local("data/background.png", True)
+    set_bg_local("data/Untitled.png", True)
 else:
-    set_bg_local("data/background.png", False)
+    set_bg_local("data/Untitled.png", False)
 
 # ---------- LOGIN ----------
 if not st.session_state.logged_in:
