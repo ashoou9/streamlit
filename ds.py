@@ -257,38 +257,41 @@ def top_right_buttons():
     <style>
     .floating-btns {
         position: fixed;
-        top: 15px;
-        right: 15px;
+        top: 10px;
+        right: 10px;
         z-index: 9999;
         display: flex;
         flex-direction: row;
-        gap: 10px;
-        justify-content: flex-end;
+        gap: 8px;
     }
 
-    .floating-btns .stButton > button {
+    .floating-btns button {
         background: linear-gradient(90deg, #0072ff, #00c6ff);
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 6px 14px;
-        font-size: 14px;
-        height: 38px;
+        border-radius: 7px;
+        padding: 4px 12px;
+        font-size: 13px;
+        height: 34px;
+        cursor: pointer;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="floating-btns">', unsafe_allow_html=True)
+    c1, c2, c3 = st.columns([1, 1, 1])
 
-    if st.button("💬 Feedback", key="fb_btn"):
-        st.session_state.current_page = "feedback"
+    with c1:
+        if st.button("💬 Feedback", key="fb_btn"):
+            st.session_state.current_page = "feedback"
 
-    if st.button("ℹ About Us", key="about_btn"):
-        st.session_state.current_page = "about"
+    with c2:
+        if st.button("ℹ About Us", key="about_btn"):
+            st.session_state.current_page = "about"
 
-    if st.button("🔴 Logout", key="logout_btn"):
-        logout()
-        st.rerun()
+    with c3:
+        if st.button("🔴 Logout", key="logout_btn"):
+            logout()
+            st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
