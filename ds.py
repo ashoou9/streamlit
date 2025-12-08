@@ -309,11 +309,13 @@ def plot_total_ach_pie(selected_day):
 ).properties(
     title="📊 Total Ach Pie Chart",
     width=300,
-    height=300,
-    background=None  # هنا نخلي الخلفية شفافة
+    height=300
 ).configure_view(
-    fill=None  # برضه للتأكد من الشفافية
+    fill=None  # ✅ الشفافية الحقيقية
+).configure_chart(
+    background='transparent'  # ✅ تاني ضمان لعدم ظهور أي خلفية
 )
+
 
 
 # ----------------------------
