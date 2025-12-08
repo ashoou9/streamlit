@@ -252,7 +252,6 @@ def logout():
 # Navigation Buttons (Top-Right)
 # ----------------------------
 def top_right_buttons():
-
     st.markdown("""
     <style>
     .floating-btns {
@@ -270,28 +269,36 @@ def top_right_buttons():
         color: white;
         border: none;
         border-radius: 7px;
-        padding: 4px 12px;
-        font-size: 13px;
-        height: 34px;
+        padding: 6px 12px;
+        font-size: 14px;
+        height: 36px;
         cursor: pointer;
     }
+
+    .floating-btns button:hover {
+        background: linear-gradient(90deg, #0051cc, #0099cc);
+    }
     </style>
+
+    <div class="floating-btns">
+        <button onclick="window._streamlit_feedback=true">💬 Feedback</button>
+        <button onclick="window._streamlit_about=true">ℹ About Us</button>
+        <button onclick="window._streamlit_logout=true">🔴 Logout</button>
+    </div>
     """, unsafe_allow_html=True)
 
-    c1, c2, c3 = st.columns([1, 1, 1])
+    # Python buttons linked to session_state
+    if st.session_state.get("_streamlit_feedback", False):
+        st.session_state.current_page = "feedback"
+        st.session_state["_streamlit_feedback"] = False
 
-    with c1:
-        if st.button("💬 Feedback", key="fb_btn"):
-            st.session_state.current_page = "feedback"
+    if st.session_state.get("_streamlit_about", False):
+        st.session_state.current_page = "about"
+        st.session_state["_streamlit_about"] = False
 
-    with c2:
-        if st.button("ℹ About Us", key="about_btn"):
-            st.session_state.current_page = "about"
-
-    with c3:
-        if st.button("🔴 Logout", key="logout_btn"):
-            logout()
-            st.rerun()
+    if st.session_state.get("_streamlit_logout", False):
+        logout()
+        st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
