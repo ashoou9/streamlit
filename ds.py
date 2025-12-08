@@ -254,17 +254,16 @@ def logout():
 def top_right_buttons():
     st.markdown("""
     <style>
-    .floating-btns {
+    .stTopRight > div {
         position: fixed;
         top: 10px;
         right: 10px;
-        z-index: 9999;
         display: flex;
-        flex-direction: row;
         gap: 8px;
+        z-index: 9999;
     }
 
-    .floating-btns button {
+    .stTopRight button {
         background: linear-gradient(90deg, #0072ff, #00c6ff);
         color: white;
         border: none;
@@ -275,32 +274,26 @@ def top_right_buttons():
         cursor: pointer;
     }
 
-    .floating-btns button:hover {
+    .stTopRight button:hover {
         background: linear-gradient(90deg, #0051cc, #0099cc);
     }
     </style>
-
-    <div class="floating-btns">
-        <button onclick="window._streamlit_feedback=true">💬 Feedback</button>
-        <button onclick="window._streamlit_about=true">ℹ About Us</button>
-        <button onclick="window._streamlit_logout=true">🔴 Logout</button>
-    </div>
     """, unsafe_allow_html=True)
 
-    # Python buttons linked to session_state
-    if st.session_state.get("_streamlit_feedback", False):
-        st.session_state.current_page = "feedback"
-        st.session_state["_streamlit_feedback"] = False
+    with st.container():
+        st.markdown('<div class="stTopRight">', unsafe_allow_html=True)
 
-    if st.session_state.get("_streamlit_about", False):
-        st.session_state.current_page = "about"
-        st.session_state["_streamlit_about"] = False
+        if st.button("💬 Feedback", key="feedback_top"):
+            st.session_state.current_page = "feedback"
 
-    if st.session_state.get("_streamlit_logout", False):
-        logout()
-        st.rerun()
+        if st.button("ℹ About Us", key="about_top"):
+            st.session_state.current_page = "about"
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        if st.button("🔴 Logout", key="logout_top"):
+            logout()
+            st.rerun()
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # ----------------------------
