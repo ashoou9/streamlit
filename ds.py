@@ -307,7 +307,7 @@ def plot_total_ach_pie(selected_day):
         color=alt.Color(field="Category", type="nominal", scale=alt.Scale(range=["#00c6ff", "#d3d3d3"])),
         tooltip=["Category", "Value"]
     ).properties(
-        title="📊 Total Ach Pie Chart"
+        title="📊 Total Ach %"
     )
 
     st.altair_chart(chart, use_container_width=False, width=300, height=150)
