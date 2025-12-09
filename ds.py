@@ -446,7 +446,7 @@ input::placeholder {
 # Users Database
 # ----------------------------
 users = {
-    "ahmed": {"password": "1001", "role": "Admin"},
+    "admin": {"password": "1001", "role": "Admin"},
     "CHC New": {"password": "1000", "role": "User"},
     "CNS 1": {"password": "0123", "role": "User"},
     "CNS 2": {"password": "9990", "role": "User"},
