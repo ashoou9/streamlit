@@ -1199,16 +1199,12 @@ else:
                                         {' replied to your feedback' if replied_by else ' posted new feedback'}</p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                         📅 {row['datetime']}
-                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}
-                                    </p>
+                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}</p>
                                 </div>
-                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
-                            </div>
-                            
+                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}</div>
                             <div class="comment-box">
                                 {str(row['comment'])}
                             </div>
-                            
                             {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
                         </div>
                     </div>
