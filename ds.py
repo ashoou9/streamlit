@@ -8,6 +8,7 @@ import re
 import base64
 import time
 import random
+import uuid
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -115,6 +116,23 @@ def set_bg_local(image_file, login_page=True):
 
     .fadeInUp {{
         animation: fadeInUp 0.8s ease-out;
+    }}
+
+    /* Notification badge */
+    .notification-badge {{
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #FF5252;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
     }}
 
     @media only screen and (max-width: 768px) {{
@@ -318,6 +336,27 @@ st.markdown("""
     animation: pulse 2s infinite !important;
 }
 
+/* Notification Card */
+.notification-card {
+    background: rgba(255,255,255,0.15) !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
+    margin-bottom: 15px !important;
+    border-left: 5px solid #FF9800 !important;
+    backdrop-filter: blur(10px) !important;
+    transition: all 0.3s ease !important;
+}
+
+.notification-card:hover {
+    background: rgba(255,255,255,0.2) !important;
+    transform: translateY(-2px) !important;
+}
+
+.notification-card.read {
+    border-left: 5px solid #4CAF50 !important;
+    opacity: 0.8;
+}
+
 /* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
@@ -385,6 +424,11 @@ input::placeholder {
     box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
 }
 
+/* BUTTON WITH NOTIFICATION BADGE */
+.notification-btn {
+    position: relative !important;
+}
+
 /* LOGIN BUTTON SPECIAL */
 .login-btn {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
@@ -420,6 +464,15 @@ input::placeholder {
     border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
     backdrop-filter: blur(10px) !important;
+}
+
+/* REPLY CARD */
+.reply-card {
+    background: rgba(0, 198, 255, 0.1) !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+    margin: 10px 0 15px 20px !important;
+    border-left: 3px solid #00c6ff !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -506,22 +559,106 @@ def is_file_for_user(filename, username):
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in p.strip() for p in parts)
 
-def add_feedback(username, comment):
-    """Add feedback to CSV file"""
+def add_feedback(username, comment, replied_to=None, replied_by=None):
+    """Add feedback to CSV file with notification support"""
     os.makedirs(BASE_PATH, exist_ok=True)
+    
     if os.path.exists(FEEDBACK_FILE):
         df = pd.read_csv(FEEDBACK_FILE)
     else:
-        df = pd.DataFrame(columns=["username","comment","datetime"])
-    df = pd.concat([df, pd.DataFrame([{"username": username,"comment":comment,"datetime":datetime.now()}])], ignore_index=True)
+        df = pd.DataFrame(columns=["id","username","comment","datetime","replied_to","replied_by","is_read"])
+    
+    # Generate unique ID
+    feedback_id = str(uuid.uuid4())[:8]
+    
+    new_feedback = {
+        "id": feedback_id,
+        "username": username,
+        "comment": comment,
+        "datetime": datetime.now(),
+        "replied_to": replied_to,  # من تم الرد عليه
+        "replied_by": replied_by,  # من قام بالرد
+        "is_read": False  # هل تم قراءة الإشعار
+    }
+    
+    df = pd.concat([df, pd.DataFrame([new_feedback])], ignore_index=True)
     df.to_csv(FEEDBACK_FILE, index=False)
+    
+    return feedback_id
 
 def load_feedback():
     """Load feedback from CSV file"""
     if os.path.exists(FEEDBACK_FILE):
-        return pd.read_csv(FEEDBACK_FILE)
+        df = pd.read_csv(FEEDBACK_FILE)
+        # Fill NaN values for new columns if CSV is old
+        if 'replied_to' not in df.columns:
+            df['replied_to'] = None
+        if 'replied_by' not in df.columns:
+            df['replied_by'] = None
+        if 'is_read' not in df.columns:
+            df['is_read'] = False
+        if 'id' not in df.columns:
+            df['id'] = [str(uuid.uuid4())[:8] for _ in range(len(df))]
+        return df
     else:
-        return pd.DataFrame(columns=["username","comment","datetime"])
+        return pd.DataFrame(columns=["id","username","comment","datetime","replied_to","replied_by","is_read"])
+
+def get_notifications(username):
+    """Get notifications for specific user"""
+    df = load_feedback()
+    
+    if df.empty:
+        return pd.DataFrame()
+    
+    # الحصول على الردود الموجهة لهذا المستخدم
+    user_notifications = df[
+        (df['replied_to'] == username) & 
+        (df['is_read'] == False)
+    ].copy()
+    
+    # الحصول على الردود على تعليقاته (إذا كان هو صاحب التعليق الأصلي)
+    user_comments = df[df['username'] == username]
+    for _, comment in user_comments.iterrows():
+        # البحث عن ردود على هذا التعليق
+        replies = df[(df['replied_to'] == comment['username']) & (df['id'] != comment['id'])]
+        user_notifications = pd.concat([user_notifications, replies], ignore_index=True)
+    
+    # إزالة التكرارات
+    user_notifications = user_notifications.drop_duplicates(subset=['id'])
+    
+    return user_notifications
+
+def get_unread_count(username):
+    """Get count of unread notifications"""
+    notifications = get_notifications(username)
+    return len(notifications)
+
+def mark_as_read(feedback_id):
+    """Mark notification as read"""
+    df = load_feedback()
+    
+    if not df.empty and 'id' in df.columns:
+        df.loc[df['id'] == feedback_id, 'is_read'] = True
+        df.to_csv(FEEDBACK_FILE, index=False)
+        return True
+    return False
+
+def mark_all_as_read(username):
+    """Mark all notifications as read for a user"""
+    df = load_feedback()
+    
+    if not df.empty:
+        # تحديث الردود الموجهة له
+        df.loc[df['replied_to'] == username, 'is_read'] = True
+        
+        # تحديث الردود على تعليقاته
+        user_comments = df[df['username'] == username]
+        for _, comment in user_comments.iterrows():
+            df.loc[df['replied_to'] == comment['username'], 'is_read'] = True
+        
+        df.to_csv(FEEDBACK_FILE, index=False)
+        return True
+    return False
 
 def show_login_animation(username):
     """Show animation during login"""
@@ -581,15 +718,32 @@ def logout():
 # ----------------------------
 def top_right_buttons():
     """Display navigation buttons at top-right"""
-    col1, col2, col3 = st.columns([1,1,1])
+    # حساب عدد الإشعارات غير المقروءة
+    unread_count = 0
+    if st.session_state.logged_in and st.session_state.current_page != "notifications":
+        unread_count = get_unread_count(st.session_state.username)
+    
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 0.5])
+    
     with col1:
         if st.button("💬 Feedback"):
             st.session_state.current_page = "feedback"
+    
     with col2:
+        # زر الإشعارات مع العداد
+        button_label = "🔔 Notifications"
+        if unread_count > 0:
+            button_label = f"🔔 ({unread_count}) Notifications"
+        
+        if st.button(button_label, key="notifications_btn"):
+            st.session_state.current_page = "notifications"
+    
+    with col3:
         if st.button("ℹ️ About"):
             st.session_state.current_page = "about"
-    with col3:
-        if st.button("🚪 Logout"):
+    
+    with col4:
+        if st.button("🚪"):
             logout()
             st.rerun()
 
@@ -613,7 +767,8 @@ def show_welcome_message():
             "Sildava": "🌟 Sildava Team",
             "Ortho": "🦴 Ortho Team - Orthopedics",
             "All": "👁️ All Viewer - Full Access",
-            "managers": "👨‍💼 Management View"
+            "managers": "👨‍💼 Management View",
+            "khalid": "👨‍💻 Developer View"
         }
         
         # Get appropriate message
@@ -633,16 +788,23 @@ def show_welcome_message():
             "DGU": "🔧",
             "DNU": "📊",
             "Sildava": "🌟",
-            "Ortho": "🦴"
+            "Ortho": "🦴",
+            "khalid": "👨‍💻"
         }
         
         emoji = team_emojis.get(username.split()[0] if ' ' in username else username, "👋")
+        
+        # عرض عدد الإشعارات غير المقروءة
+        unread_count = get_unread_count(username)
+        notification_badge = ""
+        if unread_count > 0 and st.session_state.current_page != "notifications":
+            notification_badge = f'<span style="background: #FF5252; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-size: 0.9rem;">{unread_count} new</span>'
         
         # Display welcome message
         st.markdown(f"""
         <div class="welcome-container">
             <div class="welcome-fixed">
-                <h3>{emoji} Hello {username} Team!</h3>
+                <h3>{emoji} Hello {username} Team! {notification_badge}</h3>
                 <p>{message}</p>
                 <div style="margin-top: 10px; font-size: 1.2rem;">
                     📅 {date.today().strftime('%B %d, %Y')}
@@ -722,10 +884,17 @@ else:
             """.format(role=st.session_state.user_role), unsafe_allow_html=True)
         
         with col3:
-            st.markdown("""
+            # عرض عدد الإشعارات غير المقروءة
+            unread_count = get_unread_count(st.session_state.username)
+            notification_text = f"{unread_count} unread" if unread_count > 0 else "All read"
+            badge_color = "#FF5252" if unread_count > 0 else "#4CAF50"
+            
+            st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">🚀 Status</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">Active ✅</p>
+                <h4 style="color: #00c6ff; margin: 0;">🔔 Notifications</h4>
+                <p style="font-size: 1.5rem; margin: 5px 0;">
+                    <span style="color: {badge_color};">{notification_text}</span>
+                </p>
             </div>
             """, unsafe_allow_html=True)
         
@@ -864,22 +1033,64 @@ else:
             if not df.empty:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
-                # Display feedback cards
+                # Display feedback cards with reply option
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
                     with st.container():
+                        # Determine card style based on reply status
+                        card_class = "notification-card" if pd.notna(row.get('replied_by')) else "custom-card"
+                        border_color = "#FF9800" if pd.notna(row.get('replied_by')) else "#00c6ff"
+                        
                         st.markdown(f"""
                         <div class="fadeInUp">
-                            <div class="custom-card">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <p><strong>👤 {row['username']}</strong></p>
-                                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
-                                        📅 {row['datetime']}
-                                    </p>
+                            <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">
+                                <div style="display: flex; justify-content: space-between; align-items: start;">
+                                    <div>
+                                        <p style="margin: 0; font-size: 1.1rem;">
+                                            <strong>👤 {row['username']}</strong>
+                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {row['replied_by']}</span>" if pd.notna(row.get('replied_by')) else ""}
+                                        </p>
+                                        <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                            📅 {row['datetime']}
+                                            {f" | 🔔 Unread" if not row.get('is_read', True) else ""}
+                                        </p>
+                                    </div>
+                                    <span style="background: #666; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">
+                                        ID: {row.get('id', 'N/A')}
+                                    </span>
                                 </div>
-                                <p style="margin-top: 10px;">{row['comment']}</p>
+                                
+                                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin: 10px 0;">
+                                    <p style="margin: 0; font-size: 1rem;">{row['comment']}</p>
+                                </div>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
+                        
+                        # Reply section for Admin only
+                        with st.expander(f"💬 Reply to {row['username']}", expanded=False):
+                            reply_text = st.text_area(
+                                "Your reply:",
+                                placeholder=f"Type your reply to {row['username']}...",
+                                key=f"reply_{row.get('id', idx)}",
+                                height=100
+                            )
+                            
+                            col1, col2 = st.columns([1, 4])
+                            with col1:
+                                if st.button("📤 Send Reply", key=f"send_{row.get('id', idx)}", type="primary"):
+                                    if reply_text.strip():
+                                        # Add reply as new feedback
+                                        add_feedback(
+                                            username=st.session_state.username,
+                                            comment=reply_text,
+                                            replied_to=row['username'],
+                                            replied_by=st.session_state.username
+                                        )
+                                        st.success(f"✅ Reply sent to {row['username']}!")
+                                        time.sleep(1)
+                                        st.rerun()
+                                    else:
+                                        st.warning("Please write a reply first.")
             else:
                 st.info("📭 No feedback yet.")
         else:
@@ -906,6 +1117,98 @@ else:
                 elif submit:
                     st.warning("⚠️ Please write something before submitting.")
     
+    # ----- NOTIFICATIONS PAGE -----
+    elif st.session_state.current_page == "notifications":
+        st.subheader("🔔 Your Notifications")
+        
+        notifications = get_notifications(st.session_state.username)
+        
+        if not notifications.empty:
+            # زر Mark All as Read
+            col1, col2 = st.columns([1, 4])
+            with col1:
+                if st.button("✅ Mark All as Read", type="primary"):
+                    if mark_all_as_read(st.session_state.username):
+                        st.success("All notifications marked as read!")
+                        time.sleep(0.5)
+                        st.rerun()
+            
+            st.markdown(f"### 📩 You have {len(notifications)} notification(s)")
+            
+            for idx, row in notifications.sort_values("datetime", ascending=False).iterrows():
+                with st.container():
+                    # تحديد إذا كان الرد جديداً
+                    is_new = not row.get('is_read', False)
+                    
+                    st.markdown(f"""
+                    <div class="fadeInUp">
+                        <div class="{'notification-card' if is_new else 'notification-card read'}">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="margin: 0; font-size: 1.1rem;">
+                                        <strong>👤 {row['replied_by'] if pd.notna(row.get('replied_by')) else row['username']}</strong>
+                                        {' replied to your feedback' if pd.notna(row.get('replied_by')) else ' posted new feedback'}
+                                    </p>
+                                    <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                        📅 {row['datetime']}
+                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}
+                                    </p>
+                                </div>
+                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
+                            </div>
+                            
+                            <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-top: 10px;">
+                                <p style="margin: 0;">{row['comment']}</p>
+                            </div>
+                            
+                            {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if pd.notna(row.get('replied_by')) else ''}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    
+                    # زر Mark as Read
+                    if is_new:
+                        col_btn1, col_btn2 = st.columns([1, 5])
+                        with col_btn1:
+                            if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
+                                if mark_as_read(row.get('id', idx)):
+                                    st.success("Notification marked as read!")
+                                    time.sleep(0.5)
+                                    st.rerun()
+        else:
+            st.info("📭 No new notifications.")
+            
+            # عرض كل الإشعارات السابقة
+            df = load_feedback()
+            user_notifications = df[
+                (df['replied_to'] == st.session_state.username) | 
+                (df['username'] == st.session_state.username)
+            ]
+            
+            if not user_notifications.empty:
+                st.markdown("---")
+                st.subheader("📜 Notification History")
+                
+                for idx, row in user_notifications.sort_values("datetime", ascending=False).iterrows():
+                    with st.container():
+                        st.markdown(f"""
+                        <div class="notification-card read">
+                            <div style="display: flex; justify-content: space-between;">
+                                <p><strong>👤 {row['username']}</strong></p>
+                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+                                    📅 {row['datetime']}
+                                </p>
+                            </div>
+                            <p style="margin-top: 10px;">{row['comment']}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+        
+        # زر العودة
+        st.markdown("---")
+        if st.button("← Back to Dashboard"):
+            st.session_state.current_page = "dashboard"
+            st.rerun()
+    
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
         st.subheader("ℹ️ About This Dashboard")
@@ -915,8 +1218,15 @@ else:
             <div class="custom-card">
                 <h3 style="color: #00c6ff;">🎯 Mission</h3>
                 <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
+                
+                <h3 style="color: #00c6ff; margin-top: 20px;">✨ New Features (v2.1)</h3>
+                <p>✅ <strong>Notification System</strong> - Get alerts for feedback replies</p>
+                <p>✅ <strong>Reply to Feedback</strong> - Admins can respond to user comments</p>
+                <p>✅ <strong>Real-time Badges</strong> - See unread notifications count</p>
+                <p>✅ <strong>Mark as Read</strong> - Manage your notifications</p>
+                
                 <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
-                <p>• <strong>Admin</strong> - Full system control</p>
+                <p>• <strong>Admin</strong> - Full system control + Reply to feedback</p>
                 <p>• <strong>CHC</strong> - Healthcare Division</p>
                 <p>• <strong>CNS</strong> - Neuroscience Division</p>
                 <p>• <strong>GIT</strong> - Gastroenterology</p>
@@ -924,15 +1234,16 @@ else:
                 <p>• <strong>CVM</strong> - Cardiology Division</p>
                 <p>• <strong>Power Team</strong> - Special Operations</p>
                 <p>• <strong>All Teams</strong> - Comprehensive access</p>
-                <h3 style="color: #00c6ff; margin-top: 20px;">✨ Features</h3>
-                <p>✅ Secure role-based access</p>
-                <p>✅ Daily file management</p>
-                <p>✅ Feedback system</p>
-                <p>✅ Mobile responsive</p>
-                <p>✅ Real-time updates</p>
+                
+                <h3 style="color: #00c6ff; margin-top: 20px;">🔔 How Notifications Work</h3>
+                <p>1. User submits feedback</p>
+                <p>2. Admin replies to the feedback</p>
+                <p>3. User gets notification 🔔</p>
+                <p>4. User can view and mark as read</p>
+                
                 <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
                     <p style="text-align: center; margin: 0; font-size: 1.1rem;">
-                        🚀 <strong>Commercia Excellence Team</strong>
+                        🚀 <strong>Sales Dashboard v2.1 | Notification System Enabled</strong>
                     </p>
                 </div>
             </div>
@@ -944,8 +1255,15 @@ else:
 # ----------------------------
 if st.session_state.logged_in:
     st.markdown("---")
-    st.markdown("""
+    # عرض حالة الإشعارات في الفوتر
+    if st.session_state.logged_in and st.session_state.current_page != "notifications":
+        unread_count = get_unread_count(st.session_state.username)
+        notification_text = f" | 🔔 {unread_count} unread notification(s)" if unread_count > 0 else ""
+    else:
+        notification_text = ""
+    
+    st.markdown(f"""
     <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
-        <p>📊 Sales Dashboard v2.0 | © 2024 | 🔒 Secure Access</p>
+        <p>📊 Sales Dashboard v2.1 | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
