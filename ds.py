@@ -256,7 +256,7 @@ def show_fireworks_animation():
     setTimeout(() => createFirework(canvas.width*3/4, canvas.height/3), 500);
     
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
         
         for(let i = 0; i < particles.length; i++) {
             particles[i].update();
@@ -505,6 +505,28 @@ input::placeholder {
     border-left: 3px solid #00c6ff !important;
 }
 
+/* ABOUT PAGE STYLING */
+.about-section {
+    margin-bottom: 25px !important;
+}
+
+.about-section h4 {
+    color: #00c6ff !important;
+    margin-bottom: 15px !important;
+    border-bottom: 2px solid rgba(0, 198, 255, 0.3) !important;
+    padding-bottom: 8px !important;
+}
+
+.about-feature-list {
+    margin-left: 20px !important;
+    margin-bottom: 15px !important;
+}
+
+.about-feature-list li {
+    margin-bottom: 8px !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
 @media only screen and (max-width: 768px) {
     .login-box {
         width: 90%;
@@ -589,13 +611,13 @@ def clean_text(text):
     if not isinstance(text, str):
         return str(text)
     
-    # أولاً: تحويل HTML entities إلى نص عادي
+    # تحويل HTML entities إلى نص عادي
     text = html.unescape(text)
     
-    # ثانياً: إزالة جميع HTML tags
+    # إزالة جميع HTML tags
     text = re.sub(r'<[^>]+>', '', text)
     
-    # ثالثاً: تنظيف الأحرف الخاصة
+    # تنظيف الأحرف الخاصة
     text = text.replace('\r\n', '\n').replace('\r', '\n')
     text = text.strip()
     
@@ -1196,15 +1218,20 @@ else:
                                 <div>
                                     <p style="margin: 0; font-size: 1.1rem;">
                                         <strong>👤 {replied_by if replied_by else row['username']}</strong>
-                                        {' replied to your feedback' if replied_by else ' posted new feedback'}</p>
+                                        {' replied to your feedback' if replied_by else ' posted new feedback'}
+                                    </p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                         📅 {row['datetime']}
-                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}</p>
+                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}
+                                    </p>
                                 </div>
-                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}</div>
+                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
+                            </div>
+                            
                             <div class="comment-box">
                                 {str(row['comment'])}
                             </div>
+                            
                             {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
                         </div>
                     </div>
@@ -1265,39 +1292,72 @@ else:
     elif st.session_state.current_page == "about":
         st.subheader("ℹ️ About This Dashboard")
         
-        st.markdown("""
-        <div class="fadeInUp">
-            <div class="custom-card">
-                <h3 style="color: #00c6ff;">🎯 Mission</h3>
-                <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
-                <h3 style="color: #00c6ff; margin-top: 20px;">✨ New Features (v2.1)</h3>
-                <p>✅ <strong>Notification System</strong> - Get alerts for feedback replies</p>
-                <p>✅ <strong>Reply to Feedback</strong> - Admins can respond to user comments</p>
-                <p>✅ <strong>Real-time Badges</strong> - See unread notifications count</p>
-                <p>✅ <strong>Mark as Read</strong> - Manage your notifications</p>
-                <p>✅ <strong>HTML Safe Display</strong> - No more code display issues</p>
-                <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
-                <p>• <strong>Admin</strong> - Full system control + Reply to feedback</p>
-                <p>• <strong>CHC</strong> - Healthcare Division</p>
-                <p>• <strong>CNS</strong> - Neuroscience Division</p>
-                <p>• <strong>GIT</strong> - Gastroenterology</p>
-                <p>• <strong>Primary Care</strong> - General Medicine</p>
-                <p>• <strong>CVM</strong> - Cardiology Division</p>
-                <p>• <strong>Power Team</strong> - Special Operations</p>
-                <p>• <strong>All Teams</strong> - Comprehensive access</p>
-                <h3 style="color: #00c6ff; margin-top: 20px;">🔔 How Notifications Work</h3>
-                <p>1. User submits feedback</p>
-                <p>2. Admin replies to the feedback</p>
-                <p>3. User gets notification 🔔</p>
-                <p>4. User can view and mark as read</p>
-                <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
-                    <p style="text-align: center; margin: 0; font-size: 1.1rem;">
-                        🚀 <strong>Sales Dashboard v2.1 | Notification System Enabled</strong>
-                    </p>
-                </div>
+        # استخدام container للتحكم في التنسيق
+        with st.container():
+            st.markdown('<div class="custom-card fadeInUp">', unsafe_allow_html=True)
+            
+            # Mission Section
+            st.markdown('<div class="about-section">', unsafe_allow_html=True)
+            st.markdown("#### 🎯 Mission")
+            st.markdown("Streamline daily sales operations and provide real-time insights for all teams.")
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # New Features Section
+            st.markdown('<div class="about-section">', unsafe_allow_html=True)
+            st.markdown("#### ✨ New Features (v2.1)")
+            st.markdown("""
+            ✅ **Notification System** - Get alerts for feedback replies  
+            ✅ **Reply to Feedback** - Admins can respond to user comments  
+            ✅ **Real-time Badges** - See unread notifications count  
+            ✅ **Mark as Read** - Manage your notifications  
+            ✅ **HTML Safe Display** - No more code display issues
+            """)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # Teams Section
+            st.markdown('<div class="about-section">', unsafe_allow_html=True)
+            st.markdown("#### 👥 Teams")
+            st.markdown("""
+            • **Admin** - Full system control + Reply to feedback  
+            • **CHC** - Healthcare Division  
+            • **CNS** - Neuroscience Division  
+            • **GIT** - Gastroenterology  
+            • **Primary Care** - General Medicine  
+            • **CVM** - Cardiology Division  
+            • **Power Team** - Special Operations  
+            • **All Teams** - Comprehensive access
+            """)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # How Notifications Work
+            st.markdown('<div class="about-section">', unsafe_allow_html=True)
+            st.markdown("#### 🔔 How Notifications Work")
+            st.markdown("""
+            1. 📝 User submits feedback  
+            2. 💬 Admin replies to the feedback  
+            3. 🔔 User gets notification  
+            4. 👁️ User can view and mark as read
+            """)
+            st.markdown('</div>', unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # Footer
+            st.markdown("""
+            <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px;">
+                <p style="margin: 0; font-size: 1.1rem; color: white;">
+                    🚀 <strong>Sales Dashboard v2.1 | Notification System Enabled</strong>
+                </p>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------
 # Footer
