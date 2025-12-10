@@ -1128,7 +1128,6 @@ else:
                                         </p>
                                     </div>
                                 </div>
-                                
                                 <div class="comment-box">
                                     {str(row['comment'])}
                                 </div>
