@@ -8,8 +8,8 @@ import re
 import base64
 import time
 import random
-import uuid 
-
+import uuid
+import html
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -134,6 +134,14 @@ def set_bg_local(image_file, login_page=True):
         align-items: center;
         justify-content: center;
         font-weight: bold;
+    }}
+
+    /* Safe text display */
+    .safe-text {{
+        white-space: pre-wrap;
+        word-break: break-word;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.5;
     }}
 
     @media only screen and (max-width: 768px) {{
@@ -358,6 +366,27 @@ st.markdown("""
     opacity: 0.8;
 }
 
+/* Comment Display Box */
+.comment-box {
+    background: rgba(0, 0, 0, 0.25) !important;
+    padding: 15px !important;
+    border-radius: 10px !important;
+    margin: 10px 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    line-height: 1.6 !important;
+    font-size: 0.95rem !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+}
+
+.comment-box p {
+    margin: 0 !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
 /* INPUT BOXES */
 .stTextInput > div > div > input {
     text-align: left;
@@ -492,6 +521,11 @@ input::placeholder {
     .welcome-fixed h3 {
         font-size: 1.4rem !important;
     }
+    
+    .comment-box {
+        padding: 12px !important;
+        font-size: 0.9rem !important;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -547,6 +581,26 @@ FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
 # ----------------------------
 # Helper Functions
 # ----------------------------
+def clean_text(text):
+    """
+    Clean text from HTML tags and escape special characters
+    لحل مشكلة ظهور الكود كـ HTML في الإشعارات
+    """
+    if not isinstance(text, str):
+        return str(text)
+    
+    # أولاً: تحويل HTML entities إلى نص عادي
+    text = html.unescape(text)
+    
+    # ثانياً: إزالة جميع HTML tags
+    text = re.sub(r'<[^>]+>', '', text)
+    
+    # ثالثاً: تنظيف الأحرف الخاصة
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    text = text.strip()
+    
+    return text
+
 def get_current_month_folders():
     """Get all folders for current month"""
     if not os.path.exists(BASE_PATH):
@@ -564,10 +618,17 @@ def add_feedback(username, comment, replied_to=None, replied_by=None):
     """Add feedback to CSV file with notification support"""
     os.makedirs(BASE_PATH, exist_ok=True)
     
+    # تنظيف النص قبل الحفظ
+    cleaned_comment = clean_text(comment) if comment else ""
+    
     if os.path.exists(FEEDBACK_FILE):
         df = pd.read_csv(FEEDBACK_FILE)
+        # تأكد من وجود الأعمدة المطلوبة
+        for col in ["id", "replied_to", "replied_by", "is_read"]:
+            if col not in df.columns:
+                df[col] = None
     else:
-        df = pd.DataFrame(columns=["id","username","comment","datetime","replied_to","replied_by","is_read"])
+        df = pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
     
     # Generate unique ID
     feedback_id = str(uuid.uuid4())[:8]
@@ -575,11 +636,11 @@ def add_feedback(username, comment, replied_to=None, replied_by=None):
     new_feedback = {
         "id": feedback_id,
         "username": username,
-        "comment": comment,
+        "comment": cleaned_comment,
         "datetime": datetime.now(),
-        "replied_to": replied_to,  # من تم الرد عليه
-        "replied_by": replied_by,  # من قام بالرد
-        "is_read": False  # هل تم قراءة الإشعار
+        "replied_to": replied_to,
+        "replied_by": replied_by,
+        "is_read": False
     }
     
     df = pd.concat([df, pd.DataFrame([new_feedback])], ignore_index=True)
@@ -590,19 +651,32 @@ def add_feedback(username, comment, replied_to=None, replied_by=None):
 def load_feedback():
     """Load feedback from CSV file"""
     if os.path.exists(FEEDBACK_FILE):
-        df = pd.read_csv(FEEDBACK_FILE)
-        # Fill NaN values for new columns if CSV is old
-        if 'replied_to' not in df.columns:
-            df['replied_to'] = None
-        if 'replied_by' not in df.columns:
-            df['replied_by'] = None
-        if 'is_read' not in df.columns:
-            df['is_read'] = False
-        if 'id' not in df.columns:
-            df['id'] = [str(uuid.uuid4())[:8] for _ in range(len(df))]
-        return df
+        try:
+            df = pd.read_csv(FEEDBACK_FILE)
+            # تنظيف التعليقات القديمة
+            if 'comment' in df.columns:
+                df['comment'] = df['comment'].apply(lambda x: clean_text(x) if isinstance(x, str) else x)
+            
+            # تأكد من وجود جميع الأعمدة
+            required_columns = ["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"]
+            for col in required_columns:
+                if col not in df.columns:
+                    df[col] = None
+            
+            # Generate IDs for old records if missing
+            if df['id'].isna().any():
+                df['id'] = df.apply(lambda x: str(uuid.uuid4())[:8] if pd.isna(x['id']) else x['id'], axis=1)
+            
+            # Set default values
+            if df['is_read'].isna().any():
+                df['is_read'] = df['is_read'].fillna(False)
+            
+            return df
+        except Exception as e:
+            st.error(f"Error loading feedback: {e}")
+            return pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
     else:
-        return pd.DataFrame(columns=["id","username","comment","datetime","replied_to","replied_by","is_read"])
+        return pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
 
 def get_notifications(username):
     """Get notifications for specific user"""
@@ -611,21 +685,11 @@ def get_notifications(username):
     if df.empty:
         return pd.DataFrame()
     
-    # الحصول على الردود الموجهة لهذا المستخدم
+    # الحصول على الردود الموجهة لهذا المستخدم وغير المقروءة
     user_notifications = df[
         (df['replied_to'] == username) & 
         (df['is_read'] == False)
     ].copy()
-    
-    # الحصول على الردود على تعليقاته (إذا كان هو صاحب التعليق الأصلي)
-    user_comments = df[df['username'] == username]
-    for _, comment in user_comments.iterrows():
-        # البحث عن ردود على هذا التعليق
-        replies = df[(df['replied_to'] == comment['username']) & (df['id'] != comment['id'])]
-        user_notifications = pd.concat([user_notifications, replies], ignore_index=True)
-    
-    # إزالة التكرارات
-    user_notifications = user_notifications.drop_duplicates(subset=['id'])
     
     return user_notifications
 
@@ -650,29 +714,14 @@ def mark_all_as_read(username):
     
     if not df.empty:
         # تحديث الردود الموجهة له
-        df.loc[df['replied_to'] == username, 'is_read'] = True
-        
-        # تحديث الردود على تعليقاته
-        user_comments = df[df['username'] == username]
-        for _, comment in user_comments.iterrows():
-            df.loc[df['replied_to'] == comment['username'], 'is_read'] = True
-        
+        mask = (df['replied_to'] == username) & (df['is_read'] == False)
+        df.loc[mask, 'is_read'] = True
         df.to_csv(FEEDBACK_FILE, index=False)
         return True
     return False
 
 def show_login_animation(username):
     """Show animation during login"""
-    # Choose random animation
-    animations = [
-        "confetti", 
-        "fireworks", 
-        "loading", 
-        "pulse"
-    ]
-    
-    selected_animation = random.choice(animations)
-    
     # Show loading animation first
     loading_placeholder = st.empty()
     loading_placeholder.markdown(show_loading_animation(f"Welcome {username} Team! 🚀"), unsafe_allow_html=True)
@@ -1038,8 +1087,9 @@ else:
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
                     with st.container():
                         # Determine card style based on reply status
-                        card_class = "notification-card" if pd.notna(row.get('replied_by')) else "custom-card"
-                        border_color = "#FF9800" if pd.notna(row.get('replied_by')) else "#00c6ff"
+                        has_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
+                        card_class = "notification-card" if has_reply else "custom-card"
+                        border_color = "#FF9800" if has_reply else "#00c6ff"
                         
                         st.markdown(f"""
                         <div class="fadeInUp">
@@ -1048,19 +1098,17 @@ else:
                                     <div>
                                         <p style="margin: 0; font-size: 1.1rem;">
                                             <strong>👤 {row['username']}</strong>
-                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {row['replied_by']}</span>" if pd.notna(row.get('replied_by')) else ""}
+                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {row['replied_by']}</span>" if has_reply else ""}
                                         </p>
                                         <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                             📅 {row['datetime']}
                                             {f" | 🔔 Unread" if not row.get('is_read', True) else ""}
                                         </p>
                                     </div>
-                                    <span style="background: #666; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">
-                                        ID: {row.get('id', 'N/A')}
-                                    </span>
                                 </div>
-                                <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin: 10px 0;">
-                                    <p style="margin: 0; font-size: 1rem;">{row['comment']}</p>
+                                
+                                <div class="comment-box">
+                                    {str(row['comment'])}
                                 </div>
                             </div>
                         </div>
@@ -1139,6 +1187,7 @@ else:
                 with st.container():
                     # تحديد إذا كان الرد جديداً
                     is_new = not row.get('is_read', False)
+                    replied_by = row.get('replied_by', '')
                     
                     st.markdown(f"""
                     <div class="fadeInUp">
@@ -1146,8 +1195,8 @@ else:
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
                                     <p style="margin: 0; font-size: 1.1rem;">
-                                        <strong>👤 {row['replied_by'] if pd.notna(row.get('replied_by')) else row['username']}</strong>
-                                        {' replied to your feedback' if pd.notna(row.get('replied_by')) else ' posted new feedback'}
+                                        <strong>👤 {replied_by if replied_by else row['username']}</strong>
+                                        {' replied to your feedback' if replied_by else ' posted new feedback'}
                                     </p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                         📅 {row['datetime']}
@@ -1157,11 +1206,11 @@ else:
                                 {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
                             </div>
                             
-                            <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin-top: 10px;">
-                                <p style="margin: 0;">{row['comment']}</p>
+                            <div class="comment-box">
+                                {str(row['comment'])}
                             </div>
                             
-                            {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if pd.notna(row.get('replied_by')) else ''}
+                            {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -1191,15 +1240,23 @@ else:
                 
                 for idx, row in user_notifications.sort_values("datetime", ascending=False).iterrows():
                     with st.container():
+                        is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
+                        
                         st.markdown(f"""
                         <div class="notification-card read">
-                            <div style="display: flex; justify-content: space-between;">
-                                <p><strong>👤 {row['username']}</strong></p>
-                                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
-                                    📅 {row['datetime']}
-                                </p>
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="margin: 0;"><strong>👤 {row['username']}</strong>
+                                    {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
+                                    </p>
+                                    <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                        📅 {row['datetime']}
+                                    </p>
+                                </div>
                             </div>
-                            <p style="margin-top: 10px;">{row['comment']}</p>
+                            <div class="comment-box">
+                                {str(row['comment'])}
+                            </div>
                         </div>
                         """, unsafe_allow_html=True)
         
@@ -1224,6 +1281,7 @@ else:
                 <p>✅ <strong>Reply to Feedback</strong> - Admins can respond to user comments</p>
                 <p>✅ <strong>Real-time Badges</strong> - See unread notifications count</p>
                 <p>✅ <strong>Mark as Read</strong> - Manage your notifications</p>
+                <p>✅ <strong>HTML Safe Display</strong> - No more code display issues</p>
                 
                 <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
                 <p>• <strong>Admin</strong> - Full system control + Reply to feedback</p>
