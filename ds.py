@@ -1196,8 +1196,7 @@ else:
                                 <div>
                                     <p style="margin: 0; font-size: 1.1rem;">
                                         <strong>👤 {replied_by if replied_by else row['username']}</strong>
-                                        {' replied to your feedback' if replied_by else ' posted new feedback'}
-                                    </p>
+                                        {' replied to your feedback' if replied_by else ' posted new feedback'}</p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                         📅 {row['datetime']}
                                         {' | 🔔 NEW' if is_new else ' | ✅ Read'}
@@ -1275,14 +1274,12 @@ else:
             <div class="custom-card">
                 <h3 style="color: #00c6ff;">🎯 Mission</h3>
                 <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
-                
                 <h3 style="color: #00c6ff; margin-top: 20px;">✨ New Features (v2.1)</h3>
                 <p>✅ <strong>Notification System</strong> - Get alerts for feedback replies</p>
                 <p>✅ <strong>Reply to Feedback</strong> - Admins can respond to user comments</p>
                 <p>✅ <strong>Real-time Badges</strong> - See unread notifications count</p>
                 <p>✅ <strong>Mark as Read</strong> - Manage your notifications</p>
                 <p>✅ <strong>HTML Safe Display</strong> - No more code display issues</p>
-                
                 <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
                 <p>• <strong>Admin</strong> - Full system control + Reply to feedback</p>
                 <p>• <strong>CHC</strong> - Healthcare Division</p>
@@ -1292,13 +1289,11 @@ else:
                 <p>• <strong>CVM</strong> - Cardiology Division</p>
                 <p>• <strong>Power Team</strong> - Special Operations</p>
                 <p>• <strong>All Teams</strong> - Comprehensive access</p>
-                
                 <h3 style="color: #00c6ff; margin-top: 20px;">🔔 How Notifications Work</h3>
                 <p>1. User submits feedback</p>
                 <p>2. Admin replies to the feedback</p>
                 <p>3. User gets notification 🔔</p>
                 <p>4. User can view and mark as read</p>
-                
                 <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
                     <p style="text-align: center; margin: 0; font-size: 1.1rem;">
                         🚀 <strong>Sales Dashboard v2.1 | Notification System Enabled</strong>
