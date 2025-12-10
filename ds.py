@@ -1096,7 +1096,7 @@ else:
         else:
             st.info("📅 No data available for current month.")
     
-    # ----- FEEDBACK PAGE -----
+        # ----- FEEDBACK PAGE (المصحح) -----
     elif st.session_state.current_page == "feedback":
         st.subheader("💬 Feedback System")
         
@@ -1113,6 +1113,16 @@ else:
                         card_class = "notification-card" if has_reply else "custom-card"
                         border_color = "#FF9800" if has_reply else "#00c6ff"
                         
+                        # Prepare reply HTML
+                        reply_html = ""
+                        if has_reply:
+                            reply_by = str(row['replied_by']).strip()
+                            reply_html = f'<span style="font-size: 0.9rem; color: #FF9800; margin-left: 10px;">↩️ Replied by {reply_by}</span>'
+                        
+                        # Prepare unread HTML
+                        is_unread = not row.get('is_read', True)
+                        unread_html = " | 🔔 Unread" if is_unread else ""
+                        
                         st.markdown(f"""
                         <div class="fadeInUp">
                             <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">
@@ -1120,14 +1130,15 @@ else:
                                     <div>
                                         <p style="margin: 0; font-size: 1.1rem;">
                                             <strong>👤 {row['username']}</strong>
-                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {{row['replied_by']}}</span>" if has_reply else ""}
+                                            {reply_html}
                                         </p>
                                         <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                             📅 {row['datetime']}
-                                            {" | 🔔 Unread" if not row.get('is_read', True) else ""}
+                                            {unread_html}
                                         </p>
                                     </div>
                                 </div>
+                                
                                 <div class="comment-box">
                                     {str(row['comment'])}
                                 </div>
