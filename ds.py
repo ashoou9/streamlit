@@ -1120,11 +1120,11 @@ else:
                                     <div>
                                         <p style="margin: 0; font-size: 1.1rem;">
                                             <strong>👤 {row['username']}</strong>
-                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {row['replied_by']}</span>" if has_reply else ""}
+                                            {f"<span style='font-size: 0.9rem; color: #FF9800; margin-left: 10px;'>↩️ Replied by {{row['replied_by']}}</span>" if has_reply else ""}
                                         </p>
                                         <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                             📅 {row['datetime']}
-                                            {f" | 🔔 Unread" if not row.get('is_read', True) else ""}
+                                            {" | 🔔 Unread" if not row.get('is_read', True) else ""}
                                         </p>
                                     </div>
                                 </div>
