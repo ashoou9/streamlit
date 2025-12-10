@@ -1058,7 +1058,6 @@ else:
                                         ID: {row.get('id', 'N/A')}
                                     </span>
                                 </div>
-                                
                                 <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; margin: 10px 0;">
                                     <p style="margin: 0; font-size: 1rem;">{row['comment']}</p>
                                 </div>
