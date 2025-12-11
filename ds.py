@@ -876,7 +876,7 @@ def show_welcome_message():
         st.markdown(f"""
         <div class="welcome-container">
             <div class="welcome-fixed">
-                <h3>{emoji} Hello {username} Team! {notification_badge}</h3>
+                <h3>{emoji} Hello {username.capitalize()} Team! {notification_badge}</h3>
                 <p>{message}</p>
                 <div style="margin-top: 10px; font-size: 1.2rem;">
                     📅 {date.today().strftime('%B %d, %Y')}
