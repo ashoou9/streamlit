@@ -193,7 +193,7 @@ def show_loading_animation(text="Loading..."):
     return st.markdown(loading_html, unsafe_allow_html=True)
 
 # ----------------------------
-# Login + Dashboard UI Style - FIXED
+# Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
@@ -233,7 +233,7 @@ st.markdown("""
     animation: pulse 2s infinite !important;
 }
 
-/* Notification Card - FIXED */
+/* Notification Card */
 .notification-card {
     background: rgba(255,255,255,0.15) !important;
     padding: 20px !important;
@@ -254,7 +254,7 @@ st.markdown("""
     opacity: 0.8;
 }
 
-/* Comment Display Box - FIXED */
+/* Comment Display Box */
 .comment-box {
     background: rgba(0, 0, 0, 0.25) !important;
     padding: 15px !important;
@@ -268,7 +268,6 @@ st.markdown("""
     font-size: 0.95rem !important;
     max-height: 300px !important;
     overflow-y: auto !important;
-    color: rgba(255, 255, 255, 0.95) !important;
 }
 
 .comment-box p {
@@ -435,56 +434,6 @@ input::placeholder {
     display: flex !important;
     gap: 10px !important;
     margin-top: 15px !important;
-}
-
-/* NOTIFICATIONS STYLING - ADDED */
-.notification-item {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px 0;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-.notification-item.unread {
-    border-left: 4px solid #3498db;
-    background: #f0f8ff;
-}
-
-.notification-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.notification-title {
-    font-weight: bold;
-    color: #333;
-    font-size: 16px;
-}
-
-.notification-time {
-    color: #666;
-    font-size: 14px;
-}
-
-.new-badge {
-    background: #ff4444;
-    color: white;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.notification-content-box {
-    background: #f5f5f5;
-    padding: 15px;
-    border-radius: 8px;
-    margin: 10px 0;
-    color: #333;
-    font-size: 15px;
 }
 
 @media only screen and (max-width: 768px) {
@@ -863,86 +812,6 @@ def show_welcome_message():
         """, unsafe_allow_html=True)
 
 # ----------------------------
-# Display Feedback Card - FIXED
-# ----------------------------
-def display_feedback_card(row, is_admin=False):
-    """Display a single feedback card"""
-    has_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
-    
-    # تحديد لون البطاقة - FIXED
-    border_color = "#FF9800" if has_reply else "#00c6ff"
-    
-    with st.container():
-        # استخدام Streamlit components مباشرة
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            st.markdown(f"**👤 {row['username']}**")
-        with col2:
-            st.caption(f"📅 {row['datetime']}")
-        
-        # عرض التعليق في مربع نص - FIXED
-        st.markdown(
-            f'<div class="comment-box">{row["comment"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        # إذا كان هناك رد
-        if has_reply:
-            st.info(f"↩️ Replied by: {row['replied_by']}")
-        
-        # أزرار الإجراءات للمسؤول
-        if is_admin:
-            col_btn1, col_btn2 = st.columns(2)
-            
-            with col_btn1:
-                if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary"):
-                    if delete_feedback(row['id']):
-                        st.success("✅ Feedback deleted!")
-                        time.sleep(1)
-                        st.rerun()
-            
-            with col_btn2:
-                if st.button("📤 Reply", key=f"reply_{row['id']}", type="primary"):
-                    st.session_state.replying_to = row['id']
-                    st.rerun()
-            
-            # نموذج الرد إذا كان مفعلاً
-            if st.session_state.replying_to == row['id']:
-                with st.form(key=f"reply_form_{row['id']}"):
-                    reply_text = st.text_area(
-                        "Your reply:",
-                        placeholder=f"Type your reply to {row['username']}...",
-                        height=100,
-                        key=f"reply_text_{row['id']}"
-                    )
-                    
-                    col_sub1, col_sub2 = st.columns(2)
-                    with col_sub1:
-                        submit_reply = st.form_submit_button("Send Reply", type="primary")
-                    with col_sub2:
-                        cancel_reply = st.form_submit_button("Cancel")
-                    
-                    if cancel_reply:
-                        st.session_state.replying_to = None
-                        st.rerun()
-                    
-                    if submit_reply and reply_text.strip():
-                        add_feedback(
-                            username=st.session_state.username,
-                            comment=reply_text,
-                            replied_to=row['username'],
-                            replied_by=st.session_state.username
-                        )
-                        st.session_state.replying_to = None
-                        
-                        st.success(f"✅ Reply sent to {row['username']}!")
-                        time.sleep(1)
-                        st.rerun()
-                    elif submit_reply:
-                        st.warning("Please write a reply first.")
-
-# ----------------------------
 # Main Application UI
 # ----------------------------
 if not st.session_state.logged_in:
@@ -1163,10 +1032,109 @@ else:
                 
                 st.markdown("---")
                 
-                # Display feedback using the fixed function
+                # Display feedback
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
-                    display_feedback_card(row, is_admin=True)
-                    st.markdown("---")
+                    with st.container():
+                        has_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
+                        
+                        # تحديد لون البطاقة
+                        border_color = "#FF9800" if has_reply else "#00c6ff"
+                        
+                        # عرض بطاقة الفيدباك باستخدام HTML بسيط
+                        st.markdown(f"""
+                        <div class="fadeInUp">
+                            <div style="
+                                background: rgba(255, 255, 255, 0.1);
+                                padding: 20px;
+                                border-radius: 15px;
+                                margin-bottom: 20px;
+                                border-left: 5px solid {border_color};
+                                backdrop-filter: blur(10px);
+                            ">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: black;">👤 {row['username']}</h4>
+                                    <span style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                        📅 {row['datetime']}
+                                    </span>
+                                </div>
+                                
+                                <div style="
+                                    background: rgba(0, 0, 0, 0.25);
+                                    padding: 15px;
+                                    border-radius: 10px;
+                                    margin: 10px 0;
+                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                    white-space: pre-wrap;
+                                    word-break: break-word;
+                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                    line-height: 1.6;
+                                    font-size: 0.95rem;
+                                ">
+                                    {row['comment']}
+                                </div>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # عرض معلومات الرد إذا كان هناك رد
+                        if has_reply:
+                            st.info(f"↩️ **Replied by:** {row['replied_by']}")
+                        
+                        # أزرار الإجراءات - استخدام Streamlit buttons مباشرة
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary", use_container_width=True):
+                                if delete_feedback(row['id']):
+                                    st.success("✅ Feedback deleted!")
+                                    show_confetti_animation()
+                                    time.sleep(1)
+                                    st.rerun()
+                                else:
+                                    st.error("❌ Failed to delete feedback")
+                        
+                        with col2:
+                            if st.button("📤 Reply", key=f"reply_btn_{row['id']}", type="primary", use_container_width=True):
+                                st.session_state.replying_to = row['id']
+                                st.rerun()
+                        
+                        # نموذج الرد إذا كان مفعلاً
+                        if st.session_state.replying_to == row['id']:
+                            with st.form(key=f"reply_form_{row['id']}"):
+                                reply_text = st.text_area(
+                                    "Your reply:",
+                                    placeholder=f"Type your reply to {row['username']}...",
+                                    height=100,
+                                    key=f"reply_text_{row['id']}"
+                                )
+                                
+                                col_sub1, col_sub2 = st.columns(2)
+                                with col_sub1:
+                                    submit_reply = st.form_submit_button("Send Reply", type="primary", use_container_width=True)
+                                with col_sub2:
+                                    cancel_reply = st.form_submit_button("Cancel", use_container_width=True)
+                                
+                                if cancel_reply:
+                                    st.session_state.replying_to = None
+                                    st.rerun()
+                                
+                                if submit_reply and reply_text.strip():
+                                    add_feedback(
+                                        username=st.session_state.username,
+                                        comment=reply_text,
+                                        replied_to=row['username'],
+                                        replied_by=st.session_state.username
+                                    )
+                                    st.session_state.replying_to = None
+                                    
+                                    st.success(f"✅ Reply sent to {row['username']}!")
+                                    show_confetti_animation()
+                                    time.sleep(1)
+                                    st.rerun()
+                                elif submit_reply:
+                                    st.warning("Please write a reply first.")
+                        
+                        st.markdown("---")
             else:
                 st.info("📭 No feedback yet.")
         else:
@@ -1194,7 +1162,7 @@ else:
                 elif submit:
                     st.warning("⚠️ Please write something before submitting.")
     
-    # ----- NOTIFICATIONS PAGE - SIMPLIFIED AND FIXED -----
+    # ----- NOTIFICATIONS PAGE -----
     elif st.session_state.current_page == "notifications":
         st.subheader("🔔 Your Notifications")
         
@@ -1214,35 +1182,57 @@ else:
                     is_new = not row.get('is_read', False)
                     replied_by = row.get('replied_by', '')
                     
-                    # استخدام تصميم مبسط وواضح
                     st.markdown(f"""
-                    <div class="notification-item {'unread' if is_new else ''}">
-                        <div class="notification-header">
-                            <div class="notification-title">
-                                👤 {replied_by if replied_by else row['username']} replied to your feedback
-                                {'<span class="new-badge">NEW</span>' if is_new else ''}
+                    <div class="fadeInUp">
+                        <div style="
+                            background: rgba(255,255,255,0.15);
+                            padding: 20px;
+                            border-radius: 15px;
+                            margin-bottom: 15px;
+                            border-left: 5px solid {'#FF9800' if is_new else '#4CAF50'};
+                            backdrop-filter: blur(10px);
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="margin: 0; font-size: 1.1rem; color: white;">
+                                        <strong>👤 {replied_by if replied_by else row['username']}</strong>
+                                        {' replied to your feedback' if replied_by else ' posted new feedback'}
+                                    </p>
+                                    <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                        📅 {row['datetime']}
+                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}
+                                    </p>
+                                </div>
+                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
                             </div>
-                            <div class="notification-time">
-                                📅 {row['datetime']}
+                            
+                            <div style="
+                                background: rgba(0, 0, 0, 0.25);
+                                padding: 15px;
+                                border-radius: 10px;
+                                margin: 10px 0;
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                line-height: 1.6;
+                                font-size: 0.95rem;
+                                color: rgba(255, 255, 255, 0.95);
+                            ">
+                                {row['comment']}
                             </div>
-                        </div>
-                        
-                        <div class="notification-content-box">
-                            {row['comment']}
+                            
+                            {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
                     
                     if is_new:
-                        col_btn1, col_btn2 = st.columns([1, 5])
-                        with col_btn1:
-                            if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
-                                if mark_as_read(row.get('id', idx)):
-                                    st.success("Notification marked as read!")
-                                    time.sleep(0.5)
-                                    st.rerun()
-                        with col_btn2:
-                            st.write("")  # مسافة فارغة
+                        if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
+                            if mark_as_read(row.get('id', idx)):
+                                st.success("Notification marked as read!")
+                                time.sleep(0.5)
+                                st.rerun()
                     
                     st.markdown("---")
         else:
@@ -1263,17 +1253,39 @@ else:
                         is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
                         
                         st.markdown(f"""
-                        <div class="notification-item read">
-                            <div class="notification-header">
-                                <div class="notification-title">
-                                    👤 {row['username']}
-                                    {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
-                                </div>
-                                <div class="notification-time">
-                                    📅 {row['datetime']}
+                        <div style="
+                            background: rgba(255,255,255,0.15);
+                            padding: 20px;
+                            border-radius: 15px;
+                            margin-bottom: 15px;
+                            border-left: 5px solid #4CAF50;
+                            backdrop-filter: blur(10px);
+                            opacity: 0.8;
+                        ">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div>
+                                    <p style="margin: 0; color: white;">
+                                        <strong>👤 {row['username']}</strong>
+                                        {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
+                                    </p>
+                                    <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                        📅 {row['datetime']}
+                                    </p>
                                 </div>
                             </div>
-                            <div class="notification-content-box">
+                            <div style="
+                                background: rgba(0, 0, 0, 0.25);
+                                padding: 15px;
+                                border-radius: 10px;
+                                margin: 10px 0;
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                line-height: 1.6;
+                                font-size: 0.95rem;
+                                color: rgba(255, 255, 255, 0.95);
+                            ">
                                 {row['comment']}
                             </div>
                         </div>
