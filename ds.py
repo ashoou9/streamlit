@@ -1311,7 +1311,6 @@ else:
                                 <div class="comment-box">
                                     {html.escape(str(row["comment"]))}
                                 </div>
-
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
