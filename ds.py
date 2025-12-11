@@ -747,9 +747,10 @@ def display_notifications_page():
             <h1><i class="fas fa-bell"></i> Your Notifications</h1>
             <button class="mark-all-read-btn" id="markAllReadBtn">Mark All as Read</button>
         </div>
-        <div style="padding: 15px 25px; color: #666; border-bottom: 1px solid #eaeaea;">
+            <div style="padding: 15px 25px; color: #666; border-bottom: 1px solid #eaeaea;">
             You have {unread_count} notification(s)
-        </div>
+            </div>
+    </div>
     """
     if not notifications.empty:
         for idx, row in notifications.sort_values("datetime", ascending=False).iterrows():
