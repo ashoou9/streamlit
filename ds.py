@@ -1132,10 +1132,10 @@ else:
                                             <strong>👤 {row['username']}</strong>
                                             {reply_html}
                                         </p>
-                                        <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                            <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                             📅 {row['datetime']}
                                             {unread_html}
-                                        </p>
+                                            </p>
                                     </div>
                                 </div>
                                 <div class="comment-box safe-text">
