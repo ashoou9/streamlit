@@ -1126,25 +1126,21 @@ else:
                         st.markdown(f"""
                         <div class="fadeInUp">
                             <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">
-                                
                                 <div style="display: flex; justify-content: space-between; align-items: start;">
                                     <div>
                                         <p style="margin: 0; font-size: 1.1rem;">
                                             <strong>👤 {row['username']}</strong>
                                             {reply_html}
                                         </p>
-
                                         <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
                                             📅 {row['datetime']}
                                             {unread_html}
                                         </p>
                                     </div>
                                 </div>
-
                                 <div class="comment-box safe-text">
                                     {html.escape(str(row['comment']))}
                                 </div>
-
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
