@@ -9,7 +9,6 @@ import base64
 import time
 import random
 import uuid
-import html
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -119,51 +118,6 @@ def set_bg_local(image_file, login_page=True):
         animation: fadeInUp 0.8s ease-out;
     }}
 
-    /* Notification badge */
-    .notification-badge {{
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        background: #FF5252;
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-    }}
-
-    /* Safe text display */
-    .safe-text {{
-        white-space: pre-wrap;
-        word-break: break-word;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.5;
-    }}
-
-    /* Logout button fix */
-    .stButton > button[kind="secondary"] {{
-        min-width: auto !important;
-        width: auto !important;
-        padding: 0 15px !important;
-    }}
-
-    /* Make logout button bigger */
-    .logout-btn {{
-        min-width: 80px !important;
-        width: auto !important;
-        padding: 0 20px !important;
-        background: linear-gradient(90deg, #FF5252, #D32F2F) !important;
-    }}
-
-    .logout-btn:hover {{
-        background: linear-gradient(90deg, #D32F2F, #B71C1C) !important;
-        transform: scale(1.05) !important;
-    }}
-
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 140px !important;
@@ -186,20 +140,19 @@ def show_confetti_animation():
     <script>
     function createConfetti() {
         const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
-        for(let i = 0; i < 100; i++) {
+        for(let i = 0; i < 50; i++) {
             const confetti = document.createElement('div');
             confetti.style.position = 'fixed';
             confetti.style.width = Math.random() * 10 + 5 + 'px';
             confetti.style.height = Math.random() * 10 + 5 + 'px';
             confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.top = '-100px';
+            confetti.style.top = '-10px';
             confetti.style.left = Math.random() * 100 + 'vw';
             confetti.style.borderRadius = '50%';
-            confetti.style.opacity = '1';
             confetti.style.zIndex = '9999';
             
             const animation = confetti.animate([
-                { transform: 'translateY(-100px) rotate(0deg)', opacity: 1 },
+                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
                 { transform: 'translateY(100vh) rotate(360deg)', opacity: 0 }
             ], {
                 duration: Math.random() * 3000 + 2000,
@@ -214,105 +167,6 @@ def show_confetti_animation():
     </script>
     """
     st.components.v1.html(confetti_html, height=0)
-
-def show_fireworks_animation():
-    """Show fireworks animation"""
-    fireworks_html = """
-    <script>
-    function createFirework(x, y) {
-        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF'];
-        const particles = 60;
-        
-        for(let i = 0; i < particles; i++) {
-            const particle = document.createElement('div');
-            particle.style.position = 'fixed';
-            particle.style.width = '5px';
-            particle.style.height = '5px';
-            particle.style.borderRadius = '50%';
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
-            particle.style.zIndex = '9999';
-            
-            const angle = Math.random() * Math.PI * 2;
-            const velocity = Math.random() * 5 + 2;
-            const tx = Math.cos(angle) * velocity * 50;
-            const ty = Math.sin(angle) * velocity * 50;
-            
-            const animation = particle.animate([
-                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
-                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-            ], {
-                duration: Math.random() * 1000 + 1000,
-                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-            });
-            
-            document.body.appendChild(particle);
-            animation.onfinish = () => particle.remove();
-        }
-    }
-    
-    // Create fireworks at different positions
-    setTimeout(() => createFirework(window.innerWidth / 4, window.innerHeight / 3), 100);
-    setTimeout(() => createFirework(window.innerWidth / 2, window.innerHeight / 3), 300);
-    setTimeout(() => createFirework(window.innerWidth * 3 / 4, window.innerHeight / 3), 500);
-    setTimeout(() => createFirework(window.innerWidth / 3, window.innerHeight / 2), 700);
-    setTimeout(() => createFirework(window.innerWidth * 2 / 3, window.innerHeight / 2), 900);
-    </script>
-    """
-    st.components.v1.html(fireworks_html, height=0)
-
-def show_balloons_animation(count=20):
-    """Show floating balloons animation"""
-    balloons_html = f"""
-    <script>
-    function createBalloons(count) {{
-        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE', '#FF9800'];
-        
-        for(let i = 0; i < count; i++) {{
-            const balloon = document.createElement('div');
-            balloon.style.position = 'fixed';
-            balloon.style.width = '40px';
-            balloon.style.height = '50px';
-            balloon.style.borderRadius = '50%';
-            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            balloon.style.left = Math.random() * 100 + 'vw';
-            balloon.style.top = '100vh';
-            balloon.style.zIndex = '9998';
-            balloon.style.opacity = '0.7';
-            
-            // Balloon string
-            const string = document.createElement('div');
-            string.style.position = 'absolute';
-            string.style.bottom = '-15px';
-            string.style.left = '50%';
-            string.style.transform = 'translateX(-50%)';
-            string.style.width = '0';
-            string.style.height = '0';
-            string.style.borderLeft = '5px solid transparent';
-            string.style.borderRight = '5px solid transparent';
-            string.style.borderTop = '15px solid ' + balloon.style.backgroundColor;
-            
-            balloon.appendChild(string);
-            
-            const animation = balloon.animate([
-                {{ transform: 'translateY(0) scale(0.5)', opacity: 0 }},
-                {{ transform: 'translateY(-20px) scale(0.8)', opacity: 1 }},
-                {{ transform: 'translateY(-100vh) scale(1.2)', opacity: 0 }}
-            ], {{
-                duration: (Math.random() * 10000 + 15000),
-                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-            }});
-            
-            document.body.appendChild(balloon);
-            animation.onfinish = () => balloon.remove();
-        }}
-    }}
-    
-    createBalloons({count});
-    </script>
-    """
-    st.components.v1.html(balloons_html, height=0)
 
 def show_loading_animation(text="Loading..."):
     """Show custom loading animation"""
@@ -337,17 +191,6 @@ def show_loading_animation(text="Loading..."):
     </div>
     """
     return st.markdown(loading_html, unsafe_allow_html=True)
-
-def show_success_animation():
-    """Show success animation"""
-    try:
-        show_fireworks_animation()
-        time.sleep(0.3)
-        show_balloons_animation(10)
-        time.sleep(0.3)
-        show_confetti_animation()
-    except:
-        pass
 
 # ----------------------------
 # Login + Dashboard UI Style
@@ -483,50 +326,20 @@ input::placeholder {
 
 /* BUTTONS */
 .stButton > button {
-    border-radius: 10px !important;
-    height: 45px !important;
-    font-size: 16px !important;
+    width: 100%;
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    color: white;
+    border: none;
     transition: all 0.3s ease !important;
-    min-height: 45px !important;
 }
 
-/* Primary Button */
-.stButton > button[kind="primary"] {
-    background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.stButton > button[kind="primary"]:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc) !important;
+.stButton > button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
     transform: scale(1.02) !important;
     box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
-}
-
-/* Secondary Button */
-.stButton > button[kind="secondary"] {
-    background: linear-gradient(90deg, #FF9800, #FF5722) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.stButton > button[kind="secondary"]:hover {
-    background: linear-gradient(90deg, #F57C00, #E64A19) !important;
-    transform: scale(1.02) !important;
-    box-shadow: 0 5px 15px rgba(255,152,0,0.4) !important;
-}
-
-/* DELETE BUTTON */
-.delete-btn {
-    background: linear-gradient(90deg, #ff4444, #cc0000) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.delete-btn:hover {
-    background: linear-gradient(90deg, #cc0000, #990000) !important;
-    transform: scale(1.05) !important;
-    box-shadow: 0 5px 15px rgba(255,0,0,0.4) !important;
 }
 
 /* BUTTON WITH NOTIFICATION BADGE */
@@ -602,44 +415,25 @@ input::placeholder {
     color: rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Admin actions container */
+/* FIX for logout button */
+.stButton > button[kind="secondary"] {
+    min-width: 120px !important;
+    width: auto !important;
+    padding: 0 20px !important;
+}
+
+/* Feedback actions container */
+.feedback-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Admin actions */
 .admin-actions {
     display: flex !important;
     gap: 10px !important;
-    margin-top: 10px !important;
-}
-
-/* Notification counter */
-.notification-counter {
-    background: #FF5252;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: bold;
-    margin-left: 5px;
-}
-
-/* FIX for notification display */
-[data-testid="stNotification"] {
-    position: fixed !important;
-    top: 20px !important;
-    right: 20px !important;
-    z-index: 10000 !important;
-}
-
-/* Make sure text is visible */
-p, span, div {
-    color: white !important;
-}
-
-/* Fix for feedback card margin */
-.feedback-card p {
-    margin: 5px 0 !important;
+    margin-top: 15px !important;
 }
 
 @media only screen and (max-width: 768px) {
@@ -668,10 +462,9 @@ p, span, div {
         flex-direction: column !important;
     }
     
-    /* Make logout button fit text */
-    .stButton > button.logout-btn {
+    .stButton > button[kind="secondary"] {
+        min-width: 100px !important;
         padding: 0 15px !important;
-        min-width: 70px !important;
     }
 }
 </style>
@@ -719,9 +512,6 @@ if "show_welcome" not in st.session_state:
 if "animation_shown" not in st.session_state:
     st.session_state.animation_shown = False
 
-if "show_animations" not in st.session_state:
-    st.session_state.show_animations = True
-
 if "replying_to" not in st.session_state:
     st.session_state.replying_to = None
 
@@ -741,8 +531,10 @@ def clean_text(text):
     if not isinstance(text, str):
         return str(text)
     
-    text = html.unescape(text)
+    # إزالة جميع HTML tags
     text = re.sub(r'<[^>]+>', '', text)
+    
+    # تنظيف الأحرف الخاصة
     text = text.replace('\r\n', '\n').replace('\r', '\n')
     text = text.strip()
     
@@ -781,7 +573,7 @@ def add_feedback(username, comment, replied_to=None, replied_by=None):
         "id": feedback_id,
         "username": username,
         "comment": cleaned_comment,
-        "datetime": datetime.now(),
+        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "replied_to": replied_to,
         "replied_by": replied_by,
         "is_read": False
@@ -889,9 +681,6 @@ def show_login_animation(username):
     
     st.success(f"✅ Login successful! Welcome {username} Team! 👋")
     
-    if st.session_state.show_animations:
-        show_success_animation()
-    
     st.session_state.animation_shown = True
     time.sleep(1)
 
@@ -928,7 +717,8 @@ def top_right_buttons():
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
     
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
+    # استخدام 5 أعمدة لجعل المساحة أوسع
+    col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
         if st.button("📊 Dashboard", key="nav_dashboard"):
@@ -955,6 +745,7 @@ def top_right_buttons():
             st.rerun()
     
     with col5:
+        # جعل زر Logout نوع ثانوي (secondary) ليكون بلون مختلف
         if st.button("🚪 Logout", key="nav_logout", type="secondary"):
             logout()
             st.rerun()
@@ -1021,26 +812,6 @@ def show_welcome_message():
         """, unsafe_allow_html=True)
 
 # ----------------------------
-# Animation Controls
-# ----------------------------
-def animation_controls():
-    """Animation controls in sidebar"""
-    with st.sidebar.expander("🎭 Animation Controls", expanded=False):
-        st.session_state.show_animations = st.checkbox("Show Animations", value=True)
-        
-        if st.button("🎆 Test Fireworks", key="test_fireworks"):
-            show_fireworks_animation()
-            st.success("Fireworks launched! 🎆")
-        
-        if st.button("🎈 Test Balloons", key="test_balloons"):
-            show_balloons_animation(10)
-            st.success("Balloons released! 🎈")
-        
-        if st.button("🎉 Test Confetti", key="test_confetti"):
-            show_confetti_animation()
-            st.success("Confetti time! 🎉")
-
-# ----------------------------
 # Main Application UI
 # ----------------------------
 if not st.session_state.logged_in:
@@ -1078,9 +849,6 @@ if not st.session_state.logged_in:
 
 # ---------- DASHBOARD (Logged In) ----------
 else:
-    # Animation controls in sidebar
-    animation_controls()
-    
     # Show navigation buttons
     top_right_buttons()
     
@@ -1158,10 +926,8 @@ else:
                                     f.write(file.getbuffer())
                                 success_count += 1
                             
-                            if st.session_state.show_animations:
-                                show_success_animation()
-                            
                             st.success(f"✅ {success_count} file(s) uploaded successfully!")
+                            show_confetti_animation()
                             time.sleep(1)
                             st.rerun()
                     
@@ -1255,17 +1021,14 @@ else:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
                 # Delete all button
-                col_del1, col_del2 = st.columns([1, 5])
-                with col_del1:
-                    if st.button("🗑️ Delete All", type="secondary", key="delete_all_btn", use_container_width=True):
-                        if delete_all_feedback():
-                            if st.session_state.show_animations:
-                                show_fireworks_animation()
-                            st.success("✅ All feedback deleted!")
-                            time.sleep(1)
-                            st.rerun()
-                        else:
-                            st.error("❌ Failed to delete feedback")
+                if st.button("🗑️ Delete All Feedback", type="secondary", key="delete_all_btn"):
+                    if delete_all_feedback():
+                        st.success("✅ All feedback deleted!")
+                        show_confetti_animation()
+                        time.sleep(1)
+                        st.rerun()
+                    else:
+                        st.error("❌ Failed to delete feedback")
                 
                 st.markdown("---")
                 
@@ -1273,56 +1036,58 @@ else:
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
                     with st.container():
                         has_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
-                        card_class = "notification-card" if has_reply else "custom-card"
+                        
+                        # تحديد لون البطاقة
                         border_color = "#FF9800" if has_reply else "#00c6ff"
                         
-                        reply_html = ""
-                        if has_reply:
-                            reply_by = str(row['replied_by']).strip()
-                            reply_html = f'<span style="font-size: 0.9rem; color: #FF9800; margin-left: 10px;">↩️ Replied by {reply_by}</span>'
-                        
-                        is_unread = not row.get('is_read', True)
-                        unread_html = " | 🔔 Unread" if is_unread else ""
-                        
-                        # تنسيق التاريخ بشكل أفضل
-                        try:
-                            datetime_str = str(row['datetime'])
-                            if len(datetime_str) > 19:
-                                datetime_str = datetime_str[:19]
-                        except:
-                            datetime_str = str(row['datetime'])
-                        
+                        # عرض بطاقة الفيدباك باستخدام HTML بسيط
                         st.markdown(f"""
                         <div class="fadeInUp">
-                            <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">
-                                <div style="display: flex; justify-content: space-between; align-items: start;">
-                                    <div>
-                                        <p style="margin: 0; font-size: 1.1rem;">
-                                            <strong>👤 {row['username']}</strong>
-                                            {reply_html}
-                                        </p>
-                                        <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                            📅 {datetime_str}
-                                            {unread_html}
-                                        </p>
-                                    </div>
+                            <div style="
+                                background: rgba(255, 255, 255, 0.1);
+                                padding: 20px;
+                                border-radius: 15px;
+                                margin-bottom: 20px;
+                                border-left: 5px solid {border_color};
+                                backdrop-filter: blur(10px);
+                            ">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                    <h4 style="margin: 0; color: white;">👤 {row['username']}</h4>
+                                    <span style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                        📅 {row['datetime']}
+                                    </span>
                                 </div>
-                                <div class="comment-box safe-text">
-                                    {str(row['comment'])}
+                                
+                                <div style="
+                                    background: rgba(0, 0, 0, 0.25);
+                                    padding: 15px;
+                                    border-radius: 10px;
+                                    margin: 10px 0;
+                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                    white-space: pre-wrap;
+                                    word-break: break-word;
+                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                    line-height: 1.6;
+                                    font-size: 0.95rem;
+                                ">
+                                    {row['comment']}
                                 </div>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
                         
-                        # Admin actions
-                        col1, col2, col3 = st.columns([1, 1, 4])
+                        # عرض معلومات الرد إذا كان هناك رد
+                        if has_reply:
+                            st.info(f"↩️ **Replied by:** {row['replied_by']}")
+                        
+                        # أزرار الإجراءات - استخدام Streamlit buttons مباشرة
+                        col1, col2 = st.columns(2)
                         
                         with col1:
                             if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary", use_container_width=True):
                                 if delete_feedback(row['id']):
-                                    if st.session_state.show_animations:
-                                        show_fireworks_animation()
                                     st.success("✅ Feedback deleted!")
+                                    show_confetti_animation()
                                     time.sleep(1)
                                     st.rerun()
                                 else:
@@ -1333,7 +1098,7 @@ else:
                                 st.session_state.replying_to = row['id']
                                 st.rerun()
                         
-                        # Reply form if active
+                        # نموذج الرد إذا كان مفعلاً
                         if st.session_state.replying_to == row['id']:
                             with st.form(key=f"reply_form_{row['id']}"):
                                 reply_text = st.text_area(
@@ -1343,11 +1108,11 @@ else:
                                     key=f"reply_text_{row['id']}"
                                 )
                                 
-                                col_sub1, col_sub2, col_sub3 = st.columns([1, 1, 3])
+                                col_sub1, col_sub2 = st.columns(2)
                                 with col_sub1:
-                                    submit_reply = st.form_submit_button("Send Reply", type="primary")
+                                    submit_reply = st.form_submit_button("Send Reply", type="primary", use_container_width=True)
                                 with col_sub2:
-                                    cancel_reply = st.form_submit_button("Cancel")
+                                    cancel_reply = st.form_submit_button("Cancel", use_container_width=True)
                                 
                                 if cancel_reply:
                                     st.session_state.replying_to = None
@@ -1362,10 +1127,8 @@ else:
                                     )
                                     st.session_state.replying_to = None
                                     
-                                    if st.session_state.show_animations:
-                                        show_success_animation()
-                                    
                                     st.success(f"✅ Reply sent to {row['username']}!")
+                                    show_confetti_animation()
                                     time.sleep(1)
                                     st.rerun()
                                 elif submit_reply:
@@ -1375,6 +1138,7 @@ else:
             else:
                 st.info("📭 No feedback yet.")
         else:
+            # نموذج إرسال الفيدباك للمستخدمين العاديين
             with st.form("feedback_form", clear_on_submit=True):
                 st.markdown("### 📝 Share Your Thoughts")
                 
@@ -1391,11 +1155,8 @@ else:
                 
                 if submit and comment.strip():
                     add_feedback(st.session_state.username, comment.strip())
-                    
-                    if st.session_state.show_animations:
-                        show_success_animation()
-                    
                     st.success("✅ Thank you for your feedback! 🌟")
+                    show_confetti_animation()
                     time.sleep(1.5)
                     st.rerun()
                 elif submit:
@@ -1408,15 +1169,11 @@ else:
         notifications = get_notifications(st.session_state.username)
         
         if not notifications.empty:
-            col1, col2 = st.columns([1, 4])
-            with col1:
-                if st.button("✅ Mark All as Read", type="primary", key="mark_all_read"):
-                    if mark_all_as_read(st.session_state.username):
-                        if st.session_state.show_animations:
-                            show_confetti_animation()
-                        st.success("All notifications marked as read!")
-                        time.sleep(0.5)
-                        st.rerun()
+            if st.button("✅ Mark All as Read", type="primary", key="mark_all_read"):
+                if mark_all_as_read(st.session_state.username):
+                    st.success("All notifications marked as read!")
+                    time.sleep(0.5)
+                    st.rerun()
             
             st.markdown(f"### 📩 You have {len(notifications)} notification(s)")
             
@@ -1425,33 +1182,44 @@ else:
                     is_new = not row.get('is_read', False)
                     replied_by = row.get('replied_by', '')
                     
-                    # تنسيق التاريخ
-                    try:
-                        datetime_str = str(row['datetime'])
-                        if len(datetime_str) > 19:
-                            datetime_str = datetime_str[:19]
-                    except:
-                        datetime_str = str(row['datetime'])
-                    
                     st.markdown(f"""
                     <div class="fadeInUp">
-                        <div class="{'notification-card' if is_new else 'notification-card read'}">
+                        <div style="
+                            background: rgba(255,255,255,0.15);
+                            padding: 20px;
+                            border-radius: 15px;
+                            margin-bottom: 15px;
+                            border-left: 5px solid {'#FF9800' if is_new else '#4CAF50'};
+                            backdrop-filter: blur(10px);
+                        ">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
-                                    <p style="margin: 0; font-size: 1.1rem;">
+                                    <p style="margin: 0; font-size: 1.1rem; color: white;">
                                         <strong>👤 {replied_by if replied_by else row['username']}</strong>
                                         {' replied to your feedback' if replied_by else ' posted new feedback'}
                                     </p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                        📅 {datetime_str}
+                                        📅 {row['datetime']}
                                         {' | 🔔 NEW' if is_new else ' | ✅ Read'}
                                     </p>
                                 </div>
                                 {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
                             </div>
                             
-                            <div class="comment-box">
-                                {str(row['comment'])}
+                            <div style="
+                                background: rgba(0, 0, 0, 0.25);
+                                padding: 15px;
+                                border-radius: 10px;
+                                margin: 10px 0;
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                line-height: 1.6;
+                                font-size: 0.95rem;
+                                color: rgba(255, 255, 255, 0.95);
+                            ">
+                                {row['comment']}
                             </div>
                             
                             {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
@@ -1460,15 +1228,13 @@ else:
                     """, unsafe_allow_html=True)
                     
                     if is_new:
-                        col_btn1, col_btn2 = st.columns([1, 5])
-                        with col_btn1:
-                            if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
-                                if mark_as_read(row.get('id', idx)):
-                                    st.success("Notification marked as read!")
-                                    time.sleep(0.5)
-                                    st.rerun()
-                        
-                        st.markdown("---")
+                        if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
+                            if mark_as_read(row.get('id', idx)):
+                                st.success("Notification marked as read!")
+                                time.sleep(0.5)
+                                st.rerun()
+                    
+                    st.markdown("---")
         else:
             st.info("📭 No new notifications.")
             
@@ -1486,28 +1252,41 @@ else:
                     with st.container():
                         is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
                         
-                        # تنسيق التاريخ
-                        try:
-                            datetime_str = str(row['datetime'])
-                            if len(datetime_str) > 19:
-                                datetime_str = datetime_str[:19]
-                        except:
-                            datetime_str = str(row['datetime'])
-                        
                         st.markdown(f"""
-                        <div class="notification-card read">
+                        <div style="
+                            background: rgba(255,255,255,0.15);
+                            padding: 20px;
+                            border-radius: 15px;
+                            margin-bottom: 15px;
+                            border-left: 5px solid #4CAF50;
+                            backdrop-filter: blur(10px);
+                            opacity: 0.8;
+                        ">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
                                 <div>
-                                    <p style="margin: 0;"><strong>👤 {row['username']}</strong>
-                                    {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
+                                    <p style="margin: 0; color: white;">
+                                        <strong>👤 {row['username']}</strong>
+                                        {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
                                     </p>
                                     <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                        📅 {datetime_str}
+                                        📅 {row['datetime']}
                                     </p>
                                 </div>
                             </div>
-                            <div class="comment-box">
-                                {str(row['comment'])}
+                            <div style="
+                                background: rgba(0, 0, 0, 0.25);
+                                padding: 15px;
+                                border-radius: 10px;
+                                margin: 10px 0;
+                                border: 1px solid rgba(255, 255, 255, 0.1);
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                                line-height: 1.6;
+                                font-size: 0.95rem;
+                                color: rgba(255, 255, 255, 0.95);
+                            ">
+                                {row['comment']}
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
@@ -1524,34 +1303,37 @@ else:
         st.subheader("ℹ️ About This Dashboard")
         
         with st.container():
-            st.markdown('<div class="custom-card fadeInUp">', unsafe_allow_html=True)
+            st.markdown("""
+            <div style="
+                background: rgba(255, 255, 255, 0.1);
+                padding: 25px;
+                border-radius: 15px;
+                border-left: 5px solid #00c6ff;
+                margin-bottom: 15px;
+                backdrop-filter: blur(10px);
+            ">
+            """, unsafe_allow_html=True)
             
-            st.markdown('<div class="about-section">', unsafe_allow_html=True)
             st.markdown("#### 🎯 Mission")
             st.markdown("Streamline daily sales operations and provide real-time insights for all teams.")
-            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
-            st.markdown('<div class="about-section">', unsafe_allow_html=True)
-            st.markdown("#### ✨ New Features (v2.3)")
+            st.markdown("#### ✨ Features")
             st.markdown("""
-            ✅ **Fixed UI Issues** - Correct HTML rendering  
-            ✅ **Working Animations** - Fireworks, balloons, confetti  
-            ✅ **Proper Logout Button** - Correct size and styling  
-            ✅ **Notification Counter** - Shows unread count correctly  
-            ✅ **Admin Delete Features** - Delete single/all feedback  
-            ✅ **Date Format Fix** - Clean datetime display  
-            ✅ **Mobile Responsive** - Better mobile experience
+            ✅ **File Management** - Upload and download sales files  
+            ✅ **Feedback System** - Share thoughts and suggestions  
+            ✅ **Notifications** - Get alerts for replies  
+            ✅ **Admin Controls** - Manage feedback and files  
+            ✅ **Team-Based Access** - Different views for different teams  
+            ✅ **Mobile Responsive** - Works on all devices
             """)
-            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
-            st.markdown('<div class="about-section">', unsafe_allow_html=True)
             st.markdown("#### 👥 Teams")
             st.markdown("""
-            • **Admin** - Full system control + Delete/Reply to feedback  
+            • **Admin** - Full system control  
             • **CHC** - Healthcare Division  
             • **CNS** - Neuroscience Division  
             • **GIT** - Gastroenterology  
@@ -1560,27 +1342,13 @@ else:
             • **Power Team** - Special Operations  
             • **All Teams** - Comprehensive access
             """)
-            st.markdown('</div>', unsafe_allow_html=True)
-            
-            st.markdown("---")
-            
-            st.markdown('<div class="about-section">', unsafe_allow_html=True)
-            st.markdown("#### 🔔 How Notifications Work")
-            st.markdown("""
-            1. 📝 User submits feedback  
-            2. 💬 Admin replies to the feedback  
-            3. 🔔 User gets notification  
-            4. ✅ User can mark as read  
-            5. 🗑️ Admin can delete feedback
-            """)
-            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("---")
             
             st.markdown("""
             <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px;">
                 <p style="margin: 0; font-size: 1.1rem; color: white;">
-                    🚀 <strong>Sales Dashboard v2.3 | Fixed UI & Animations</strong>
+                    🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
                 </p>
             </div>
             """, unsafe_allow_html=True)
@@ -1600,6 +1368,6 @@ if st.session_state.logged_in:
     
     st.markdown(f"""
     <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
-        <p>📊 Sales Dashboard v2.3 | © 2024 | 🔒 Secure Access {notification_text}</p>
+        <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
