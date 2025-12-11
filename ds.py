@@ -144,67 +144,24 @@ def set_bg_local(image_file, login_page=True):
         line-height: 1.5;
     }}
 
-    /* Delete button styling */
-    .delete-btn {{
-        background: linear-gradient(90deg, #ff4444, #cc0000) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 8px !important;
-        padding: 8px 15px !important;
-        font-size: 14px !important;
-        transition: all 0.3s ease !important;
+    /* Logout button fix */
+    .stButton > button[kind="secondary"] {{
+        min-width: auto !important;
+        width: auto !important;
+        padding: 0 15px !important;
     }}
 
-    .delete-btn:hover {{
-        background: linear-gradient(90deg, #cc0000, #990000) !important;
+    /* Make logout button bigger */
+    .logout-btn {{
+        min-width: 80px !important;
+        width: auto !important;
+        padding: 0 20px !important;
+        background: linear-gradient(90deg, #FF5252, #D32F2F) !important;
+    }}
+
+    .logout-btn:hover {{
+        background: linear-gradient(90deg, #D32F2F, #B71C1C) !important;
         transform: scale(1.05) !important;
-    }}
-
-    /* Balloon animation */
-    @keyframes balloon-rise {{
-        0% {{ transform: translateY(100vh) scale(0.5); opacity: 0; }}
-        10% {{ opacity: 1; }}
-        100% {{ transform: translateY(-100vh) scale(1.2); opacity: 0; }}
-    }}
-
-    .balloon {{
-        position: fixed;
-        width: 40px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--color);
-        animation: balloon-rise 15s linear infinite;
-        z-index: 9998;
-        opacity: 0.7;
-    }}
-
-    .balloon:before {{
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 15px solid var(--color);
-    }}
-
-    /* Fireworks animation */
-    @keyframes explode {{
-        0% {{ transform: translate(0, 0) scale(1); opacity: 1; }}
-        100% {{ transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }}
-    }}
-
-    .particle {{
-        position: fixed;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        background: var(--pcolor);
-        animation: explode 1.5s ease-out forwards;
-        z-index: 9999;
     }}
 
     @media only screen and (max-width: 768px) {{
@@ -226,42 +183,31 @@ def set_bg_local(image_file, login_page=True):
 def show_confetti_animation():
     """Show confetti animation effect"""
     confetti_html = """
-    <style>
-    .confetti {
-        position: fixed;
-        width: 10px;
-        height: 10px;
-        background-color: #f00;
-        top: 0;
-        opacity: 0;
-        z-index: 9999;
-    }
-    @keyframes confetti-fall {
-        0% {
-            top: -100px;
-            opacity: 1;
-            transform: rotate(0deg);
-        }
-        100% {
-            top: 100vh;
-            opacity: 0;
-            transform: rotate(360deg);
-        }
-    }
-    </style>
     <script>
     function createConfetti() {
         const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
         for(let i = 0; i < 100; i++) {
             const confetti = document.createElement('div');
-            confetti.className = 'confetti';
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.position = 'fixed';
             confetti.style.width = Math.random() * 10 + 5 + 'px';
             confetti.style.height = Math.random() * 10 + 5 + 'px';
-            confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.top = '-100px';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.borderRadius = '50%';
+            confetti.style.opacity = '1';
+            confetti.style.zIndex = '9999';
+            
+            const animation = confetti.animate([
+                { transform: 'translateY(-100px) rotate(0deg)', opacity: 1 },
+                { transform: 'translateY(100vh) rotate(360deg)', opacity: 0 }
+            ], {
+                duration: Math.random() * 3000 + 2000,
+                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+            });
+            
             document.body.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 5000);
+            animation.onfinish = () => confetti.remove();
         }
     }
     setTimeout(createConfetti, 100);
@@ -272,43 +218,37 @@ def show_confetti_animation():
 def show_fireworks_animation():
     """Show fireworks animation"""
     fireworks_html = """
-    <style>
-    .particle {
-        position: fixed;
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
-        animation: explode 1.5s ease-out forwards;
-        z-index: 9999;
-    }
-    
-    @keyframes explode {
-        0% {
-            transform: translate(0, 0) scale(1);
-            opacity: 1;
-        }
-        100% {
-            transform: translate(var(--tx), var(--ty)) scale(0);
-            opacity: 0;
-        }
-    }
-    </style>
     <script>
-    function createFirework(x, y, color) {
-        const colors = color ? [color] : ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF'];
+    function createFirework(x, y) {
+        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF'];
+        const particles = 60;
         
-        for(let i = 0; i < 60; i++) {
+        for(let i = 0; i < particles; i++) {
             const particle = document.createElement('div');
-            particle.className = 'particle';
+            particle.style.position = 'fixed';
+            particle.style.width = '5px';
+            particle.style.height = '5px';
+            particle.style.borderRadius = '50%';
+            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             particle.style.left = x + 'px';
             particle.style.top = y + 'px';
-            particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            particle.style.setProperty('--tx', (Math.random() - 0.5) * 300 + 'px');
-            particle.style.setProperty('--ty', (Math.random() - 0.5) * 300 + 'px');
-            particle.style.animationDelay = Math.random() * 0.5 + 's';
+            particle.style.zIndex = '9999';
+            
+            const angle = Math.random() * Math.PI * 2;
+            const velocity = Math.random() * 5 + 2;
+            const tx = Math.cos(angle) * velocity * 50;
+            const ty = Math.sin(angle) * velocity * 50;
+            
+            const animation = particle.animate([
+                { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+            ], {
+                duration: Math.random() * 1000 + 1000,
+                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+            });
             
             document.body.appendChild(particle);
-            setTimeout(() => particle.remove(), 2000);
+            animation.onfinish = () => particle.remove();
         }
     }
     
@@ -324,63 +264,52 @@ def show_fireworks_animation():
 
 def show_balloons_animation(count=20):
     """Show floating balloons animation"""
-    balloons_html = """
-    <style>
-    .balloon {
-        position: fixed;
-        width: 40px;
-        height: 50px;
-        border-radius: 50%;
-        animation: balloon-rise 15s linear infinite;
-        z-index: 9998;
-        opacity: 0.7;
-    }
-    
-    .balloon:before {
-        content: '';
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 0;
-        height: 0;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 15px solid var(--color);
-    }
-    
-    @keyframes balloon-rise {
-        0% {
-            transform: translateY(100vh) scale(0.5);
-            opacity: 0;
-        }
-        10% {
-            opacity: 1;
-        }
-        100% {
-            transform: translateY(-100vh) scale(1.2);
-            opacity: 0;
-        }
-    }
-    </style>
+    balloons_html = f"""
     <script>
-    function createBalloons(count) {
+    function createBalloons(count) {{
         const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE', '#FF9800'];
         
-        for(let i = 0; i < count; i++) {
+        for(let i = 0; i < count; i++) {{
             const balloon = document.createElement('div');
-            balloon.className = 'balloon';
+            balloon.style.position = 'fixed';
+            balloon.style.width = '40px';
+            balloon.style.height = '50px';
+            balloon.style.borderRadius = '50%';
+            balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
             balloon.style.left = Math.random() * 100 + 'vw';
-            balloon.style.setProperty('--color', colors[Math.floor(Math.random() * colors.length)]);
-            balloon.style.animationDelay = Math.random() * 10 + 's';
-            balloon.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            balloon.style.top = '100vh';
+            balloon.style.zIndex = '9998';
+            balloon.style.opacity = '0.7';
+            
+            // Balloon string
+            const string = document.createElement('div');
+            string.style.position = 'absolute';
+            string.style.bottom = '-15px';
+            string.style.left = '50%';
+            string.style.transform = 'translateX(-50%)';
+            string.style.width = '0';
+            string.style.height = '0';
+            string.style.borderLeft = '5px solid transparent';
+            string.style.borderRight = '5px solid transparent';
+            string.style.borderTop = '15px solid ' + balloon.style.backgroundColor;
+            
+            balloon.appendChild(string);
+            
+            const animation = balloon.animate([
+                {{ transform: 'translateY(0) scale(0.5)', opacity: 0 }},
+                {{ transform: 'translateY(-20px) scale(0.8)', opacity: 1 }},
+                {{ transform: 'translateY(-100vh) scale(1.2)', opacity: 0 }}
+            ], {{
+                duration: (Math.random() * 10000 + 15000),
+                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+            }});
             
             document.body.appendChild(balloon);
-            setTimeout(() => balloon.remove(), 25000);
-        }
-    }
+            animation.onfinish = () => balloon.remove();
+        }}
+    }}
     
-    createBalloons(""" + str(count) + """);
+    createBalloons({count});
     </script>
     """
     st.components.v1.html(balloons_html, height=0)
@@ -411,11 +340,14 @@ def show_loading_animation(text="Loading..."):
 
 def show_success_animation():
     """Show success animation"""
-    show_fireworks_animation()
-    time.sleep(0.5)
-    show_balloons_animation(15)
-    time.sleep(0.5)
-    show_confetti_animation()
+    try:
+        show_fireworks_animation()
+        time.sleep(0.3)
+        show_balloons_animation(10)
+        time.sleep(0.3)
+        show_confetti_animation()
+    except:
+        pass
 
 # ----------------------------
 # Login + Dashboard UI Style
@@ -551,40 +483,50 @@ input::placeholder {
 
 /* BUTTONS */
 .stButton > button {
-    width: 100%;
-    border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    color: white;
-    border: none;
+    border-radius: 10px !important;
+    height: 45px !important;
+    font-size: 16px !important;
     transition: all 0.3s ease !important;
+    min-height: 45px !important;
 }
 
-.stButton > button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
+/* Primary Button */
+.stButton > button[kind="primary"] {
+    background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.stButton > button[kind="primary"]:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc) !important;
     transform: scale(1.02) !important;
     box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
 }
 
-/* DELETE BUTTON */
-.stButton > button.delete-btn {
-    background: linear-gradient(90deg, #ff4444, #cc0000) !important;
+/* Secondary Button */
+.stButton > button[kind="secondary"] {
+    background: linear-gradient(90deg, #FF9800, #FF5722) !important;
+    color: white !important;
+    border: none !important;
 }
 
-.stButton > button.delete-btn:hover {
+.stButton > button[kind="secondary"]:hover {
+    background: linear-gradient(90deg, #F57C00, #E64A19) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 5px 15px rgba(255,152,0,0.4) !important;
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+    background: linear-gradient(90deg, #ff4444, #cc0000) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.delete-btn:hover {
     background: linear-gradient(90deg, #cc0000, #990000) !important;
     transform: scale(1.05) !important;
     box-shadow: 0 5px 15px rgba(255,0,0,0.4) !important;
-}
-
-/* SECONDARY BUTTON */
-.stButton > button.secondary-btn {
-    background: linear-gradient(90deg, #FF9800, #FF5722) !important;
-}
-
-.stButton > button.secondary-btn:hover {
-    background: linear-gradient(90deg, #F57C00, #E64A19) !important;
 }
 
 /* BUTTON WITH NOTIFICATION BADGE */
@@ -667,6 +609,39 @@ input::placeholder {
     margin-top: 10px !important;
 }
 
+/* Notification counter */
+.notification-counter {
+    background: #FF5252;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+/* FIX for notification display */
+[data-testid="stNotification"] {
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 10000 !important;
+}
+
+/* Make sure text is visible */
+p, span, div {
+    color: white !important;
+}
+
+/* Fix for feedback card margin */
+.feedback-card p {
+    margin: 5px 0 !important;
+}
+
 @media only screen and (max-width: 768px) {
     .login-box {
         width: 90%;
@@ -691,6 +666,12 @@ input::placeholder {
     
     .admin-actions {
         flex-direction: column !important;
+    }
+    
+    /* Make logout button fit text */
+    .stButton > button.logout-btn {
+        padding: 0 15px !important;
+        min-width: 70px !important;
     }
 }
 </style>
@@ -740,6 +721,9 @@ if "animation_shown" not in st.session_state:
 
 if "show_animations" not in st.session_state:
     st.session_state.show_animations = True
+
+if "replying_to" not in st.session_state:
+    st.session_state.replying_to = None
 
 # ----------------------------
 # Paths
@@ -933,6 +917,7 @@ def logout():
     st.session_state.current_page = "dashboard"
     st.session_state.show_welcome = True
     st.session_state.animation_shown = False
+    st.session_state.replying_to = None
 
 # ----------------------------
 # Navigation Buttons (Top-Right)
@@ -943,15 +928,15 @@ def top_right_buttons():
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
     
-    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 0.5])
+    col1, col2, col3, col4, col5 = st.columns([1, 1, 1, 1, 1])
     
     with col1:
-        if st.button("📊 Dashboard"):
+        if st.button("📊 Dashboard", key="nav_dashboard"):
             st.session_state.current_page = "dashboard"
             st.rerun()
     
     with col2:
-        if st.button("💬 Feedback"):
+        if st.button("💬 Feedback", key="nav_feedback"):
             st.session_state.current_page = "feedback"
             st.rerun()
     
@@ -960,17 +945,17 @@ def top_right_buttons():
         if unread_count > 0:
             button_label = f"🔔 ({unread_count})"
         
-        if st.button(button_label, key="notifications_btn"):
+        if st.button(button_label, key="nav_notifications"):
             st.session_state.current_page = "notifications"
             st.rerun()
     
     with col4:
-        if st.button("ℹ️ About"):
+        if st.button("ℹ️ About", key="nav_about"):
             st.session_state.current_page = "about"
             st.rerun()
     
     with col5:
-        if st.button("Logout"):
+        if st.button("🚪 Logout", key="nav_logout", type="secondary"):
             logout()
             st.rerun()
 
@@ -1043,14 +1028,17 @@ def animation_controls():
     with st.sidebar.expander("🎭 Animation Controls", expanded=False):
         st.session_state.show_animations = st.checkbox("Show Animations", value=True)
         
-        if st.button("🎆 Test Fireworks"):
+        if st.button("🎆 Test Fireworks", key="test_fireworks"):
             show_fireworks_animation()
+            st.success("Fireworks launched! 🎆")
         
-        if st.button("🎈 Test Balloons"):
+        if st.button("🎈 Test Balloons", key="test_balloons"):
             show_balloons_animation(10)
+            st.success("Balloons released! 🎈")
         
-        if st.button("🎉 Test Confetti"):
+        if st.button("🎉 Test Confetti", key="test_confetti"):
             show_confetti_animation()
+            st.success("Confetti time! 🎉")
 
 # ----------------------------
 # Main Application UI
@@ -1071,11 +1059,11 @@ if not st.session_state.logged_in:
     </div>
     """, unsafe_allow_html=True)
     
-    u = st.text_input("", placeholder="👤 Username")
-    p = st.text_input("", type="password", placeholder="🔒 Password")
+    u = st.text_input("", placeholder="👤 Username", key="login_username")
+    p = st.text_input("", type="password", placeholder="🔒 Password", key="login_password")
     
     st.markdown('<div class="login-btn">', unsafe_allow_html=True)
-    if st.button("🚀 Login to Dashboard"):
+    if st.button("🚀 Login to Dashboard", key="login_button", type="primary"):
         if u and p:
             if login(u, p):
                 show_login_animation(u)
@@ -1141,7 +1129,8 @@ else:
                 "📅 Select Date:",
                 folders,
                 format_func=lambda x: f"📅 {x}",
-                index=0
+                index=0,
+                key="date_selector"
             )
             
             if selected_day:
@@ -1159,7 +1148,7 @@ else:
                             key="admin_uploader"
                         )
                         
-                        if uploaded_files and st.button("🚀 Upload Files", type="primary"):
+                        if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button"):
                             today_folder = os.path.join(BASE_PATH, selected_day)
                             os.makedirs(today_folder, exist_ok=True)
                             
@@ -1268,7 +1257,7 @@ else:
                 # Delete all button
                 col_del1, col_del2 = st.columns([1, 5])
                 with col_del1:
-                    if st.button("🗑️ Delete All", type="secondary", use_container_width=True):
+                    if st.button("🗑️ Delete All", type="secondary", key="delete_all_btn", use_container_width=True):
                         if delete_all_feedback():
                             if st.session_state.show_animations:
                                 show_fireworks_animation()
@@ -1277,6 +1266,8 @@ else:
                             st.rerun()
                         else:
                             st.error("❌ Failed to delete feedback")
+                
+                st.markdown("---")
                 
                 # Display feedback
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
@@ -1293,9 +1284,17 @@ else:
                         is_unread = not row.get('is_read', True)
                         unread_html = " | 🔔 Unread" if is_unread else ""
                         
+                        # تنسيق التاريخ بشكل أفضل
+                        try:
+                            datetime_str = str(row['datetime'])
+                            if len(datetime_str) > 19:
+                                datetime_str = datetime_str[:19]
+                        except:
+                            datetime_str = str(row['datetime'])
+                        
                         st.markdown(f"""
                         <div class="fadeInUp">
-                            <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">                         
+                            <div class="{card_class}" style="border-left: 5px solid {border_color} !important;">
                                 <div style="display: flex; justify-content: space-between; align-items: start;">
                                     <div>
                                         <p style="margin: 0; font-size: 1.1rem;">
@@ -1303,18 +1302,17 @@ else:
                                             {reply_html}
                                         </p>
                                         <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                            📅 {row['datetime']}
+                                            📅 {datetime_str}
                                             {unread_html}
                                         </p>
                                     </div>
                                 </div>
-                                    <div class="comment-box safe-text">
-                                    {html.escape(str(row['comment']))}
-                                    </div>
+                                <div class="comment-box safe-text">
+                                    {str(row['comment'])}
+                                </div>
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
-
                         
                         # Admin actions
                         col1, col2, col3 = st.columns([1, 1, 4])
@@ -1336,17 +1334,24 @@ else:
                                 st.rerun()
                         
                         # Reply form if active
-                        if hasattr(st.session_state, 'replying_to') and st.session_state.replying_to == row['id']:
+                        if st.session_state.replying_to == row['id']:
                             with st.form(key=f"reply_form_{row['id']}"):
                                 reply_text = st.text_area(
                                     "Your reply:",
                                     placeholder=f"Type your reply to {row['username']}...",
-                                    height=100
+                                    height=100,
+                                    key=f"reply_text_{row['id']}"
                                 )
                                 
-                                col_sub1, col_sub2 = st.columns([1, 4])
+                                col_sub1, col_sub2, col_sub3 = st.columns([1, 1, 3])
                                 with col_sub1:
                                     submit_reply = st.form_submit_button("Send Reply", type="primary")
+                                with col_sub2:
+                                    cancel_reply = st.form_submit_button("Cancel")
+                                
+                                if cancel_reply:
+                                    st.session_state.replying_to = None
+                                    st.rerun()
                                 
                                 if submit_reply and reply_text.strip():
                                     add_feedback(
@@ -1355,7 +1360,7 @@ else:
                                         replied_to=row['username'],
                                         replied_by=st.session_state.username
                                     )
-                                    del st.session_state.replying_to
+                                    st.session_state.replying_to = None
                                     
                                     if st.session_state.show_animations:
                                         show_success_animation()
@@ -1376,7 +1381,8 @@ else:
                 comment = st.text_area(
                     "Your feedback:",
                     placeholder="What's on your mind? Suggestions, issues, or comments...",
-                    height=150
+                    height=150,
+                    key="user_feedback"
                 )
                 
                 col1, col2 = st.columns([1, 4])
@@ -1404,7 +1410,7 @@ else:
         if not notifications.empty:
             col1, col2 = st.columns([1, 4])
             with col1:
-                if st.button("✅ Mark All as Read", type="primary"):
+                if st.button("✅ Mark All as Read", type="primary", key="mark_all_read"):
                     if mark_all_as_read(st.session_state.username):
                         if st.session_state.show_animations:
                             show_confetti_animation()
@@ -1419,6 +1425,14 @@ else:
                     is_new = not row.get('is_read', False)
                     replied_by = row.get('replied_by', '')
                     
+                    # تنسيق التاريخ
+                    try:
+                        datetime_str = str(row['datetime'])
+                        if len(datetime_str) > 19:
+                            datetime_str = datetime_str[:19]
+                    except:
+                        datetime_str = str(row['datetime'])
+                    
                     st.markdown(f"""
                     <div class="fadeInUp">
                         <div class="{'notification-card' if is_new else 'notification-card read'}">
@@ -1429,7 +1443,7 @@ else:
                                         {' replied to your feedback' if replied_by else ' posted new feedback'}
                                     </p>
                                     <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                        📅 {row['datetime']}
+                                        📅 {datetime_str}
                                         {' | 🔔 NEW' if is_new else ' | ✅ Read'}
                                     </p>
                                 </div>
@@ -1453,6 +1467,8 @@ else:
                                     st.success("Notification marked as read!")
                                     time.sleep(0.5)
                                     st.rerun()
+                        
+                        st.markdown("---")
         else:
             st.info("📭 No new notifications.")
             
@@ -1470,6 +1486,14 @@ else:
                     with st.container():
                         is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
                         
+                        # تنسيق التاريخ
+                        try:
+                            datetime_str = str(row['datetime'])
+                            if len(datetime_str) > 19:
+                                datetime_str = datetime_str[:19]
+                        except:
+                            datetime_str = str(row['datetime'])
+                        
                         st.markdown(f"""
                         <div class="notification-card read">
                             <div style="display: flex; justify-content: space-between; align-items: start;">
@@ -1478,7 +1502,7 @@ else:
                                     {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
                                     </p>
                                     <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                        📅 {row['datetime']}
+                                        📅 {datetime_str}
                                     </p>
                                 </div>
                             </div>
@@ -1487,9 +1511,11 @@ else:
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
+                        
+                        st.markdown("---")
         
         st.markdown("---")
-        if st.button("← Back to Dashboard"):
+        if st.button("← Back to Dashboard", key="back_to_dashboard"):
             st.session_state.current_page = "dashboard"
             st.rerun()
     
@@ -1508,14 +1534,15 @@ else:
             st.markdown("---")
             
             st.markdown('<div class="about-section">', unsafe_allow_html=True)
-            st.markdown("#### ✨ New Features (v2.2)")
+            st.markdown("#### ✨ New Features (v2.3)")
             st.markdown("""
-            ✅ **Enhanced Animations** - Fireworks, balloons, and confetti  
-            ✅ **Delete Feedback** - Admin can delete individual feedback  
-            ✅ **Delete All** - Admin can clear all feedback  
-            ✅ **Animation Controls** - Toggle animations on/off  
-            ✅ **Improved UI** - Better card designs and layouts  
-            ✅ **Real-time Updates** - Instant notification updates
+            ✅ **Fixed UI Issues** - Correct HTML rendering  
+            ✅ **Working Animations** - Fireworks, balloons, confetti  
+            ✅ **Proper Logout Button** - Correct size and styling  
+            ✅ **Notification Counter** - Shows unread count correctly  
+            ✅ **Admin Delete Features** - Delete single/all feedback  
+            ✅ **Date Format Fix** - Clean datetime display  
+            ✅ **Mobile Responsive** - Better mobile experience
             """)
             st.markdown('</div>', unsafe_allow_html=True)
             
@@ -1553,7 +1580,7 @@ else:
             st.markdown("""
             <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px;">
                 <p style="margin: 0; font-size: 1.1rem; color: white;">
-                    🚀 <strong>Sales Dashboard v2.2 | Enhanced Animation System</strong>
+                    🚀 <strong>Sales Dashboard v2.3 | Fixed UI & Animations</strong>
                 </p>
             </div>
             """, unsafe_allow_html=True)
@@ -1573,6 +1600,6 @@ if st.session_state.logged_in:
     
     st.markdown(f"""
     <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
-        <p>📊 Sales Dashboard v2.2 | © 2024 | 🔒 Secure Access {notification_text}</p>
+        <p>📊 Sales Dashboard v2.3 | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
