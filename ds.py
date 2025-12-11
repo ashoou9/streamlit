@@ -60,64 +60,6 @@ def set_bg_local(image_file, login_page=True):
         height: 0px;
     }}
 
-    /* Animation for welcome message */
-    @keyframes welcomeAnimation {{
-        0% {{ transform: translateY(-20px); opacity: 0; }}
-        100% {{ transform: translateY(0); opacity: 1; }}
-    }}
-
-    .welcome-container {{
-        animation: welcomeAnimation 1s ease-out;
-    }}
-
-    @keyframes pulse {{
-        0% {{ transform: scale(1); }}
-        50% {{ transform: scale(1.05); }}
-        100% {{ transform: scale(1); }}
-    }}
-
-    .pulse-animation {{
-        animation: pulse 2s infinite;
-    }}
-
-    @keyframes float {{
-        0%, 100% {{ transform: translateY(0px); }}
-        50% {{ transform: translateY(-10px); }}
-    }}
-
-    .float-animation {{
-        animation: float 3s ease-in-out infinite;
-    }}
-
-    @keyframes shimmer {{
-        0% {{ background-position: -200% center; }}
-        100% {{ background-position: 200% center; }}
-    }}
-
-    .shimmer-effect {{
-        background: linear-gradient(90deg, 
-            rgba(255,255,255,0) 0%, 
-            rgba(255,255,255,0.2) 50%, 
-            rgba(255,255,255,0) 100%);
-        background-size: 200% auto;
-        animation: shimmer 3s infinite linear;
-    }}
-
-    @keyframes fadeInUp {{
-        from {{ 
-            opacity: 0;
-            transform: translateY(30px);
-        }}
-        to {{ 
-            opacity: 1;
-            transform: translateY(0);
-        }}
-    }}
-
-    .fadeInUp {{
-        animation: fadeInUp 0.8s ease-out;
-    }}
-
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 140px !important;
@@ -132,72 +74,16 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Custom Animations Functions
-# ----------------------------
-def show_confetti_animation():
-    """Show confetti animation effect"""
-    confetti_html = """
-    <script>
-    function createConfetti() {
-        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
-        for(let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.style.position = 'fixed';
-            confetti.style.width = Math.random() * 10 + 5 + 'px';
-            confetti.style.height = Math.random() * 10 + 5 + 'px';
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.top = '-10px';
-            confetti.style.left = Math.random() * 100 + 'vw';
-            confetti.style.borderRadius = '50%';
-            confetti.style.zIndex = '9999';
-            
-            const animation = confetti.animate([
-                { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
-                { transform: 'translateY(100vh) rotate(360deg)', opacity: 0 }
-            ], {
-                duration: Math.random() * 3000 + 2000,
-                easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
-            });
-            
-            document.body.appendChild(confetti);
-            animation.onfinish = () => confetti.remove();
-        }
-    }
-    setTimeout(createConfetti, 100);
-    </script>
-    """
-    st.components.v1.html(confetti_html, height=0)
-
-def show_loading_animation(text="Loading..."):
-    """Show custom loading animation"""
-    loading_html = f"""
-    <div style="text-align: center; padding: 20px;">
-        <div style="
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 15px;
-            border: 5px solid rgba(0, 198, 255, 0.3);
-            border-top: 5px solid #00c6ff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        "></div>
-        <p style="color: white; font-weight: bold;">{text}</p>
-        <style>
-        @keyframes spin {{
-            0% {{ transform: rotate(0deg); }}
-            100% {{ transform: rotate(360deg); }}
-        }}
-        </style>
-    </div>
-    """
-    return st.markdown(loading_html, unsafe_allow_html=True)
-
-# ----------------------------
-# Login + Dashboard UI Style
+# Custom CSS Styles
 # ----------------------------
 st.markdown("""
 <style>
-/* Welcome Message - Fixed in Dashboard */
+/* General styles */
+.stApp {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Welcome Message */
 .welcome-fixed {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     padding: 20px !important;
@@ -212,50 +98,38 @@ st.markdown("""
     max-width: 600px !important;
 }
 
-.welcome-fixed h3 {
-    color: white !important;
-    margin-bottom: 8px !important;
-    font-size: 1.8rem !important;
-}
-
-.welcome-fixed p {
-    color: rgba(255,255,255,0.9) !important;
-    margin-top: 8px !important;
-    font-size: 1rem !important;
-}
-
-/* Success Message with Animation */
-.success-animated {
-    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
-    padding: 15px !important;
-    border-radius: 10px !important;
-    border: none !important;
-    animation: pulse 2s infinite !important;
-}
-
-/* Notification Card */
-.notification-card {
-    background: rgba(255,255,255,0.15) !important;
+/* Feedback Card - FIXED */
+.feedback-card {
+    background: rgba(255, 255, 255, 0.1) !important;
     padding: 20px !important;
     border-radius: 15px !important;
-    margin-bottom: 15px !important;
-    border-left: 5px solid #FF9800 !important;
+    margin-bottom: 20px !important;
+    border-left: 5px solid #00c6ff !important;
     backdrop-filter: blur(10px) !important;
-    transition: all 0.3s ease !important;
 }
 
-.notification-card:hover {
-    background: rgba(255,255,255,0.2) !important;
-    transform: translateY(-2px) !important;
+.feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
-.notification-card.read {
-    border-left: 5px solid #4CAF50 !important;
-    opacity: 0.8;
+.feedback-username {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    margin: 0;
 }
 
-/* Comment Display Box */
-.comment-box {
+.feedback-date {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+}
+
+/* Comment Box - FIXED */
+.comment-content {
     background: rgba(0, 0, 0, 0.25) !important;
     padding: 15px !important;
     border-radius: 10px !important;
@@ -266,65 +140,10 @@ st.markdown("""
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     line-height: 1.6 !important;
     font-size: 0.95rem !important;
-    max-height: 300px !important;
-    overflow-y: auto !important;
-}
-
-.comment-box p {
-    margin: 0 !important;
     color: rgba(255, 255, 255, 0.95) !important;
 }
 
-/* INPUT BOXES */
-.stTextInput > div > div > input {
-    text-align: left;
-    font-size: 16px;
-    padding: 10px;
-    color: black !important;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.9) !important;
-}
-
-/* ALL LABELS */
-label[data-baseweb="label"],
-.stSelectbox label,
-.stFileUploader label,
-.stTextInput label,
-.stDateInput label {
-    color: white !important;
-    font-weight: bold !important;
-}
-
-/* SUBHEADERS & TEXT */
-h1, h2, h3, h4, h5, h6,
-.stSubheader,
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stText"] {
-    color: white !important;
-    font-weight: bold !important;
-}
-
-/* PLACEHOLDER */
-input::placeholder {
-    color: rgba(0,0,0,0.6) !important;
-}
-
-/* LOGIN BOX */
-.login-box {
-    background: rgba(255, 255, 255, 0.1) !important;
-    width: 420px;
-    max-width: 90%;
-    padding: 35px;
-    border-radius: 18px;
-    text-align: center;
-    margin: 60px auto 0 auto;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
-    animation: fadeInUp 0.8s ease-out !important;
-}
-
-/* BUTTONS */
+/* Buttons */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -342,130 +161,81 @@ input::placeholder {
     box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
 }
 
-/* BUTTON WITH NOTIFICATION BADGE */
-.notification-btn {
-    position: relative !important;
+.stButton > button[kind="secondary"] {
+    background: linear-gradient(90deg, #FF9800, #FF5722) !important;
 }
 
-/* LOGIN BUTTON SPECIAL */
-.login-btn {
-    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-    margin-top: 20px !important;
+.stButton > button[kind="secondary"]:hover {
+    background: linear-gradient(90deg, #F57C00, #E64A19) !important;
 }
 
-/* DOWNLOAD BUTTON */
-.stDownloadButton button {
+/* Delete button */
+.delete-btn {
+    background: linear-gradient(90deg, #ff4444, #cc0000) !important;
+}
+
+.delete-btn:hover {
+    background: linear-gradient(90deg, #cc0000, #990000) !important;
+}
+
+/* Logout button fix */
+.logout-btn {
+    min-width: 100px !important;
+    width: auto !important;
+    padding: 0 15px !important;
+}
+
+/* Login box */
+.login-box {
+    background: rgba(255, 255, 255, 0.1) !important;
+    width: 420px;
+    max-width: 90%;
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    margin: 60px auto 0 auto;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+}
+
+/* Text colors */
+h1, h2, h3, h4, h5, h6,
+.stSubheader,
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stText"] {
     color: white !important;
-    background: linear-gradient(90deg, #0072ff, #00c6ff);
-    border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
-    transition: all 0.3s ease !important;
+    font-weight: bold !important;
 }
 
-.stDownloadButton button:hover {
-    background: linear-gradient(90deg, #0051cc, #0099cc);
-    transform: scale(1.02) !important;
+label[data-baseweb="label"] {
     color: white !important;
+    font-weight: bold !important;
 }
 
-/* PROGRESS BAR STYLING */
-.stProgress > div > div > div > div {
-    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-}
-
-/* CARD STYLING */
+/* Custom card */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
     padding: 20px !important;
     border-radius: 15px !important;
-    border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
+    border-left: 5px solid #00c6ff !important;
     backdrop-filter: blur(10px) !important;
 }
 
-/* REPLY CARD */
-.reply-card {
-    background: rgba(0, 198, 255, 0.1) !important;
-    padding: 15px !important;
-    border-radius: 10px !important;
-    margin: 10px 0 15px 20px !important;
-    border-left: 3px solid #00c6ff !important;
-}
-
-/* ABOUT PAGE STYLING */
-.about-section {
-    margin-bottom: 25px !important;
-}
-
-.about-section h4 {
-    color: #00c6ff !important;
+/* Notification card */
+.notification-card {
+    background: rgba(255,255,255,0.15) !important;
+    padding: 20px !important;
+    border-radius: 15px !important;
     margin-bottom: 15px !important;
-    border-bottom: 2px solid rgba(0, 198, 255, 0.3) !important;
-    padding-bottom: 8px !important;
+    border-left: 5px solid #FF9800 !important;
+    backdrop-filter: blur(10px) !important;
 }
 
-.about-feature-list {
-    margin-left: 20px !important;
-    margin-bottom: 15px !important;
-}
-
-.about-feature-list li {
-    margin-bottom: 8px !important;
-    color: rgba(255, 255, 255, 0.9) !important;
-}
-
-/* FIX for logout button */
-.stButton > button[kind="secondary"] {
-    min-width: 120px !important;
-    width: auto !important;
-    padding: 0 20px !important;
-}
-
-/* Feedback actions container */
-.feedback-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-/* Admin actions */
-.admin-actions {
-    display: flex !important;
-    gap: 10px !important;
-    margin-top: 15px !important;
-}
-
-@media only screen and (max-width: 768px) {
-    .login-box {
-        width: 90%;
-        padding: 25px;
-        margin-top: 60px;
-    }
-    
-    .welcome-fixed {
-        padding: 15px !important;
-        margin: 0 10px 20px 10px !important;
-        font-size: 1.1rem !important;
-    }
-    
-    .welcome-fixed h3 {
-        font-size: 1.4rem !important;
-    }
-    
-    .comment-box {
-        padding: 12px !important;
-        font-size: 0.9rem !important;
-    }
-    
-    .admin-actions {
-        flex-direction: column !important;
-    }
-    
-    .stButton > button[kind="secondary"] {
-        min-width: 100px !important;
-        padding: 0 15px !important;
-    }
+.notification-card.read {
+    border-left: 5px solid #4CAF50 !important;
+    opacity: 0.8;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -508,9 +278,6 @@ if "current_page" not in st.session_state:
 
 if "show_welcome" not in st.session_state:
     st.session_state.show_welcome = True
-
-if "animation_shown" not in st.session_state:
-    st.session_state.animation_shown = False
 
 if "replying_to" not in st.session_state:
     st.session_state.replying_to = None
@@ -671,19 +438,6 @@ def delete_all_feedback():
         return True
     return False
 
-def show_login_animation(username):
-    """Show animation during login"""
-    loading_placeholder = st.empty()
-    loading_placeholder.markdown(show_loading_animation(f"Welcome {username} Team! 🚀"), unsafe_allow_html=True)
-    
-    time.sleep(1.5)
-    loading_placeholder.empty()
-    
-    st.success(f"✅ Login successful! Welcome {username} Team! 👋")
-    
-    st.session_state.animation_shown = True
-    time.sleep(1)
-
 # ----------------------------
 # Login / Logout Logic
 # ----------------------------
@@ -705,7 +459,6 @@ def logout():
     st.session_state.username = None
     st.session_state.current_page = "dashboard"
     st.session_state.show_welcome = True
-    st.session_state.animation_shown = False
     st.session_state.replying_to = None
 
 # ----------------------------
@@ -717,7 +470,7 @@ def top_right_buttons():
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
     
-    # استخدام 5 أعمدة لجعل المساحة أوسع
+    # استخدام أعمدة متساوية
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
@@ -745,7 +498,7 @@ def top_right_buttons():
             st.rerun()
     
     with col5:
-        # جعل زر Logout نوع ثانوي (secondary) ليكون بلون مختلف
+        # جعل زر Logout نوع secondary ليكون بلون مختلف وأكبر
         if st.button("🚪 Logout", key="nav_logout", type="secondary"):
             logout()
             st.rerun()
@@ -756,43 +509,7 @@ def top_right_buttons():
 def show_welcome_message():
     """Display welcome message that stays in dashboard"""
     if st.session_state.show_welcome and st.session_state.logged_in:
-        team_messages = {
-            "Admin": "🎯 Admin Dashboard - Full Control",
-            "CHC": "🏥 CHC Team - Healthcare Division",
-            "CNS": "🧠 CNS Team - Neuroscience Division", 
-            "GIT": "🩺 GIT Team - Gastroenterology",
-            "Primary Care": "👨‍⚕️ Primary Care - General Medicine",
-            "CVM": "❤️ CVM Team - Cardiology",
-            "Power Team": "⚡ Power Team - Special Operations",
-            "DGU": "🔧 DGU Team - Technical Division",
-            "DNU": "📊 DNU Team - Data Analysis",
-            "Sildava": "🌟 Sildava Team",
-            "Ortho": "🦴 Ortho Team - Orthopedics",
-            "All": "👁️ All Viewer - Full Access",
-            "managers": "👨‍💼 Management View",
-            "khalid": "👨‍💻 Developer View"
-        }
-        
         username = st.session_state.username
-        message = team_messages.get(username.split()[0] if ' ' in username else username, 
-                                   f"👋 Welcome {username.capitalize()} Team!")
-        
-        team_emojis = {
-            "Admin": "👑",
-            "CHC": "🏥",
-            "CNS": "🧠", 
-            "GIT": "🩺",
-            "Primary": "👨‍⚕️",
-            "CVM": "❤️",
-            "Power": "⚡",
-            "DGU": "🔧",
-            "DNU": "📊",
-            "Sildava": "🌟",
-            "Ortho": "🦴",
-            "khalid": "👨‍💻"
-        }
-        
-        emoji = team_emojis.get(username.split()[0] if ' ' in username else username, "👋")
         
         unread_count = get_unread_count(username)
         notification_badge = ""
@@ -800,16 +517,89 @@ def show_welcome_message():
             notification_badge = f'<span style="background: #FF5252; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-size: 0.9rem;">{unread_count} new</span>'
         
         st.markdown(f"""
-        <div class="welcome-container">
-            <div class="welcome-fixed">
-                <h3>{emoji} Hello {username.capitalize()} Team! {notification_badge}</h3>
-                <p>{message}</p>
-                <div style="margin-top: 10px; font-size: 1.2rem;">
-                    📅 {date.today().strftime('%B %d, %Y')}
-                </div>
+        <div class="welcome-fixed">
+            <h3>👋 Hello {username.capitalize()} Team! {notification_badge}</h3>
+            <p>Welcome to the Sales Dashboard</p>
+            <div style="margin-top: 10px; font-size: 1.2rem;">
+                📅 {date.today().strftime('%B %d, %Y')}
             </div>
         </div>
         """, unsafe_allow_html=True)
+
+# ----------------------------
+# Display Feedback Function - FIXED
+# ----------------------------
+def display_feedback_card(row, is_admin=False):
+    """Display a single feedback card - SIMPLIFIED VERSION"""
+    with st.container():
+        # استخدام Streamlit components مباشرة
+        col1, col2 = st.columns([3, 1])
+        
+        with col1:
+            st.markdown(f"**👤 {row['username']}**")
+        with col2:
+            st.caption(f"📅 {row['datetime']}")
+        
+        # عرض التعليق في مربع نص
+        st.markdown(
+            f'<div class="comment-content">{row["comment"]}</div>',
+            unsafe_allow_html=True
+        )
+        
+        # إذا كان هناك رد
+        if pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != '':
+            st.info(f"↩️ Replied by: {row['replied_by']}")
+        
+        # أزرار الإجراءات للمسؤول
+        if is_admin:
+            col_btn1, col_btn2 = st.columns(2)
+            
+            with col_btn1:
+                if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary"):
+                    if delete_feedback(row['id']):
+                        st.success("✅ Feedback deleted!")
+                        time.sleep(1)
+                        st.rerun()
+            
+            with col_btn2:
+                if st.button("📤 Reply", key=f"reply_{row['id']}", type="primary"):
+                    st.session_state.replying_to = row['id']
+                    st.rerun()
+            
+            # نموذج الرد إذا كان مفعلاً
+            if st.session_state.replying_to == row['id']:
+                with st.form(key=f"reply_form_{row['id']}"):
+                    reply_text = st.text_area(
+                        "Your reply:",
+                        placeholder=f"Type your reply to {row['username']}...",
+                        height=100,
+                        key=f"reply_text_{row['id']}"
+                    )
+                    
+                    col_sub1, col_sub2 = st.columns(2)
+                    with col_sub1:
+                        submit_reply = st.form_submit_button("Send Reply", type="primary")
+                    with col_sub2:
+                        cancel_reply = st.form_submit_button("Cancel")
+                    
+                    if cancel_reply:
+                        st.session_state.replying_to = None
+                        st.rerun()
+                    
+                    if submit_reply and reply_text.strip():
+                        add_feedback(
+                            username=st.session_state.username,
+                            comment=reply_text,
+                            replied_to=row['username'],
+                            replied_by=st.session_state.username
+                        )
+                        st.session_state.replying_to = None
+                        
+                        st.success(f"✅ Reply sent to {row['username']}!")
+                        time.sleep(1)
+                        st.rerun()
+                    elif submit_reply:
+                        st.warning("Please write a reply first.")
 
 # ----------------------------
 # Main Application UI
@@ -833,17 +623,16 @@ if not st.session_state.logged_in:
     u = st.text_input("", placeholder="👤 Username", key="login_username")
     p = st.text_input("", type="password", placeholder="🔒 Password", key="login_password")
     
-    st.markdown('<div class="login-btn">', unsafe_allow_html=True)
     if st.button("🚀 Login to Dashboard", key="login_button", type="primary"):
         if u and p:
             if login(u, p):
-                show_login_animation(u)
+                st.success(f"✅ Login successful! Welcome {u} Team! 👋")
+                time.sleep(1)
                 st.rerun()
             else:
                 st.error("❌ Wrong Username Or Password")
         else:
             st.warning("⚠️ Please enter both username and password")
-    st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -927,7 +716,6 @@ else:
                                 success_count += 1
                             
                             st.success(f"✅ {success_count} file(s) uploaded successfully!")
-                            show_confetti_animation()
                             time.sleep(1)
                             st.rerun()
                     
@@ -1011,7 +799,7 @@ else:
         else:
             st.info("📅 No data available for current month.")
     
-    # ----- FEEDBACK PAGE -----
+    # ----- FEEDBACK PAGE - FIXED VERSION -----
     elif st.session_state.current_page == "feedback":
         st.subheader("💬 Feedback System")
         
@@ -1020,11 +808,10 @@ else:
             if not df.empty:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
-                # Delete all button
+                # زر حذف الكل
                 if st.button("🗑️ Delete All Feedback", type="secondary", key="delete_all_btn"):
                     if delete_all_feedback():
                         st.success("✅ All feedback deleted!")
-                        show_confetti_animation()
                         time.sleep(1)
                         st.rerun()
                     else:
@@ -1032,109 +819,10 @@ else:
                 
                 st.markdown("---")
                 
-                # Display feedback
+                # عرض الفيدباك باستخدام الدالة المصححة
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
-                    with st.container():
-                        has_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
-                        
-                        # تحديد لون البطاقة
-                        border_color = "#FF9800" if has_reply else "#00c6ff"
-                        
-                        # عرض بطاقة الفيدباك باستخدام HTML بسيط
-                        st.markdown(f"""
-                        <div class="fadeInUp">
-                            <div style="
-                                background: rgba(255, 255, 255, 0.1);
-                                padding: 20px;
-                                border-radius: 15px;
-                                margin-bottom: 20px;
-                                border-left: 5px solid {border_color};
-                                backdrop-filter: blur(10px);
-                            ">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <h4 style="margin: 0; color: white;">👤 {row['username']}</h4>
-                                    <span style="font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                        📅 {row['datetime']}
-                                    </span>
-                                </div>
-                                
-                                <div style="
-                                    background: rgba(0, 0, 0, 0.25);
-                                    padding: 15px;
-                                    border-radius: 10px;
-                                    margin: 10px 0;
-                                    border: 1px solid rgba(255, 255, 255, 0.1);
-                                    white-space: pre-wrap;
-                                    word-break: break-word;
-                                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                    line-height: 1.6;
-                                    font-size: 0.95rem;
-                                ">
-                                    {row['comment']}
-                                </div>
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
-                        # عرض معلومات الرد إذا كان هناك رد
-                        if has_reply:
-                            st.info(f"↩️ **Replied by:** {row['replied_by']}")
-                        
-                        # أزرار الإجراءات - استخدام Streamlit buttons مباشرة
-                        col1, col2 = st.columns(2)
-                        
-                        with col1:
-                            if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary", use_container_width=True):
-                                if delete_feedback(row['id']):
-                                    st.success("✅ Feedback deleted!")
-                                    show_confetti_animation()
-                                    time.sleep(1)
-                                    st.rerun()
-                                else:
-                                    st.error("❌ Failed to delete feedback")
-                        
-                        with col2:
-                            if st.button("📤 Reply", key=f"reply_btn_{row['id']}", type="primary", use_container_width=True):
-                                st.session_state.replying_to = row['id']
-                                st.rerun()
-                        
-                        # نموذج الرد إذا كان مفعلاً
-                        if st.session_state.replying_to == row['id']:
-                            with st.form(key=f"reply_form_{row['id']}"):
-                                reply_text = st.text_area(
-                                    "Your reply:",
-                                    placeholder=f"Type your reply to {row['username']}...",
-                                    height=100,
-                                    key=f"reply_text_{row['id']}"
-                                )
-                                
-                                col_sub1, col_sub2 = st.columns(2)
-                                with col_sub1:
-                                    submit_reply = st.form_submit_button("Send Reply", type="primary", use_container_width=True)
-                                with col_sub2:
-                                    cancel_reply = st.form_submit_button("Cancel", use_container_width=True)
-                                
-                                if cancel_reply:
-                                    st.session_state.replying_to = None
-                                    st.rerun()
-                                
-                                if submit_reply and reply_text.strip():
-                                    add_feedback(
-                                        username=st.session_state.username,
-                                        comment=reply_text,
-                                        replied_to=row['username'],
-                                        replied_by=st.session_state.username
-                                    )
-                                    st.session_state.replying_to = None
-                                    
-                                    st.success(f"✅ Reply sent to {row['username']}!")
-                                    show_confetti_animation()
-                                    time.sleep(1)
-                                    st.rerun()
-                                elif submit_reply:
-                                    st.warning("Please write a reply first.")
-                        
-                        st.markdown("---")
+                    display_feedback_card(row, is_admin=True)
+                    st.markdown("---")
             else:
                 st.info("📭 No feedback yet.")
         else:
@@ -1156,7 +844,6 @@ else:
                 if submit and comment.strip():
                     add_feedback(st.session_state.username, comment.strip())
                     st.success("✅ Thank you for your feedback! 🌟")
-                    show_confetti_animation()
                     time.sleep(1.5)
                     st.rerun()
                 elif submit:
@@ -1183,46 +870,22 @@ else:
                     replied_by = row.get('replied_by', '')
                     
                     st.markdown(f"""
-                    <div class="fadeInUp">
-                        <div style="
-                            background: rgba(255,255,255,0.15);
-                            padding: 20px;
-                            border-radius: 15px;
-                            margin-bottom: 15px;
-                            border-left: 5px solid {'#FF9800' if is_new else '#4CAF50'};
-                            backdrop-filter: blur(10px);
-                        ">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
-                                <div>
-                                    <p style="margin: 0; font-size: 1.1rem; color: white;">
-                                        <strong>👤 {replied_by if replied_by else row['username']}</strong>
-                                        {' replied to your feedback' if replied_by else ' posted new feedback'}
-                                    </p>
-                                    <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                        📅 {row['datetime']}
-                                        {' | 🔔 NEW' if is_new else ' | ✅ Read'}
-                                    </p>
-                                </div>
-                                {'' if not is_new else '<span style="background: #FF9800; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">NEW</span>'}
+                    <div class="notification-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div>
+                                <p style="margin: 0; font-size: 1.1rem; color: white;">
+                                    <strong>👤 {replied_by if replied_by else row['username']}</strong>
+                                    {' replied to your feedback' if replied_by else ' posted new feedback'}
+                                </p>
+                                <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
+                                    📅 {row['datetime']}
+                                    {' | 🔔 NEW' if is_new else ' | ✅ Read'}
+                                </p>
                             </div>
-                            
-                            <div style="
-                                background: rgba(0, 0, 0, 0.25);
-                                padding: 15px;
-                                border-radius: 10px;
-                                margin: 10px 0;
-                                border: 1px solid rgba(255, 255, 255, 0.1);
-                                white-space: pre-wrap;
-                                word-break: break-word;
-                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                line-height: 1.6;
-                                font-size: 0.95rem;
-                                color: rgba(255, 255, 255, 0.95);
-                            ">
-                                {row['comment']}
-                            </div>
-                            
-                            {f'<div style="margin-top: 10px; font-size: 0.9rem; color: #00c6ff;">↪️ In response to your feedback</div>' if replied_by else ''}
+                        </div>
+                        
+                        <div class="comment-content">
+                            {row['comment']}
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
@@ -1253,39 +916,17 @@ else:
                         is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
                         
                         st.markdown(f"""
-                        <div style="
-                            background: rgba(255,255,255,0.15);
-                            padding: 20px;
-                            border-radius: 15px;
-                            margin-bottom: 15px;
-                            border-left: 5px solid #4CAF50;
-                            backdrop-filter: blur(10px);
-                            opacity: 0.8;
-                        ">
-                            <div style="display: flex; justify-content: space-between; align-items: start;">
-                                <div>
-                                    <p style="margin: 0; color: white;">
-                                        <strong>👤 {row['username']}</strong>
-                                        {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
-                                    </p>
-                                    <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                        📅 {row['datetime']}
-                                    </p>
-                                </div>
+                        <div class="notification-card read">
+                            <div>
+                                <p style="margin: 0; color: white;">
+                                    <strong>👤 {row['username']}</strong>
+                                    {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
+                                </p>
+                                <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                    📅 {row['datetime']}
+                                </p>
                             </div>
-                            <div style="
-                                background: rgba(0, 0, 0, 0.25);
-                                padding: 15px;
-                                border-radius: 10px;
-                                margin: 10px 0;
-                                border: 1px solid rgba(255, 255, 255, 0.1);
-                                white-space: pre-wrap;
-                                word-break: break-word;
-                                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                                line-height: 1.6;
-                                font-size: 0.95rem;
-                                color: rgba(255, 255, 255, 0.95);
-                            ">
+                            <div class="comment-content">
                                 {row['comment']}
                             </div>
                         </div>
@@ -1304,14 +945,7 @@ else:
         
         with st.container():
             st.markdown("""
-            <div style="
-                background: rgba(255, 255, 255, 0.1);
-                padding: 25px;
-                border-radius: 15px;
-                border-left: 5px solid #00c6ff;
-                margin-bottom: 15px;
-                backdrop-filter: blur(10px);
-            ">
+            <div class="custom-card">
             """, unsafe_allow_html=True)
             
             st.markdown("#### 🎯 Mission")
@@ -1326,7 +960,6 @@ else:
             ✅ **Notifications** - Get alerts for replies  
             ✅ **Admin Controls** - Manage feedback and files  
             ✅ **Team-Based Access** - Different views for different teams  
-            ✅ **Mobile Responsive** - Works on all devices
             """)
             
             st.markdown("---")
@@ -1344,14 +977,6 @@ else:
             """)
             
             st.markdown("---")
-            
-            st.markdown("""
-            <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px;">
-                <p style="margin: 0; font-size: 1.1rem; color: white;">
-                    🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
 
