@@ -74,7 +74,7 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Custom CSS Styles
+# Custom CSS Styles - UPDATED FOR NOTIFICATIONS
 # ----------------------------
 st.markdown("""
 <style>
@@ -223,19 +223,148 @@ label[data-baseweb="label"] {
     backdrop-filter: blur(10px) !important;
 }
 
-/* Notification card */
-.notification-card {
-    background: rgba(255,255,255,0.15) !important;
-    padding: 20px !important;
-    border-radius: 15px !important;
-    margin-bottom: 15px !important;
-    border-left: 5px solid #FF9800 !important;
-    backdrop-filter: blur(10px) !important;
+/* NEW: Notifications styles matching the image */
+.notifications-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
 }
 
-.notification-card.read {
-    border-left: 5px solid #4CAF50 !important;
-    opacity: 0.8;
+.notifications-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eaeaea;
+    background-color: #f9fafc;
+}
+
+.notifications-header h1 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.mark-all-read-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.mark-all-read-btn:hover {
+    background-color: #2980b9;
+}
+
+.notifications-count {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 0.8rem;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+}
+
+.notification-item {
+    padding: 20px 25px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    transition: background-color 0.2s;
+}
+
+.notification-item:hover {
+    background-color: #f9f9f9;
+}
+
+.notification-item.unread {
+    background-color: #f0f8ff;
+    border-right: 4px solid #3498db;
+}
+
+.notification-icon {
+    background-color: #eef5ff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3498db;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+}
+
+.notification-title {
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.notification-badge {
+    background-color: #e74c3c;
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.notification-time {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.notification-comment {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    border: 1px solid #e9ecef;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.mark-read-btn {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 6px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.mark-read-btn:hover {
+    background-color: #27ae60;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -602,6 +731,155 @@ def display_feedback_card(row, is_admin=False):
                         st.warning("Please write a reply first.")
 
 # ----------------------------
+# Display Notifications Function - NEW DESIGN
+# ----------------------------
+def display_notifications_page():
+    """Display notifications page with new design"""
+    st.subheader("🔔 Your Notifications")
+    
+    notifications = get_notifications(st.session_state.username)
+    unread_count = len(notifications)
+    
+    # HTML for notifications header and list
+    notifications_html = f"""
+    <div class="notifications-container">
+        <div class="notifications-header">
+            <h1><i class="fas fa-bell"></i> Your Notifications</h1>
+            <button class="mark-all-read-btn" id="markAllReadBtn">Mark All as Read</button>
+        </div>
+        
+        <div style="padding: 15px 25px; color: #666; border-bottom: 1px solid #eaeaea;">
+            You have {unread_count} notification(s)
+        </div>
+    """
+    
+    if not notifications.empty:
+        for idx, row in notifications.sort_values("datetime", ascending=False).iterrows():
+            is_read = row.get('is_read', False)
+            replied_by = row.get('replied_by', '')
+            
+            notifications_html += f"""
+            <div class="notification-item {'unread' if not is_read else ''}" id="notification-{row['id']}">
+                <div class="notification-icon">
+                    <i class="fas fa-reply"></i>
+                </div>
+                <div class="notification-content">
+                    <div class="notification-title">
+                        {replied_by if replied_by else row['username']} replied to your feedback
+                        {'<span class="notification-badge">NEW</span>' if not is_read else ''}
+                    </div>
+                    <div class="notification-time">
+                        <i class="far fa-clock"></i> {row['datetime']}
+                    </div>
+                    <div class="notification-comment">
+                        {row['comment']}
+                    </div>
+                    {'<button class="mark-read-btn" onclick="markAsRead(\'' + str(row['id']) + '\')">✔ Mark as Read</button>' if not is_read else ''}
+                </div>
+            </div>
+            """
+    else:
+        notifications_html += """
+        <div style="padding: 40px 25px; text-align: center; color: #666;">
+            <i class="far fa-bell" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
+            <p style="font-size: 1.1rem;">No new notifications</p>
+        </div>
+        """
+    
+    notifications_html += "</div>"
+    
+    # Display the HTML
+    st.markdown(notifications_html, unsafe_allow_html=True)
+    
+    # JavaScript for button actions
+    st.markdown("""
+    <script>
+    function markAsRead(feedbackId) {
+        // This function would typically make an AJAX call to mark as read
+        // For now, we'll trigger a Streamlit rerun with a query parameter
+        window.location.href = window.location.pathname + '?mark_read=' + feedbackId;
+    }
+    
+    document.getElementById('markAllReadBtn')?.addEventListener('click', function() {
+        // Mark all as read
+        window.location.href = window.location.pathname + '?mark_all_read=true';
+    });
+    </script>
+    """, unsafe_allow_html=True)
+    
+    # Handle mark as read actions
+    query_params = st.query_params
+    if "mark_read" in query_params:
+        feedback_id = query_params["mark_read"]
+        if mark_as_read(feedback_id):
+            st.success("Notification marked as read!")
+            time.sleep(0.5)
+            st.query_params.clear()
+            st.rerun()
+    
+    if "mark_all_read" in query_params:
+        if mark_all_as_read(st.session_state.username):
+            st.success("All notifications marked as read!")
+            time.sleep(0.5)
+            st.query_params.clear()
+            st.rerun()
+    
+    # Streamlit buttons as fallback
+    st.markdown("---")
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("✅ Mark All as Read", use_container_width=True, type="primary"):
+            if mark_all_as_read(st.session_state.username):
+                st.success("All notifications marked as read!")
+                time.sleep(0.5)
+                st.rerun()
+    
+    with col2:
+        if st.button("← Back to Dashboard", use_container_width=True):
+            st.session_state.current_page = "dashboard"
+            st.rerun()
+    
+    # Show notification history if no new notifications
+    if notifications.empty:
+        df = load_feedback()
+        user_notifications = df[
+            (df['replied_to'] == st.session_state.username) | 
+            (df['username'] == st.session_state.username)
+        ]
+        
+        if not user_notifications.empty:
+            st.markdown("---")
+            st.subheader("📜 Notification History")
+            
+            for idx, row in user_notifications.sort_values("datetime", ascending=False).iterrows():
+                with st.container():
+                    is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
+                    
+                    st.markdown(f"""
+                    <div style="
+                        background: rgba(255, 255, 255, 0.1);
+                        padding: 15px;
+                        border-radius: 10px;
+                        margin-bottom: 15px;
+                        border-left: 5px solid #4CAF50;
+                    ">
+                        <div>
+                            <p style="margin: 0; color: white;">
+                                <strong>👤 {row['username']}</strong>
+                                {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
+                            </p>
+                            <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
+                                📅 {row['datetime']}
+                            </p>
+                        </div>
+                        <div class="comment-content">
+                            {row['comment']}
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+# ----------------------------
 # Main Application UI
 # ----------------------------
 if not st.session_state.logged_in:
@@ -851,93 +1129,7 @@ else:
     
     # ----- NOTIFICATIONS PAGE -----
     elif st.session_state.current_page == "notifications":
-        st.subheader("🔔 Your Notifications")
-        
-        notifications = get_notifications(st.session_state.username)
-        
-        if not notifications.empty:
-            if st.button("✅ Mark All as Read", type="primary", key="mark_all_read"):
-                if mark_all_as_read(st.session_state.username):
-                    st.success("All notifications marked as read!")
-                    time.sleep(0.5)
-                    st.rerun()
-            
-            st.markdown(f"### 📩 You have {len(notifications)} notification(s)")
-            
-            for idx, row in notifications.sort_values("datetime", ascending=False).iterrows():
-                with st.container():
-                    is_new = not row.get('is_read', False)
-                    replied_by = row.get('replied_by', '')
-                    
-                    st.markdown(f"""
-                    <div class="notification-card">
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div>
-                                <p style="margin: 0; font-size: 1.1rem; color: white;">
-                                    <strong>👤 {replied_by if replied_by else row['username']}</strong>
-                                    {' replied to your feedback' if replied_by else ' posted new feedback'}
-                                </p>
-                                <p style="margin: 5px 0 10px 0; font-size: 0.9rem; color: rgba(255,255,255,0.8);">
-                                    📅 {row['datetime']}
-                                    {' | 🔔 NEW' if is_new else ' | ✅ Read'}
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div class="comment-content">
-                            {row['comment']}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    if is_new:
-                        if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
-                            if mark_as_read(row.get('id', idx)):
-                                st.success("Notification marked as read!")
-                                time.sleep(0.5)
-                                st.rerun()
-                    
-                    st.markdown("---")
-        else:
-            st.info("📭 No new notifications.")
-            
-            df = load_feedback()
-            user_notifications = df[
-                (df['replied_to'] == st.session_state.username) | 
-                (df['username'] == st.session_state.username)
-            ]
-            
-            if not user_notifications.empty:
-                st.markdown("---")
-                st.subheader("📜 Notification History")
-                
-                for idx, row in user_notifications.sort_values("datetime", ascending=False).iterrows():
-                    with st.container():
-                        is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
-                        
-                        st.markdown(f"""
-                        <div class="notification-card read">
-                            <div>
-                                <p style="margin: 0; color: white;">
-                                    <strong>👤 {row['username']}</strong>
-                                    {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
-                                </p>
-                                <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                    📅 {row['datetime']}
-                                </p>
-                            </div>
-                            <div class="comment-content">
-                                {row['comment']}
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
-                        
-                        st.markdown("---")
-        
-        st.markdown("---")
-        if st.button("← Back to Dashboard", key="back_to_dashboard"):
-            st.session_state.current_page = "dashboard"
-            st.rerun()
+        display_notifications_page()
     
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
