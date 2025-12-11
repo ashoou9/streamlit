@@ -846,7 +846,7 @@ def show_welcome_message():
         # Get appropriate message
         username = st.session_state.username
         message = team_messages.get(username.split()[0] if ' ' in username else username, 
-                                   f"👋 Welcome {username} Team!")
+                                   f"👋 Welcome {username.capitalize()} Team!")
         
         # Emojis based on team
         team_emojis = {
@@ -1138,9 +1138,10 @@ else:
                                         </p>
                                     </div>
                                 </div>
-                                <div class="comment-box">
-                                    {str(row['comment'])}
+                                <div class="comment-box safe-text">
+                                    {html.escape(str(row['comment']))}
                                 </div>
+
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
