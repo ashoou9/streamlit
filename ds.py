@@ -970,7 +970,7 @@ def top_right_buttons():
             st.rerun()
     
     with col5:
-        if st.button("🚪 Logout"):
+        if st.button("Logout"):
             logout()
             st.rerun()
 
