@@ -762,19 +762,19 @@ def display_notifications_page():
                 <div class="notification-icon">
                     <i class="fas fa-reply"></i>
                 </div>
-                <div class="notification-content">
-                    <div class="notification-title">
+                    <div class="notification-content">
+                        <div class="notification-title">
                         {replied_by if replied_by else row['username']} replied to your feedback
                         {'<span class="notification-badge">NEW</span>' if not is_read else ''}
-                    </div>
+                        </div>
                     <div class="notification-time">
                         <i class="far fa-clock"></i> {row['datetime']}
                     </div>
                     <div class="notification-comment">
                         {row['comment']}
-                    </div>
+                        </div>
                     {'<button class="mark-read-btn" onclick="markAsRead(\'' + str(row['id']) + '\')">✔ Mark as Read</button>' if not is_read else ''}
-                </div>
+                    </div>
             </div>
             """
     else:
