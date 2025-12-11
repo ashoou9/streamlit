@@ -1308,9 +1308,10 @@ else:
                                         </p>
                                     </div>
                                 </div>
-                                <div class="comment-box safe-text">
-                                    {str(row['comment'])}
+                                <div class="comment-box">
+                                    {html.escape(str(row["comment"]))}
                                 </div>
+
                             </div>
                         </div>
                         """, unsafe_allow_html=True)
