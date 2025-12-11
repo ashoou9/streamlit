@@ -8,7 +8,6 @@ import re
 import base64
 import time
 import random
-import uuid
 
 # ----------------------------
 # Hide Warnings and Logs
@@ -60,6 +59,64 @@ def set_bg_local(image_file, login_page=True):
         height: 0px;
     }}
 
+    /* Animation for welcome message */
+    @keyframes welcomeAnimation {{
+        0% {{ transform: translateY(-20px); opacity: 0; }}
+        100% {{ transform: translateY(0); opacity: 1; }}
+    }}
+
+    .welcome-container {{
+        animation: welcomeAnimation 1s ease-out;
+    }}
+
+    @keyframes pulse {{
+        0% {{ transform: scale(1); }}
+        50% {{ transform: scale(1.05); }}
+        100% {{ transform: scale(1); }}
+    }}
+
+    .pulse-animation {{
+        animation: pulse 2s infinite;
+    }}
+
+    @keyframes float {{
+        0%, 100% {{ transform: translateY(0px); }}
+        50% {{ transform: translateY(-10px); }}
+    }}
+
+    .float-animation {{
+        animation: float 3s ease-in-out infinite;
+    }}
+
+    @keyframes shimmer {{
+        0% {{ background-position: -200% center; }}
+        100% {{ background-position: 200% center; }}
+    }}
+
+    .shimmer-effect {{
+        background: linear-gradient(90deg, 
+            rgba(255,255,255,0) 0%, 
+            rgba(255,255,255,0.2) 50%, 
+            rgba(255,255,255,0) 100%);
+        background-size: 200% auto;
+        animation: shimmer 3s infinite linear;
+    }}
+
+    @keyframes fadeInUp {{
+        from {{ 
+            opacity: 0;
+            transform: translateY(30px);
+        }}
+        to {{ 
+            opacity: 1;
+            transform: translateY(0);
+        }}
+    }}
+
+    .fadeInUp {{
+        animation: fadeInUp 0.8s ease-out;
+    }}
+
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
             padding-top: 140px !important;
@@ -74,16 +131,158 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Custom CSS Styles - UPDATED FOR NOTIFICATIONS
+# Custom Animations Functions
+# ----------------------------
+def show_confetti_animation():
+    """Show confetti animation effect"""
+    confetti_html = """
+    <style>
+    .confetti {
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background-color: #f00;
+        top: 0;
+        opacity: 0;
+    }
+    @keyframes confetti-fall {
+        0% {
+            top: -100px;
+            opacity: 1;
+            transform: rotate(0deg);
+        }
+        100% {
+            top: 100vh;
+            opacity: 0;
+            transform: rotate(360deg);
+        }
+    }
+    </style>
+    <script>
+    function createConfetti() {
+        const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF', '#18FFFF', '#64FFDA', '#69F0AE'];
+        for(let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.width = Math.random() * 10 + 5 + 'px';
+            confetti.style.height = Math.random() * 10 + 5 + 'px';
+            confetti.style.animation = `confetti-fall ${Math.random() * 3 + 2}s linear forwards`;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
+    }
+    setTimeout(createConfetti, 100);
+    </script>
+    """
+    st.components.v1.html(confetti_html, height=0)
+
+def show_fireworks_animation():
+    """Show fireworks animation"""
+    fireworks_html = """
+    <canvas id="fireworksCanvas" style="position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999;"></canvas>
+    <script>
+    const canvas = document.getElementById('fireworksCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    const particles = [];
+    const colors = ['#FF5252', '#FF4081', '#E040FB', '#7C4DFF', '#536DFE', '#448AFF', '#40C4FF'];
+    
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.size = Math.random() * 3 + 1;
+            this.speedX = Math.random() * 6 - 3;
+            this.speedY = Math.random() * 6 - 3;
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.life = 100;
+        }
+        
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.life--;
+            this.size *= 0.97;
+        }
+        
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    
+    function createFirework(x, y) {
+        for(let i = 0; i < 50; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+    
+    // Create multiple fireworks
+    setTimeout(() => createFirework(canvas.width/4, canvas.height/3), 100);
+    setTimeout(() => createFirework(canvas.width/2, canvas.height/3), 300);
+    setTimeout(() => createFirework(canvas.width*3/4, canvas.height/3), 500);
+    
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        for(let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            
+            if(particles[i].life <= 0 || particles[i].size <= 0.5) {
+                particles.splice(i, 1);
+                i--;
+            }
+        }
+        
+        if(particles.length > 0) {
+            requestAnimationFrame(animate);
+        } else {
+            canvas.remove();
+        }
+    }
+    
+    animate();
+    </script>
+    """
+    st.components.v1.html(fireworks_html, height=0)
+
+def show_loading_animation(text="Loading..."):
+    """Show custom loading animation"""
+    loading_html = f"""
+    <div style="text-align: center; padding: 20px;">
+        <div style="
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            border: 5px solid rgba(0, 198, 255, 0.3);
+            border-top: 5px solid #00c6ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        "></div>
+        <p style="color: white; font-weight: bold;">{text}</p>
+        <style>
+        @keyframes spin {{
+            0% {{ transform: rotate(0deg); }}
+            100% {{ transform: rotate(360deg); }}
+        }}
+        </style>
+    </div>
+    """
+    return st.markdown(loading_html, unsafe_allow_html=True)
+
+# ----------------------------
+# Login + Dashboard UI Style
 # ----------------------------
 st.markdown("""
 <style>
-/* General styles */
-.stApp {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Welcome Message */
+/* Welcome Message - Fixed in Dashboard */
 .welcome-fixed {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     padding: 20px !important;
@@ -98,52 +297,77 @@ st.markdown("""
     max-width: 600px !important;
 }
 
-/* Feedback Card - FIXED */
-.feedback-card {
-    background: rgba(255, 255, 255, 0.1) !important;
-    padding: 20px !important;
-    border-radius: 15px !important;
-    margin-bottom: 20px !important;
-    border-left: 5px solid #00c6ff !important;
-    backdrop-filter: blur(10px) !important;
+.welcome-fixed h3 {
+    color: white !important;
+    margin-bottom: 8px !important;
+    font-size: 1.8rem !important;
 }
 
-.feedback-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+.welcome-fixed p {
+    color: rgba(255,255,255,0.9) !important;
+    margin-top: 8px !important;
+    font-size: 1rem !important;
 }
 
-.feedback-username {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: white;
-    margin: 0;
-}
-
-.feedback-date {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.7);
-    margin: 0;
-}
-
-/* Comment Box - FIXED */
-.comment-content {
-    background: rgba(0, 0, 0, 0.25) !important;
+/* Success Message with Animation */
+.success-animated {
+    background: linear-gradient(135deg, #00b09b 0%, #96c93d 100%) !important;
     padding: 15px !important;
     border-radius: 10px !important;
-    margin: 10px 0 !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    white-space: pre-wrap !important;
-    word-break: break-word !important;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
-    line-height: 1.6 !important;
-    font-size: 0.95rem !important;
-    color: rgba(255, 255, 255, 0.95) !important;
+    border: none !important;
+    animation: pulse 2s infinite !important;
 }
 
-/* Buttons */
+/* INPUT BOXES */
+.stTextInput > div > div > input {
+    text-align: left;
+    font-size: 16px;
+    padding: 10px;
+    color: black !important;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.9) !important;
+}
+
+/* ALL LABELS */
+label[data-baseweb="label"],
+.stSelectbox label,
+.stFileUploader label,
+.stTextInput label,
+.stDateInput label {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* SUBHEADERS & TEXT */
+h1, h2, h3, h4, h5, h6,
+.stSubheader,
+div[data-testid="stMarkdownContainer"] p,
+div[data-testid="stText"] {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* PLACEHOLDER */
+input::placeholder {
+    color: rgba(0,0,0,0.6) !important;
+}
+
+/* LOGIN BOX */
+.login-box {
+    background: rgba(255, 255, 255, 0.1) !important;
+    width: 420px;
+    max-width: 90%;
+    padding: 35px;
+    border-radius: 18px;
+    text-align: center;
+    margin: 60px auto 0 auto;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+    animation: fadeInUp 0.8s ease-out !important;
+}
+
+/* BUTTONS */
 .stButton > button {
     width: 100%;
     border-radius: 10px;
@@ -161,210 +385,59 @@ st.markdown("""
     box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
 }
 
-.stButton > button[kind="secondary"] {
-    background: linear-gradient(90deg, #FF9800, #FF5722) !important;
+/* LOGIN BUTTON SPECIAL */
+.login-btn {
+    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+    margin-top: 20px !important;
 }
 
-.stButton > button[kind="secondary"]:hover {
-    background: linear-gradient(90deg, #F57C00, #E64A19) !important;
-}
-
-/* Delete button */
-.delete-btn {
-    background: linear-gradient(90deg, #ff4444, #cc0000) !important;
-}
-
-.delete-btn:hover {
-    background: linear-gradient(90deg, #cc0000, #990000) !important;
-}
-
-/* Logout button fix */
-.logout-btn {
-    min-width: 100px !important;
-    width: auto !important;
-    padding: 0 15px !important;
-}
-
-/* Login box */
-.login-box {
-    background: rgba(255, 255, 255, 0.1) !important;
-    width: 420px;
-    max-width: 90%;
-    padding: 35px;
-    border-radius: 18px;
-    text-align: center;
-    margin: 60px auto 0 auto;
-    backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
-}
-
-/* Text colors */
-h1, h2, h3, h4, h5, h6,
-.stSubheader,
-div[data-testid="stMarkdownContainer"] p,
-div[data-testid="stText"] {
+/* DOWNLOAD BUTTON */
+.stDownloadButton button {
     color: white !important;
-    font-weight: bold !important;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    border-radius: 10px;
+    height: 45px;
+    font-size: 16px;
+    transition: all 0.3s ease !important;
 }
 
-label[data-baseweb="label"] {
+.stDownloadButton button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc);
+    transform: scale(1.02) !important;
     color: white !important;
-    font-weight: bold !important;
 }
 
-/* Custom card */
+/* PROGRESS BAR STYLING */
+.stProgress > div > div > div > div {
+    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+}
+
+/* CARD STYLING */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
     padding: 20px !important;
     border-radius: 15px !important;
-    margin-bottom: 15px !important;
     border-left: 5px solid #00c6ff !important;
+    margin-bottom: 15px !important;
     backdrop-filter: blur(10px) !important;
 }
 
-/* NEW: Notifications styles matching the image */
-.notifications-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    overflow: hidden;
-}
-
-.notifications-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 25px;
-    border-bottom: 1px solid #eaeaea;
-    background-color: #f9fafc;
-}
-
-.notifications-header h1 {
-    font-size: 1.5rem;
-    color: #2c3e50;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-}
-
-.mark-all-read-btn {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-}
-
-.mark-all-read-btn:hover {
-    background-color: #2980b9;
-}
-
-.notifications-count {
-    background-color: #e74c3c;
-    color: white;
-    font-size: 0.8rem;
-    border-radius: 50%;
-    width: 22px;
-    height: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 8px;
-}
-
-.notification-item {
-    padding: 20px 25px;
-    border-bottom: 1px solid #f0f0f0;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    transition: background-color 0.2s;
-}
-
-.notification-item:hover {
-    background-color: #f9f9f9;
-}
-
-.notification-item.unread {
-    background-color: #f0f8ff;
-    border-right: 4px solid #3498db;
-}
-
-.notification-icon {
-    background-color: #eef5ff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #3498db;
-    flex-shrink: 0;
-}
-
-.notification-content {
-    flex: 1;
-}
-
-.notification-title {
-    font-weight: 600;
-    color: #2c3e50;
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.notification-badge {
-    background-color: #e74c3c;
-    color: white;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-}
-
-.notification-time {
-    color: #7f8c8d;
-    font-size: 0.85rem;
-    margin-top: 5px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.notification-comment {
-    background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 10px;
-    border: 1px solid #e9ecef;
-    color: #333;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-.mark-read-btn {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 6px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    margin-top: 10px;
-    transition: background-color 0.3s;
-}
-
-.mark-read-btn:hover {
-    background-color: #27ae60;
+@media only screen and (max-width: 768px) {
+    .login-box {
+        width: 90%;
+        padding: 25px;
+        margin-top: 60px;
+    }
+    
+    .welcome-fixed {
+        padding: 15px !important;
+        margin: 0 10px 20px 10px !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .welcome-fixed h3 {
+        font-size: 1.4rem !important;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -408,8 +481,8 @@ if "current_page" not in st.session_state:
 if "show_welcome" not in st.session_state:
     st.session_state.show_welcome = True
 
-if "replying_to" not in st.session_state:
-    st.session_state.replying_to = None
+if "animation_shown" not in st.session_state:
+    st.session_state.animation_shown = False
 
 # ----------------------------
 # Paths
@@ -420,22 +493,6 @@ FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
 # ----------------------------
 # Helper Functions
 # ----------------------------
-def clean_text(text):
-    """
-    Clean text from HTML tags and escape special characters
-    """
-    if not isinstance(text, str):
-        return str(text)
-    
-    # إزالة جميع HTML tags
-    text = re.sub(r'<[^>]+>', '', text)
-    
-    # تنظيف الأحرف الخاصة
-    text = text.replace('\r\n', '\n').replace('\r', '\n')
-    text = text.strip()
-    
-    return text
-
 def get_current_month_folders():
     """Get all folders for current month"""
     if not os.path.exists(BASE_PATH):
@@ -449,123 +506,52 @@ def is_file_for_user(filename, username):
     parts = re.split(r"\s*-\s*", name)
     return any(username.lower() in p.strip() for p in parts)
 
-def add_feedback(username, comment, replied_to=None, replied_by=None):
-    """Add feedback to CSV file with notification support"""
+def add_feedback(username, comment):
+    """Add feedback to CSV file"""
     os.makedirs(BASE_PATH, exist_ok=True)
-    
-    cleaned_comment = clean_text(comment) if comment else ""
-    
     if os.path.exists(FEEDBACK_FILE):
         df = pd.read_csv(FEEDBACK_FILE)
-        for col in ["id", "replied_to", "replied_by", "is_read"]:
-            if col not in df.columns:
-                df[col] = None
     else:
-        df = pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
-    
-    feedback_id = str(uuid.uuid4())[:8]
-    
-    new_feedback = {
-        "id": feedback_id,
-        "username": username,
-        "comment": cleaned_comment,
-        "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "replied_to": replied_to,
-        "replied_by": replied_by,
-        "is_read": False
-    }
-    
-    df = pd.concat([df, pd.DataFrame([new_feedback])], ignore_index=True)
+        df = pd.DataFrame(columns=["username","comment","datetime"])
+    df = pd.concat([df, pd.DataFrame([{"username": username,"comment":comment,"datetime":datetime.now()}])], ignore_index=True)
     df.to_csv(FEEDBACK_FILE, index=False)
-    
-    return feedback_id
 
 def load_feedback():
     """Load feedback from CSV file"""
     if os.path.exists(FEEDBACK_FILE):
-        try:
-            df = pd.read_csv(FEEDBACK_FILE)
-            if 'comment' in df.columns:
-                df['comment'] = df['comment'].apply(lambda x: clean_text(x) if isinstance(x, str) else x)
-            
-            required_columns = ["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"]
-            for col in required_columns:
-                if col not in df.columns:
-                    df[col] = None
-            
-            if df['id'].isna().any():
-                df['id'] = df.apply(lambda x: str(uuid.uuid4())[:8] if pd.isna(x['id']) else x['id'], axis=1)
-            
-            if df['is_read'].isna().any():
-                df['is_read'] = df['is_read'].fillna(False)
-            
-            return df
-        except Exception as e:
-            st.error(f"Error loading feedback: {e}")
-            return pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
+        return pd.read_csv(FEEDBACK_FILE)
     else:
-        return pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"])
+        return pd.DataFrame(columns=["username","comment","datetime"])
 
-def get_notifications(username):
-    """Get notifications for specific user"""
-    df = load_feedback()
+def show_login_animation(username):
+    """Show animation during login"""
+    # Choose random animation
+    animations = [
+        "confetti", 
+        "fireworks", 
+        "loading", 
+        "pulse"
+    ]
     
-    if df.empty:
-        return pd.DataFrame()
+    selected_animation = random.choice(animations)
     
-    user_notifications = df[
-        (df['replied_to'] == username) & 
-        (df['is_read'] == False)
-    ].copy()
+    # Show loading animation first
+    loading_placeholder = st.empty()
+    loading_placeholder.markdown(show_loading_animation(f"Welcome {username} Team! 🚀"), unsafe_allow_html=True)
     
-    return user_notifications
-
-def get_unread_count(username):
-    """Get count of unread notifications"""
-    notifications = get_notifications(username)
-    return len(notifications)
-
-def mark_as_read(feedback_id):
-    """Mark notification as read"""
-    df = load_feedback()
+    time.sleep(1.5)
     
-    if not df.empty and 'id' in df.columns:
-        df.loc[df['id'] == feedback_id, 'is_read'] = True
-        df.to_csv(FEEDBACK_FILE, index=False)
-        return True
-    return False
-
-def mark_all_as_read(username):
-    """Mark all notifications as read for a user"""
-    df = load_feedback()
+    # Clear loading
+    loading_placeholder.empty()
     
-    if not df.empty:
-        mask = (df['replied_to'] == username) & (df['is_read'] == False)
-        df.loc[mask, 'is_read'] = True
-        df.to_csv(FEEDBACK_FILE, index=False)
-        return True
-    return False
-
-def delete_feedback(feedback_id):
-    """Delete feedback by ID"""
-    df = load_feedback()
+    # Show success message
+    st.success(f"✅ Login successful! Welcome {username} Team! 👋")
     
-    if not df.empty and 'id' in df.columns:
-        initial_count = len(df)
-        df = df[df['id'] != feedback_id]
-        
-        if len(df) < initial_count:
-            df.to_csv(FEEDBACK_FILE, index=False)
-            return True
+    # Mark animation as shown
+    st.session_state.animation_shown = True
     
-    return False
-
-def delete_all_feedback():
-    """Delete all feedback"""
-    if os.path.exists(FEEDBACK_FILE):
-        os.remove(FEEDBACK_FILE)
-        return True
-    return False
+    # Small delay before redirect
+    time.sleep(1)
 
 # ----------------------------
 # Login / Logout Logic
@@ -588,47 +574,22 @@ def logout():
     st.session_state.username = None
     st.session_state.current_page = "dashboard"
     st.session_state.show_welcome = True
-    st.session_state.replying_to = None
+    st.session_state.animation_shown = False
 
 # ----------------------------
 # Navigation Buttons (Top-Right)
 # ----------------------------
 def top_right_buttons():
     """Display navigation buttons at top-right"""
-    unread_count = 0
-    if st.session_state.logged_in and st.session_state.current_page != "notifications":
-        unread_count = get_unread_count(st.session_state.username)
-    
-    # استخدام أعمدة متساوية
-    col1, col2, col3, col4, col5 = st.columns(5)
-    
+    col1, col2, col3 = st.columns([1,1,1])
     with col1:
-        if st.button("📊 Dashboard", key="nav_dashboard"):
-            st.session_state.current_page = "dashboard"
-            st.rerun()
-    
-    with col2:
-        if st.button("💬 Feedback", key="nav_feedback"):
+        if st.button("💬 Feedback"):
             st.session_state.current_page = "feedback"
-            st.rerun()
-    
-    with col3:
-        button_label = "🔔 Notifications"
-        if unread_count > 0:
-            button_label = f"🔔 ({unread_count})"
-        
-        if st.button(button_label, key="nav_notifications"):
-            st.session_state.current_page = "notifications"
-            st.rerun()
-    
-    with col4:
-        if st.button("ℹ️ About", key="nav_about"):
+    with col2:
+        if st.button("ℹ️ About"):
             st.session_state.current_page = "about"
-            st.rerun()
-    
-    with col5:
-        # جعل زر Logout نوع secondary ليكون بلون مختلف وأكبر
-        if st.button("🚪 Logout", key="nav_logout", type="secondary"):
+    with col3:
+        if st.button("🚪 Logout"):
             logout()
             st.rerun()
 
@@ -638,245 +599,57 @@ def top_right_buttons():
 def show_welcome_message():
     """Display welcome message that stays in dashboard"""
     if st.session_state.show_welcome and st.session_state.logged_in:
+        # Different messages based on team
+        team_messages = {
+            "Admin": "🎯 Admin Dashboard - Full Control",
+            "CHC": "🏥 CHC Team - Healthcare Division",
+            "CNS": "🧠 CNS Team - Neuroscience Division", 
+            "GIT": "🩺 GIT Team - Gastroenterology",
+            "Primary Care": "👨‍⚕️ Primary Care - General Medicine",
+            "CVM": "❤️ CVM Team - Cardiology",
+            "Power Team": "⚡ Power Team - Special Operations",
+            "DGU": "🔧 DGU Team - Technical Division",
+            "DNU": "📊 DNU Team - Data Analysis",
+            "Sildava": "🌟 Sildava Team",
+            "Ortho": "🦴 Ortho Team - Orthopedics",
+            "All": "👁️ All Viewer - Full Access",
+            "managers": "👨‍💼 Management View"
+        }
+        
+        # Get appropriate message
         username = st.session_state.username
+        message = team_messages.get(username.split()[0] if ' ' in username else username, 
+                                   f"👋 Welcome {username} Team!")
         
-        unread_count = get_unread_count(username)
-        notification_badge = ""
-        if unread_count > 0 and st.session_state.current_page != "notifications":
-            notification_badge = f'<span style="background: #FF5252; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-size: 0.9rem;">{unread_count} new</span>'
+        # Emojis based on team
+        team_emojis = {
+            "Admin": "👑",
+            "CHC": "🏥",
+            "CNS": "🧠", 
+            "GIT": "🩺",
+            "Primary": "👨‍⚕️",
+            "CVM": "❤️",
+            "Power": "⚡",
+            "DGU": "🔧",
+            "DNU": "📊",
+            "Sildava": "🌟",
+            "Ortho": "🦴"
+        }
         
+        emoji = team_emojis.get(username.split()[0] if ' ' in username else username, "👋")
+        
+        # Display welcome message
         st.markdown(f"""
-        <div class="welcome-fixed">
-            <h3>👋 Hello {username.capitalize()} Team! {notification_badge}</h3>
-            <p>Welcome to the Sales Dashboard</p>
-            <div style="margin-top: 10px; font-size: 1.2rem;">
-                📅 {date.today().strftime('%B %d, %Y')}
+        <div class="welcome-container">
+            <div class="welcome-fixed">
+                <h3>{emoji} Hello {username} Team!</h3>
+                <p>{message}</p>
+                <div style="margin-top: 10px; font-size: 1.2rem;">
+                    📅 {date.today().strftime('%B %d, %Y')}
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
-
-# ----------------------------
-# Display Feedback Function - FIXED
-# ----------------------------
-def display_feedback_card(row, is_admin=False):
-    """Display a single feedback card - SIMPLIFIED VERSION"""
-    with st.container():
-        # استخدام Streamlit components مباشرة
-        col1, col2 = st.columns([3, 1])
-        
-        with col1:
-            st.markdown(f"**👤 {row['username']}**")
-        with col2:
-            st.caption(f"📅 {row['datetime']}")
-        
-        # عرض التعليق في مربع نص
-        st.markdown(
-            f'<div class="comment-content">{row["comment"]}</div>',
-            unsafe_allow_html=True
-        )
-        
-        # إذا كان هناك رد
-        if pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != '':
-            st.info(f"↩️ Replied by: {row['replied_by']}")
-        
-        # أزرار الإجراءات للمسؤول
-        if is_admin:
-            col_btn1, col_btn2 = st.columns(2)
-            
-            with col_btn1:
-                if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary"):
-                    if delete_feedback(row['id']):
-                        st.success("✅ Feedback deleted!")
-                        time.sleep(1)
-                        st.rerun()
-            
-            with col_btn2:
-                if st.button("📤 Reply", key=f"reply_{row['id']}", type="primary"):
-                    st.session_state.replying_to = row['id']
-                    st.rerun()
-            
-            # نموذج الرد إذا كان مفعلاً
-            if st.session_state.replying_to == row['id']:
-                with st.form(key=f"reply_form_{row['id']}"):
-                    reply_text = st.text_area(
-                        "Your reply:",
-                        placeholder=f"Type your reply to {row['username']}...",
-                        height=100,
-                        key=f"reply_text_{row['id']}"
-                    )
-                    
-                    col_sub1, col_sub2 = st.columns(2)
-                    with col_sub1:
-                        submit_reply = st.form_submit_button("Send Reply", type="primary")
-                    with col_sub2:
-                        cancel_reply = st.form_submit_button("Cancel")
-                    
-                    if cancel_reply:
-                        st.session_state.replying_to = None
-                        st.rerun()
-                    
-                    if submit_reply and reply_text.strip():
-                        add_feedback(
-                            username=st.session_state.username,
-                            comment=reply_text,
-                            replied_to=row['username'],
-                            replied_by=st.session_state.username
-                        )
-                        st.session_state.replying_to = None
-                        
-                        st.success(f"✅ Reply sent to {row['username']}!")
-                        time.sleep(1)
-                        st.rerun()
-                    elif submit_reply:
-                        st.warning("Please write a reply first.")
-
-# ----------------------------
-# Display Notifications Function - NEW DESIGN
-# ----------------------------
-def display_notifications_page():
-    """Display notifications page with new design"""
-    st.subheader("🔔 Your Notifications")
-    
-    notifications = get_notifications(st.session_state.username)
-    unread_count = len(notifications)
-    
-    # HTML for notifications header and list
-    notifications_html = f"""
-    <div class="notifications-container">
-        <div class="notifications-header">
-            <h1><i class="fas fa-bell"></i> Your Notifications</h1>
-            <button class="mark-all-read-btn" id="markAllReadBtn">Mark All as Read</button>
-        </div>
-            <div style="padding: 15px 25px; color: #666; border-bottom: 1px solid #eaeaea;">
-            You have {unread_count} notification(s)
-            </div>
-    </div>
-    """
-    if not notifications.empty:
-        for idx, row in notifications.sort_values("datetime", ascending=False).iterrows():
-            is_read = row.get('is_read', False)
-            replied_by = row.get('replied_by', '')
-            
-            notifications_html += f"""
-            <div class="notification-item {'unread' if not is_read else ''}" id="notification-{row['id']}">
-                <div class="notification-icon">
-                    <i class="fas fa-reply"></i>
-                </div>
-                    <div class="notification-content">
-                        <div class="notification-title">
-                        {replied_by if replied_by else row['username']} replied to your feedback
-                        {'<span class="notification-badge">NEW</span>' if not is_read else ''}
-                        </div>
-                    <div class="notification-time">
-                        <i class="far fa-clock"></i> {row['datetime']}
-                    </div>
-                    <div class="notification-comment">
-                        {row['comment']}
-                        </div>
-                    {'<button class="mark-read-btn" onclick="markAsRead(\'' + str(row['id']) + '\')">✔ Mark as Read</button>' if not is_read else ''}
-                    </div>
-            </div>
-            """
-    else:
-        notifications_html += """
-        <div style="padding: 40px 25px; text-align: center; color: #666;">
-            <i class="far fa-bell" style="font-size: 48px; margin-bottom: 15px; opacity: 0.5;"></i>
-            <p style="font-size: 1.1rem;">No new notifications</p>
-        </div>
-        """
-    
-    notifications_html += "</div>"
-    
-    # Display the HTML
-    st.markdown(notifications_html, unsafe_allow_html=True)
-    
-    # JavaScript for button actions
-    st.markdown("""
-    <script>
-    function markAsRead(feedbackId) {
-        // This function would typically make an AJAX call to mark as read
-        // For now, we'll trigger a Streamlit rerun with a query parameter
-        window.location.href = window.location.pathname + '?mark_read=' + feedbackId;
-    }
-    
-    document.getElementById('markAllReadBtn')?.addEventListener('click', function() {
-        // Mark all as read
-        window.location.href = window.location.pathname + '?mark_all_read=true';
-    });
-    </script>
-    """, unsafe_allow_html=True)
-    
-    # Handle mark as read actions
-    query_params = st.query_params
-    if "mark_read" in query_params:
-        feedback_id = query_params["mark_read"]
-        if mark_as_read(feedback_id):
-            st.success("Notification marked as read!")
-            time.sleep(0.5)
-            st.query_params.clear()
-            st.rerun()
-    
-    if "mark_all_read" in query_params:
-        if mark_all_as_read(st.session_state.username):
-            st.success("All notifications marked as read!")
-            time.sleep(0.5)
-            st.query_params.clear()
-            st.rerun()
-    
-    # Streamlit buttons as fallback
-    st.markdown("---")
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("✅ Mark All as Read", use_container_width=True, type="primary"):
-            if mark_all_as_read(st.session_state.username):
-                st.success("All notifications marked as read!")
-                time.sleep(0.5)
-                st.rerun()
-    
-    with col2:
-        if st.button("← Back to Dashboard", use_container_width=True):
-            st.session_state.current_page = "dashboard"
-            st.rerun()
-    
-    # Show notification history if no new notifications
-    if notifications.empty:
-        df = load_feedback()
-        user_notifications = df[
-            (df['replied_to'] == st.session_state.username) | 
-            (df['username'] == st.session_state.username)
-        ]
-        
-        if not user_notifications.empty:
-            st.markdown("---")
-            st.subheader("📜 Notification History")
-            
-            for idx, row in user_notifications.sort_values("datetime", ascending=False).iterrows():
-                with st.container():
-                    is_reply = pd.notna(row.get('replied_by')) and str(row.get('replied_by')).strip() != ''
-                    
-                    st.markdown(f"""
-                    <div style="
-                        background: rgba(255, 255, 255, 0.1);
-                        padding: 15px;
-                        border-radius: 10px;
-                        margin-bottom: 15px;
-                        border-left: 5px solid #4CAF50;
-                    ">
-                        <div>
-                            <p style="margin: 0; color: white;">
-                                <strong>👤 {row['username']}</strong>
-                                {f"<span style='color: #FF9800; font-size: 0.9rem; margin-left: 10px;'>↩️ {row['replied_by']}</span>" if is_reply else ""}
-                            </p>
-                            <p style="margin: 5px 0; font-size: 0.9rem; color: rgba(255,255,255,0.7);">
-                                📅 {row['datetime']}
-                            </p>
-                        </div>
-                        <div class="comment-content">
-                            {row['comment']}
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
 
 # ----------------------------
 # Main Application UI
@@ -890,6 +663,7 @@ else:
 if not st.session_state.logged_in:
     st.markdown('<div class="login-box">', unsafe_allow_html=True)
     
+    # Login Header
     st.markdown("""
     <div style="text-align: center; margin-bottom: 30px;">
         <h2 style="color: white; margin-bottom: 5px;">🔐 Login</h2>
@@ -897,19 +671,23 @@ if not st.session_state.logged_in:
     </div>
     """, unsafe_allow_html=True)
     
-    u = st.text_input("", placeholder="👤 Username", key="login_username")
-    p = st.text_input("", type="password", placeholder="🔒 Password", key="login_password")
+    # Input fields
+    u = st.text_input("", placeholder="👤 Username")
+    p = st.text_input("", type="password", placeholder="🔒 Password")
     
-    if st.button("🚀 Login to Dashboard", key="login_button", type="primary"):
+    # Login button
+    st.markdown('<div class="login-btn">', unsafe_allow_html=True)
+    if st.button("🚀 Login to Dashboard"):
         if u and p:
             if login(u, p):
-                st.success(f"✅ Login successful! Welcome {u} Team! 👋")
-                time.sleep(1)
+                # Show animation during login
+                show_login_animation(u)
                 st.rerun()
             else:
                 st.error("❌ Wrong Username Or Password")
         else:
             st.warning("⚠️ Please enter both username and password")
+    st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -918,13 +696,14 @@ else:
     # Show navigation buttons
     top_right_buttons()
     
-    # Show welcome message
+    # Show welcome message (ALWAYS VISIBLE in dashboard)
     show_welcome_message()
     
     # ----- DASHBOARD PAGE -----
     if st.session_state.current_page == "dashboard":
         st.subheader("📊 Daily Sales Dashboard")
         
+        # Stats Card
         col1, col2, col3 = st.columns(3)
         with col1:
             st.markdown("""
@@ -943,19 +722,14 @@ else:
             """.format(role=st.session_state.user_role), unsafe_allow_html=True)
         
         with col3:
-            unread_count = get_unread_count(st.session_state.username)
-            notification_text = f"{unread_count} unread" if unread_count > 0 else "All read"
-            badge_color = "#FF5252" if unread_count > 0 else "#4CAF50"
-            
-            st.markdown(f"""
+            st.markdown("""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">🔔 Notifications</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">
-                    <span style="color: {badge_color};">{notification_text}</span>
-                </p>
+                <h4 style="color: #00c6ff; margin: 0;">🚀 Status</h4>
+                <p style="font-size: 1.5rem; margin: 5px 0;">Active ✅</p>
             </div>
             """, unsafe_allow_html=True)
         
+        # Get available data
         folders = get_current_month_folders()
         
         if folders:
@@ -963,17 +737,18 @@ else:
                 "📅 Select Date:",
                 folders,
                 format_func=lambda x: f"📅 {x}",
-                index=0,
-                key="date_selector"
+                index=0
             )
             
             if selected_day:
                 folder_path = os.path.join(BASE_PATH, selected_day)
                 
+                # ----- ADMIN DASHBOARD -----
                 if st.session_state.user_role == "Admin":
                     st.markdown("---")
                     st.subheader("👨‍💼 Admin Controls")
                     
+                    # File upload section
                     with st.expander("📤 Upload Files", expanded=True):
                         uploaded_files = st.file_uploader(
                             "Choose Excel files", 
@@ -982,7 +757,7 @@ else:
                             key="admin_uploader"
                         )
                         
-                        if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button"):
+                        if uploaded_files and st.button("🚀 Upload Files", type="primary"):
                             today_folder = os.path.join(BASE_PATH, selected_day)
                             os.makedirs(today_folder, exist_ok=True)
                             
@@ -993,9 +768,11 @@ else:
                                 success_count += 1
                             
                             st.success(f"✅ {success_count} file(s) uploaded successfully!")
+                            st.balloons()
                             time.sleep(1)
                             st.rerun()
                     
+                    # File management section
                     st.markdown("---")
                     st.subheader("📁 File Management")
                     
@@ -1030,6 +807,7 @@ else:
                     else:
                         st.info("📁 Folder doesn't exist yet.")
                 
+                # ----- USER DASHBOARD -----
                 else:
                     st.markdown("---")
                     
@@ -1043,6 +821,7 @@ else:
                         if allowed_files:
                             st.subheader("📥 Your Files")
                             
+                            # Display files in a nice grid
                             cols = st.columns(2)
                             for idx, file in enumerate(allowed_files):
                                 with cols[idx % 2]:
@@ -1076,7 +855,7 @@ else:
         else:
             st.info("📅 No data available for current month.")
     
-    # ----- FEEDBACK PAGE - FIXED VERSION -----
+    # ----- FEEDBACK PAGE -----
     elif st.session_state.current_page == "feedback":
         st.subheader("💬 Feedback System")
         
@@ -1085,33 +864,33 @@ else:
             if not df.empty:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
-                # زر حذف الكل
-                if st.button("🗑️ Delete All Feedback", type="secondary", key="delete_all_btn"):
-                    if delete_all_feedback():
-                        st.success("✅ All feedback deleted!")
-                        time.sleep(1)
-                        st.rerun()
-                    else:
-                        st.error("❌ Failed to delete feedback")
-                
-                st.markdown("---")
-                
-                # عرض الفيدباك باستخدام الدالة المصححة
+                # Display feedback cards
                 for idx, row in df.sort_values("datetime", ascending=False).iterrows():
-                    display_feedback_card(row, is_admin=True)
-                    st.markdown("---")
+                    with st.container():
+                        st.markdown(f"""
+                        <div class="fadeInUp">
+                            <div class="custom-card">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <p><strong>👤 {row['username']}</strong></p>
+                                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7);">
+                                        📅 {row['datetime']}
+                                    </p>
+                                </div>
+                                <p style="margin-top: 10px;">{row['comment']}</p>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
             else:
                 st.info("📭 No feedback yet.")
         else:
-            # نموذج إرسال الفيدباك للمستخدمين العاديين
+            # User feedback form
             with st.form("feedback_form", clear_on_submit=True):
                 st.markdown("### 📝 Share Your Thoughts")
                 
                 comment = st.text_area(
                     "Your feedback:",
                     placeholder="What's on your mind? Suggestions, issues, or comments...",
-                    height=150,
-                    key="user_feedback"
+                    height=150
                 )
                 
                 col1, col2 = st.columns([1, 4])
@@ -1122,68 +901,51 @@ else:
                     add_feedback(st.session_state.username, comment.strip())
                     st.success("✅ Thank you for your feedback! 🌟")
                     time.sleep(1.5)
+                    st.session_state.current_page = "dashboard"
                     st.rerun()
                 elif submit:
                     st.warning("⚠️ Please write something before submitting.")
-    
-    # ----- NOTIFICATIONS PAGE -----
-    elif st.session_state.current_page == "notifications":
-        display_notifications_page()
     
     # ----- ABOUT PAGE -----
     elif st.session_state.current_page == "about":
         st.subheader("ℹ️ About This Dashboard")
         
-        with st.container():
-            st.markdown("""
+        st.markdown("""
+        <div class="fadeInUp">
             <div class="custom-card">
-            """, unsafe_allow_html=True)
-            
-            st.markdown("#### 🎯 Mission")
-            st.markdown("Streamline daily sales operations and provide real-time insights for all teams.")
-            
-            st.markdown("---")
-            
-            st.markdown("#### ✨ Features")
-            st.markdown("""
-            ✅ **File Management** - Upload and download sales files  
-            ✅ **Feedback System** - Share thoughts and suggestions  
-            ✅ **Notifications** - Get alerts for replies  
-            ✅ **Admin Controls** - Manage feedback and files  
-            ✅ **Team-Based Access** - Different views for different teams  
-            """)
-            
-            st.markdown("---")
-            
-            st.markdown("#### 👥 Teams")
-            st.markdown("""
-            • **Admin** - Full system control  
-            • **CHC** - Healthcare Division  
-            • **CNS** - Neuroscience Division  
-            • **GIT** - Gastroenterology  
-            • **Primary Care** - General Medicine  
-            • **CVM** - Cardiology Division  
-            • **Power Team** - Special Operations  
-            • **All Teams** - Comprehensive access
-            """)
-            
-            st.markdown("---")
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+                <h3 style="color: #00c6ff;">🎯 Mission</h3>
+                <p>Streamline daily sales operations and provide real-time insights for all teams.</p>
+                <h3 style="color: #00c6ff; margin-top: 20px;">👥 Teams</h3>
+                <p>• <strong>Admin</strong> - Full system control</p>
+                <p>• <strong>CHC</strong> - Healthcare Division</p>
+                <p>• <strong>CNS</strong> - Neuroscience Division</p>
+                <p>• <strong>GIT</strong> - Gastroenterology</p>
+                <p>• <strong>Primary Care</strong> - General Medicine</p>
+                <p>• <strong>CVM</strong> - Cardiology Division</p>
+                <p>• <strong>Power Team</strong> - Special Operations</p>
+                <p>• <strong>All Teams</strong> - Comprehensive access</p>
+                <h3 style="color: #00c6ff; margin-top: 20px;">✨ Features</h3>
+                <p>✅ Secure role-based access</p>
+                <p>✅ Daily file management</p>
+                <p>✅ Feedback system</p>
+                <p>✅ Mobile responsive</p>
+                <p>✅ Real-time updates</p>
+                <div style="margin-top: 25px; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px;">
+                    <p style="text-align: center; margin: 0; font-size: 1.1rem;">
+                        🚀 <strong>Commercia Excellence Team</strong>
+                    </p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ----------------------------
 # Footer
 # ----------------------------
 if st.session_state.logged_in:
     st.markdown("---")
-    if st.session_state.logged_in and st.session_state.current_page != "notifications":
-        unread_count = get_unread_count(st.session_state.username)
-        notification_text = f" | 🔔 {unread_count} unread notification(s)" if unread_count > 0 else ""
-    else:
-        notification_text = ""
-    
-    st.markdown(f"""
+    st.markdown("""
     <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
-        <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
+        <p>📊 Sales Dashboard v2.0 | © 2024 | 🔒 Secure Access</p>
     </div>
     """, unsafe_allow_html=True)
