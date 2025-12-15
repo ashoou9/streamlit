@@ -1047,6 +1047,7 @@ else:
                             key="admin_uploader"
                         )
                         
+                        
                         if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button"):
                             today_folder = os.path.join(BASE_PATH, selected_day)
                             os.makedirs(today_folder, exist_ok=True)
