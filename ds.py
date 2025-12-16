@@ -1,3 +1,5 @@
+
+
 import streamlit as st
 import warnings
 import logging
@@ -773,6 +775,53 @@ input::placeholder {
         height: 32px !important;
     }
 }
+
+/* تنسيق القائمة المنسدلة للتنقل */
+.navigation-selectbox {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    font-weight: bold !important;
+    padding: 8px !important;
+}
+
+.navigation-selectbox option {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #333 !important;
+    padding: 10px !important;
+}
+
+/* تنسيق حاوية التنقل */
+.nav-container {
+    margin-bottom: 20px !important;
+    text-align: right !important;
+}
+
+.nav-container .stSelectbox {
+    width: 250px !important;
+    float: right !important;
+}
+
+@media only screen and (max-width: 768px) {
+    .nav-container .stSelectbox {
+        width: 200px !important;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .nav-container .stSelectbox {
+        width: 180px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .nav-container .stSelectbox {
+        width: 160px !important;
+        font-size: 13px !important;
+    }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1009,44 +1058,74 @@ def logout():
     st.session_state.replying_to = None
 
 # ----------------------------
-# Navigation Buttons (Top-Right)
+# Navigation Dropdown (Top-Right) - الحل الجديد المبسط
 # ----------------------------
-def top_right_buttons():
-    """Display navigation buttons at top-right"""
+def top_right_navigation():
+    """Display navigation dropdown at top-right"""
     unread_count = 0
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
     
-    # استخدام 5 أعمدة لجعل المساحة أوسع
-    col1, col2, col3, col4, col5 = st.columns(5)
+    # عرض الإشعارات بجانب القائمة
+    notification_badge = ""
+    if unread_count > 0:
+        notification_badge = f" ({unread_count} new)"
     
-    with col1:
-        if st.button("📊 Dashboard", key="nav_dashboard", use_container_width=True):
-            st.session_state.current_page = "dashboard"
-            st.rerun()
+    # إنشاء الحاوية للتنقل
+    st.markdown('<div class="nav-container">', unsafe_allow_html=True)
     
-    with col2:
-        if st.button("💬 Feedback", key="nav_feedback", use_container_width=True):
-            st.session_state.current_page = "feedback"
-            st.rerun()
+    # خيارات القائمة
+    options = [
+        "📊 Dashboard",
+        "💬 Feedback", 
+        f"🔔 Notifications{notification_badge}",
+        "ℹ️ About",
+        "🚪 Logout"
+    ]
     
-    with col3:
-        button_label = "🔔 Notifications"
-        if unread_count > 0:
-            button_label = f"🔔 ({unread_count})"
+    # تحديد الخيار الحالي بناءً على الصفحة الحالية
+    current_index = 0
+    if st.session_state.current_page == "feedback":
+        current_index = 1
+    elif st.session_state.current_page == "notifications":
+        current_index = 2
+    elif st.session_state.current_page == "about":
+        current_index = 3
+    
+    # استخدام selectbox للتنقل
+    selected = st.selectbox(
+        "Navigate to:",
+        options,
+        index=current_index,
+        key="navigation_select",
+        label_visibility="collapsed"
+    )
+    
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # معالجة الاختيار
+    if selected:
+        if "Dashboard" in selected:
+            if st.session_state.current_page != "dashboard":
+                st.session_state.current_page = "dashboard"
+                st.rerun()
         
-        if st.button(button_label, key="nav_notifications", use_container_width=True):
-            st.session_state.current_page = "notifications"
-            st.rerun()
-    
-    with col4:
-        if st.button("ℹ️ About", key="nav_about", use_container_width=True):
-            st.session_state.current_page = "about"
-            st.rerun()
-    
-    with col5:
-        # جعل زر Logout نوع ثانوي (secondary) ليكون بلون مختلف
-        if st.button("🚪 Logout", key="nav_logout", type="secondary", use_container_width=True):
+        elif "Feedback" in selected:
+            if st.session_state.current_page != "feedback":
+                st.session_state.current_page = "feedback"
+                st.rerun()
+        
+        elif "Notifications" in selected:
+            if st.session_state.current_page != "notifications":
+                st.session_state.current_page = "notifications"
+                st.rerun()
+        
+        elif "About" in selected:
+            if st.session_state.current_page != "about":
+                st.session_state.current_page = "about"
+                st.rerun()
+        
+        elif "Logout" in selected:
             logout()
             st.rerun()
 
@@ -1238,8 +1317,8 @@ if not st.session_state.logged_in:
 
 # ---------- DASHBOARD (Logged In) ----------
 else:
-    # Show navigation buttons
-    top_right_buttons()
+    # Show navigation dropdown (الحل الجديد)
+    top_right_navigation()
     
     # Show welcome message
     show_welcome_message()
