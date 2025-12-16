@@ -11,7 +11,10 @@ import base64
 import time
 import random
 import uuid
-
+st.set_page_config(
+    page_title="Mash Premiere"
+    
+)
 # ----------------------------
 # أولاً: إنشاء المجلدات والملفات المطلوبة للويندوز الجديد
 # هذه الزيادة الوحيدة اللي هنضيفها في الأول
@@ -631,7 +634,7 @@ input::placeholder {
 /* LOGIN BUTTON SPECIAL */
 .login-btn {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-    margin-top: 10px !important;
+    margin-top: 20px !important;
 }
 
 /* DOWNLOAD BUTTON - REDUCED */
