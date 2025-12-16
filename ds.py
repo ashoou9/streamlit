@@ -83,11 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
 /* إزالة الـ padding تماماً من الجوانب */
 .block-container {
     padding-top: 1rem !important;
-    padding-left: 15rem !important;
-    padding-right: 15rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
     padding-bottom: 100px !important;
     max-width: 100% !important;
-    width: 100% !important;
+    width: 80% !important;
     overflow-x: hidden !important;
 }
 
