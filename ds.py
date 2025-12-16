@@ -35,6 +35,104 @@ logging.getLogger().setLevel(logging.CRITICAL)
 os.environ["PYTHONWARNINGS"] = "ignore"
 
 # ----------------------------
+# JavaScript لإصلاح مشكلة الـ Zoom
+# ----------------------------
+st.markdown("""
+<script>
+// منع الـ Zoom الغير مرغوب فيه
+document.addEventListener('DOMContentLoaded', function() {
+    // منع zoom بالـ keyboard (Ctrl + +, Ctrl + -)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey === true || e.metaKey === true) && 
+            (e.keyCode === 61 || e.keyCode === 107 || e.keyCode === 173 || 
+             e.keyCode === 109 || e.keyCode === 187 || e.keyCode === 189)) {
+            e.preventDefault();
+        }
+    });
+    
+    // منع zoom بالـ mouse wheel + Ctrl
+    document.addEventListener('wheel', function(e) {
+        if(e.ctrlKey) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // إجبار viewport scale على 1
+    const metaViewport = document.querySelector('meta[name="viewport"]');
+    if (metaViewport) {
+        metaViewport.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+    }
+});
+</script>
+
+<style>
+/* إصلاح عام للـ Zoom */
+* {
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    -ms-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+
+/* تحسين الـ Responsive للعناصر */
+@media (max-width: 1400px) {
+    .block-container {
+        padding-left: 20rem !important;
+        padding-right: 20rem !important;
+    }
+}
+
+@media (max-width: 1200px) {
+    .block-container {
+        padding-left: 15rem !important;
+        padding-right: 15rem !important;
+    }
+}
+
+@media (max-width: 992px) {
+    .block-container {
+        padding-left: 10rem !important;
+        padding-right: 10rem !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .block-container {
+        padding-left: 5rem !important;
+        padding-right: 5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+}
+
+/* تحسين الأزرار للـ Zoom */
+.stButton > button {
+    min-width: 0px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* تحسين الـ Welcome Message للـ Zoom */
+.welcome-fixed {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* تحسين النصوص للـ Zoom */
+h1, h2, h3, h4, h5, h6, p, span, div {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ----------------------------
 # Page Background - مع تعديل بسيط للتعامل مع الويندوز الجديد
 # ----------------------------
 def set_bg_local(image_file, login_page=True):
@@ -69,11 +167,13 @@ def set_bg_local(image_file, login_page=True):
     .stApp {{
         background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
         background-size: cover;
+        min-height: 100vh;
     }}
 
     [data-testid="stAppViewContainer"] {{
         padding-top: {padding_top} !important;
         margin: 0 !important;
+        overflow-x: hidden !important;
     }}
 
     .block-container {{
@@ -82,6 +182,7 @@ def set_bg_local(image_file, login_page=True):
         padding-right: 30rem !important;
         padding-bottom: 100px !important;
         max-width: 100% !important;
+        overflow-x: hidden !important;
     }}
 
     header, footer {{
@@ -239,18 +340,24 @@ st.markdown("""
     border: 2px solid rgba(255,255,255,0.3) !important;
     backdrop-filter: blur(10px) !important;
     max-width: 600px !important;
+    width: 90% !important;
+    box-sizing: border-box !important;
 }
 
 .welcome-fixed h3 {
     color: white !important;
     margin-bottom: 8px !important;
     font-size: 1.8rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 .welcome-fixed p {
     color: rgba(255,255,255,0.9) !important;
     margin-top: 8px !important;
     font-size: 1rem !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 /* Success Message with Animation */
@@ -313,6 +420,8 @@ st.markdown("""
     color: black !important;
     border-radius: 8px;
     background: rgba(255,255,255,0.9) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
 }
 
 /* ALL LABELS */
@@ -332,6 +441,8 @@ div[data-testid="stMarkdownContainer"] p,
 div[data-testid="stText"] {
     color: white !important;
     font-weight: bold !important;
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
 }
 
 /* PLACEHOLDER */
@@ -343,7 +454,7 @@ input::placeholder {
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
     width: 420px;
-    max-width: 90%;
+    max-width: 90% !important;
     padding: 35px;
     border-radius: 18px;
     text-align: center;
@@ -352,6 +463,7 @@ input::placeholder {
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
     animation: fadeInUp 0.8s ease-out !important;
+    box-sizing: border-box !important;
 }
 
 /* BUTTONS */
@@ -364,6 +476,11 @@ input::placeholder {
     color: white;
     border: none;
     transition: all 0.3s ease !important;
+    box-sizing: border-box !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 .stButton > button:hover {
@@ -391,6 +508,7 @@ input::placeholder {
     height: 45px;
     font-size: 16px;
     transition: all 0.3s ease !important;
+    min-width: 0 !important;
 }
 
 .stDownloadButton button:hover {
@@ -412,6 +530,8 @@ input::placeholder {
     border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
     backdrop-filter: blur(10px) !important;
+    box-sizing: border-box !important;
+    word-wrap: break-word !important;
 }
 
 /* REPLY CARD */
@@ -473,6 +593,7 @@ input::placeholder {
     padding: 20px;
     margin: 10px 0;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    box-sizing: border-box !important;
 }
 
 .notification-item.unread {
@@ -491,6 +612,7 @@ input::placeholder {
     font-weight: bold;
     color: #333;
     font-size: 16px;
+    word-wrap: break-word !important;
 }
 
 .notification-time {
@@ -514,19 +636,70 @@ input::placeholder {
     margin: 10px 0;
     color: #333;
     font-size: 15px;
+    word-wrap: break-word !important;
+}
+
+/* تحسين الـ Zoom والأزرار */
+@media only screen and (max-width: 1400px) {
+    .block-container {
+        padding-left: 20rem !important;
+        padding-right: 20rem !important;
+    }
+    
+    .welcome-fixed {
+        max-width: 80% !important;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    .block-container {
+        padding-left: 15rem !important;
+        padding-right: 15rem !important;
+    }
+    
+    .welcome-fixed {
+        max-width: 85% !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .welcome-fixed h3 {
+        font-size: 1.6rem !important;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    .block-container {
+        padding-left: 10rem !important;
+        padding-right: 10rem !important;
+    }
+    
+    .welcome-fixed {
+        max-width: 90% !important;
+        font-size: 1.1rem !important;
+    }
+    
+    .welcome-fixed h3 {
+        font-size: 1.4rem !important;
+    }
+    
+    .stButton > button {
+        font-size: 14px !important;
+        height: 40px !important;
+    }
 }
 
 @media only screen and (max-width: 768px) {
     .login-box {
-        width: 90%;
-        padding: 25px;
-        margin-top: 60px;
+        width: 90% !important;
+        padding: 25px !important;
+        margin-top: 60px !important;
     }
     
     .welcome-fixed {
         padding: 15px !important;
         margin: 0 10px 20px 10px !important;
         font-size: 1.1rem !important;
+        max-width: 95% !important;
     }
     
     .welcome-fixed h3 {
@@ -545,6 +718,59 @@ input::placeholder {
     .stButton > button[kind="secondary"] {
         min-width: 100px !important;
         padding: 0 15px !important;
+    }
+    
+    .stButton > button {
+        font-size: 13px !important;
+        height: 38px !important;
+        padding: 0 10px !important;
+    }
+}
+
+@media only screen and (max-width: 576px) {
+    .block-container {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+    
+    .welcome-fixed {
+        font-size: 1rem !important;
+        padding: 12px !important;
+    }
+    
+    .welcome-fixed h3 {
+        font-size: 1.2rem !important;
+    }
+    
+    .stButton > button {
+        font-size: 12px !important;
+        height: 35px !important;
+        padding: 0 8px !important;
+    }
+    
+    .login-box {
+        padding: 20px !important;
+        margin-top: 50px !important;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .welcome-fixed {
+        font-size: 0.9rem !important;
+    }
+    
+    .welcome-fixed h3 {
+        font-size: 1.1rem !important;
+    }
+    
+    .stButton > button {
+        font-size: 11px !important;
+        height: 32px !important;
     }
 }
 </style>
@@ -795,12 +1021,12 @@ def top_right_buttons():
     col1, col2, col3, col4, col5 = st.columns(5)
     
     with col1:
-        if st.button("📊 Dashboard", key="nav_dashboard"):
+        if st.button("📊 Dashboard", key="nav_dashboard", use_container_width=True):
             st.session_state.current_page = "dashboard"
             st.rerun()
     
     with col2:
-        if st.button("💬 Feedback", key="nav_feedback"):
+        if st.button("💬 Feedback", key="nav_feedback", use_container_width=True):
             st.session_state.current_page = "feedback"
             st.rerun()
     
@@ -809,18 +1035,18 @@ def top_right_buttons():
         if unread_count > 0:
             button_label = f"🔔 ({unread_count})"
         
-        if st.button(button_label, key="nav_notifications"):
+        if st.button(button_label, key="nav_notifications", use_container_width=True):
             st.session_state.current_page = "notifications"
             st.rerun()
     
     with col4:
-        if st.button("ℹ️ About", key="nav_about"):
+        if st.button("ℹ️ About", key="nav_about", use_container_width=True):
             st.session_state.current_page = "about"
             st.rerun()
     
     with col5:
         # جعل زر Logout نوع ثانوي (secondary) ليكون بلون مختلف
-        if st.button("🚪 Logout", key="nav_logout", type="secondary"):
+        if st.button("🚪 Logout", key="nav_logout", type="secondary", use_container_width=True):
             logout()
             st.rerun()
 
@@ -919,14 +1145,14 @@ def display_feedback_card(row, is_admin=False):
             col_btn1, col_btn2 = st.columns(2)
             
             with col_btn1:
-                if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary"):
+                if st.button("🗑️ Delete", key=f"delete_{row['id']}", type="secondary", use_container_width=True):
                     if delete_feedback(row['id']):
                         st.success("✅ Feedback deleted!")
                         time.sleep(1)
                         st.rerun()
             
             with col_btn2:
-                if st.button("📤 Reply", key=f"reply_{row['id']}", type="primary"):
+                if st.button("📤 Reply", key=f"reply_{row['id']}", type="primary", use_container_width=True):
                     st.session_state.replying_to = row['id']
                     st.rerun()
             
@@ -942,9 +1168,9 @@ def display_feedback_card(row, is_admin=False):
                     
                     col_sub1, col_sub2 = st.columns(2)
                     with col_sub1:
-                        submit_reply = st.form_submit_button("Send Reply", type="primary")
+                        submit_reply = st.form_submit_button("Send Reply", type="primary", use_container_width=True)
                     with col_sub2:
-                        cancel_reply = st.form_submit_button("Cancel")
+                        cancel_reply = st.form_submit_button("Cancel", use_container_width=True)
                     
                     if cancel_reply:
                         st.session_state.replying_to = None
@@ -997,7 +1223,7 @@ if not st.session_state.logged_in:
     p = st.text_input("", type="password", placeholder="🔒 Password", key="login_password")
     
     st.markdown('<div class="login-btn">', unsafe_allow_html=True)
-    if st.button("🚀 Login to Dashboard", key="login_button", type="primary"):
+    if st.button("🚀 Login to Dashboard", key="login_button", type="primary", use_container_width=True):
         if u and p:
             if login(u, p):
                 show_login_animation(u)
@@ -1079,7 +1305,7 @@ else:
                             key="admin_uploader"
                         )
                         
-                        if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button"):
+                        if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button", use_container_width=True):
                             today_folder = os.path.join(BASE_PATH, selected_day)
                             os.makedirs(today_folder, exist_ok=True)
                             
@@ -1109,7 +1335,7 @@ else:
                                         st.write(f"📄 **{file}**")
                                     
                                     with c2:
-                                        if st.button("🗑️", key=f"del_{file}"):
+                                        if st.button("🗑️", key=f"del_{file}", use_container_width=True):
                                             os.remove(path)
                                             st.warning(f"Deleted: {file}")
                                             time.sleep(1)
@@ -1121,7 +1347,8 @@ else:
                                                 "📥 Download",
                                                 f,
                                                 file_name=file,
-                                                key=f"dl_{file}"
+                                                key=f"dl_{file}",
+                                                use_container_width=True
                                             )
                         else:
                             st.info("📭 No files available for this date.")
@@ -1184,7 +1411,7 @@ else:
                 st.markdown(f"### 📋 Total Feedback: {len(df)}")
                 
                 # Delete all button
-                if st.button("🗑️ Delete All Feedback", type="secondary", key="delete_all_btn"):
+                if st.button("🗑️ Delete All Feedback", type="secondary", key="delete_all_btn", use_container_width=True):
                     if delete_all_feedback():
                         st.success("✅ All feedback deleted!")
                         show_confetti_animation()
@@ -1215,7 +1442,7 @@ else:
                 
                 col1, col2 = st.columns([1, 4])
                 with col1:
-                    submit = st.form_submit_button("📤 Submit", type="primary")
+                    submit = st.form_submit_button("📤 Submit", type="primary", use_container_width=True)
                 
                 if submit and comment.strip():
                     add_feedback(st.session_state.username, comment.strip())
@@ -1233,7 +1460,7 @@ else:
         notifications = get_notifications(st.session_state.username)
         
         if not notifications.empty:
-            if st.button("✅ Mark All as Read", type="primary", key="mark_all_read"):
+            if st.button("✅ Mark All as Read", type="primary", key="mark_all_read", use_container_width=True):
                 if mark_all_as_read(st.session_state.username):
                     st.success("All notifications marked as read!")
                     time.sleep(0.5)
@@ -1268,7 +1495,7 @@ else:
                     if is_new:
                         col_btn1, col_btn2 = st.columns([1, 5])
                         with col_btn1:
-                            if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}"):
+                            if st.button("✓ Mark as Read", key=f"read_{row.get('id', idx)}", use_container_width=True):
                                 if mark_as_read(row.get('id', idx)):
                                     st.success("Notification marked as read!")
                                     time.sleep(0.5)
@@ -1314,7 +1541,7 @@ else:
                         st.markdown("---")
         
         st.markdown("---")
-        if st.button("← Back to Dashboard", key="back_to_dashboard"):
+        if st.button("← Back to Dashboard", key="back_to_dashboard", use_container_width=True):
             st.session_state.current_page = "dashboard"
             st.rerun()
     
