@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 import warnings
 import logging
@@ -76,39 +75,54 @@ document.addEventListener('DOMContentLoaded', function() {
     text-size-adjust: 100% !important;
 }
 
+/* ============================================= */
+/* EXPANDED FULL WIDTH LAYOUT - التوسيع الكامل */
+/* ============================================= */
+
+/* إزالة الـ padding تماماً من الجوانب */
+.block-container {
+    padding-top: 1rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 100px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+}
+
 /* تحسين الـ Responsive للعناصر */
 @media (max-width: 1400px) {
     .block-container {
-        padding-left: 20rem !important;
-        padding-right: 20rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
 }
 
 @media (max-width: 1200px) {
     .block-container {
-        padding-left: 15rem !important;
-        padding-right: 15rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
 }
 
 @media (max-width: 992px) {
     .block-container {
-        padding-left: 10rem !important;
-        padding-right: 10rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
     }
 }
 
 @media (max-width: 768px) {
     .block-container {
-        padding-left: 5rem !important;
-        padding-right: 5rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 }
 
 @media (max-width: 576px) {
     .block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
 }
 
@@ -180,10 +194,11 @@ def set_bg_local(image_file, login_page=True):
 
     .block-container {{
         padding-top: 1rem !important;
-        padding-left: 30rem !important;
-        padding-right: 30rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
         padding-bottom: 100px !important;
         max-width: 100% !important;
+        width: 100% !important;
         overflow-x: hidden !important;
     }}
 
@@ -259,6 +274,44 @@ def set_bg_local(image_file, login_page=True):
             padding-right: 1rem !important;
         }}
     }}
+    
+    /* توسيع الأعمدة والصفوف */
+    .stColumn {{
+        padding: 0 5px !important;
+    }}
+    
+    [data-testid="column"] {{
+        padding: 0 5px !important;
+    }}
+    
+    .row-widget {{
+        width: 100% !important;
+    }}
+    
+    /* توسيع العناصر الداخلية */
+    div[data-testid="stHorizontalBlock"] {{
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }}
+    
+    /* توسيع الـ Cards */
+    .custom-card {{
+        width: 100% !important;
+        margin: 0 0 15px 0 !important;
+    }}
+    
+    /* توسيع Welcome Message */
+    .welcome-fixed {{
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 25px 0 !important;
+    }}
+    
+    /* توسيع الـ Forms */
+    .stForm {{
+        width: 100% !important;
+    }}
     </style>
     """
     st.markdown(page_bg_img, unsafe_allow_html=True)
@@ -325,24 +378,24 @@ def show_loading_animation(text="Loading..."):
     return st.markdown(loading_html, unsafe_allow_html=True)
 
 # ----------------------------
-# Login + Dashboard UI Style - FIXED
+# Login + Dashboard UI Style - FIXED مع التوسيع
 # ----------------------------
 st.markdown("""
 <style>
-/* Welcome Message - Fixed in Dashboard */
+/* Welcome Message - Fixed in Dashboard - EXPANDED */
 .welcome-fixed {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     padding: 20px !important;
     border-radius: 15px !important;
     text-align: center !important;
-    margin: 0 auto 25px auto !important;
+    margin: 0 0 25px 0 !important; /* تغيير الهامش */
     color: white !important;
     font-size: 1.3rem !important;
     box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
     border: 2px solid rgba(255,255,255,0.3) !important;
     backdrop-filter: blur(10px) !important;
-    max-width: 600px !important;
-    width: 90% !important;
+    max-width: 100% !important; /* تغيير من 600px */
+    width: 100% !important; /* تغيير من 90% */
     box-sizing: border-box !important;
 }
 
@@ -371,7 +424,7 @@ st.markdown("""
     animation: pulse 2s infinite !important;
 }
 
-/* Notification Card - FIXED */
+/* Notification Card - FIXED - EXPANDED */
 .notification-card {
     background: rgba(255,255,255,0.15) !important;
     padding: 20px !important;
@@ -380,6 +433,7 @@ st.markdown("""
     border-left: 5px solid #FF9800 !important;
     backdrop-filter: blur(10px) !important;
     transition: all 0.3s ease !important;
+    width: 100% !important;
 }
 
 .notification-card:hover {
@@ -392,7 +446,7 @@ st.markdown("""
     opacity: 0.8;
 }
 
-/* Comment Display Box - FIXED */
+/* Comment Display Box - FIXED - EXPANDED */
 .comment-box {
     background: rgba(0, 0, 0, 0.25) !important;
     padding: 15px !important;
@@ -407,6 +461,7 @@ st.markdown("""
     max-height: 300px !important;
     overflow-y: auto !important;
     color: rgba(255, 255, 255, 0.95) !important;
+    width: 100% !important;
 }
 
 .comment-box p {
@@ -414,7 +469,7 @@ st.markdown("""
     color: rgba(255, 255, 255, 0.95) !important;
 }
 
-/* INPUT BOXES */
+/* INPUT BOXES - EXPANDED */
 .stTextInput > div > div > input {
     text-align: left;
     font-size: 16px;
@@ -436,7 +491,7 @@ label[data-baseweb="label"],
     font-weight: bold !important;
 }
 
-/* SUBHEADERS & TEXT */
+/* SUBHEADERS & TEXT - EXPANDED */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -445,6 +500,7 @@ div[data-testid="stText"] {
     font-weight: bold !important;
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
+    width: 100% !important;
 }
 
 /* PLACEHOLDER */
@@ -452,15 +508,15 @@ input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
-/* LOGIN BOX */
+/* LOGIN BOX - EXPANDED */
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
-    width: 420px;
-    max-width: 90% !important;
+    width: 100% !important; /* تغيير من 420px */
+    max-width: 500px !important; /* زيادة من 90% */
     padding: 35px;
     border-radius: 18px;
     text-align: center;
-    margin: 60px auto 0 auto;
+    margin: 60px auto 0 auto !important; /* مركز */
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
@@ -468,9 +524,9 @@ input::placeholder {
     box-sizing: border-box !important;
 }
 
-/* BUTTONS */
+/* BUTTONS - EXPANDED */
 .stButton > button {
-    width: 100%;
+    width: 100% !important;
     border-radius: 10px;
     height: 45px;
     font-size: 16px;
@@ -502,7 +558,7 @@ input::placeholder {
     margin-top: 20px !important;
 }
 
-/* DOWNLOAD BUTTON */
+/* DOWNLOAD BUTTON - EXPANDED */
 .stDownloadButton button {
     color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
@@ -511,6 +567,7 @@ input::placeholder {
     font-size: 16px;
     transition: all 0.3s ease !important;
     min-width: 0 !important;
+    width: 100% !important;
 }
 
 .stDownloadButton button:hover {
@@ -524,7 +581,7 @@ input::placeholder {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
 }
 
-/* CARD STYLING */
+/* CARD STYLING - EXPANDED */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
     padding: 20px !important;
@@ -534,20 +591,40 @@ input::placeholder {
     backdrop-filter: blur(10px) !important;
     box-sizing: border-box !important;
     word-wrap: break-word !important;
+    width: 100% !important;
+    height: 120px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
 }
 
-/* REPLY CARD */
+.custom-card h4 {
+    color: #00c6ff !important;
+    margin: 0 0 10px 0 !important;
+    font-size: 1.1rem !important;
+}
+
+.custom-card p {
+    font-size: 1.5rem !important;
+    margin: 0 !important;
+    color: white !important;
+    font-weight: bold !important;
+}
+
+/* REPLY CARD - EXPANDED */
 .reply-card {
     background: rgba(0, 198, 255, 0.1) !important;
     padding: 15px !important;
     border-radius: 10px !important;
     margin: 10px 0 15px 20px !important;
     border-left: 3px solid #00c6ff !important;
+    width: 100% !important;
 }
 
-/* ABOUT PAGE STYLING */
+/* ABOUT PAGE STYLING - EXPANDED */
 .about-section {
     margin-bottom: 25px !important;
+    width: 100% !important;
 }
 
 .about-section h4 {
@@ -579,16 +656,18 @@ input::placeholder {
     display: flex;
     gap: 10px;
     margin-top: 10px;
+    width: 100% !important;
 }
 
-/* Admin actions */
+/* Admin actions - EXPANDED */
 .admin-actions {
     display: flex !important;
     gap: 10px !important;
     margin-top: 15px !important;
+    width: 100% !important;
 }
 
-/* NOTIFICATIONS STYLING - ADDED */
+/* NOTIFICATIONS STYLING - EXPANDED */
 .notification-item {
     background: white;
     border-radius: 10px;
@@ -596,6 +675,7 @@ input::placeholder {
     margin: 10px 0;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     box-sizing: border-box !important;
+    width: 100% !important;
 }
 
 .notification-item.unread {
@@ -608,6 +688,7 @@ input::placeholder {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    width: 100% !important;
 }
 
 .notification-title {
@@ -639,44 +720,122 @@ input::placeholder {
     color: #333;
     font-size: 15px;
     word-wrap: break-word !important;
+    width: 100% !important;
 }
 
-/* تحسين الـ Zoom والأزرار */
+/* ============================================= */
+/* FULL WIDTH RESPONSIVE ADJUSTMENTS */
+/* ============================================= */
+
+/* توسيع الـ columns */
+.stColumn, [data-testid="column"] {
+    padding: 0 5px !important;
+}
+
+/* توسيع الـ horizontal blocks */
+div[data-testid="stHorizontalBlock"] {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 !important;
+}
+
+/* توسيع الـ select boxes */
+.stSelectbox > div > div {
+    width: 100% !important;
+}
+
+/* توسيع الـ file uploader */
+.stFileUploader {
+    width: 100% !important;
+}
+
+/* توسيع الـ text areas */
+.stTextArea > div > div > textarea {
+    width: 100% !important;
+}
+
+/* توسيع الـ forms */
+.stForm {
+    width: 100% !important;
+}
+
+/* تنسيق القائمة المنسدلة للتنقل */
+.navigation-selectbox {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    font-weight: bold !important;
+    padding: 8px !important;
+    width: 250px !important;
+}
+
+.navigation-selectbox option {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #333 !important;
+    padding: 10px !important;
+}
+
+/* تنسيق حاوية التنقل */
+.nav-container {
+    margin-bottom: 20px !important;
+    text-align: right !important;
+    width: 100% !important;
+}
+
+.nav-container .stSelectbox {
+    width: 250px !important;
+    float: right !important;
+}
+
+/* ============================================= */
+/* RESPONSIVE ADJUSTMENTS للعرض الكامل */
+/* ============================================= */
+
 @media only screen and (max-width: 1400px) {
     .block-container {
-        padding-left: 20rem !important;
-        padding-right: 20rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
     
     .welcome-fixed {
-        max-width: 80% !important;
+        width: 100% !important;
+    }
+    
+    .custom-card {
+        height: 110px !important;
     }
 }
 
 @media only screen and (max-width: 1200px) {
     .block-container {
-        padding-left: 15rem !important;
-        padding-right: 15rem !important;
-    }
-    
-    .welcome-fixed {
-        max-width: 85% !important;
-        font-size: 1.2rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
     }
     
     .welcome-fixed h3 {
         font-size: 1.6rem !important;
     }
+    
+    .custom-card {
+        height: 100px !important;
+        padding: 15px !important;
+    }
+    
+    .custom-card p {
+        font-size: 1.4rem !important;
+    }
 }
 
 @media only screen and (max-width: 992px) {
     .block-container {
-        padding-left: 10rem !important;
-        padding-right: 10rem !important;
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
     
     .welcome-fixed {
-        max-width: 90% !important;
+        padding: 15px !important;
         font-size: 1.1rem !important;
     }
     
@@ -687,6 +846,19 @@ input::placeholder {
     .stButton > button {
         font-size: 14px !important;
         height: 40px !important;
+    }
+    
+    .custom-card {
+        height: 90px !important;
+        padding: 12px !important;
+    }
+    
+    .custom-card p {
+        font-size: 1.3rem !important;
+    }
+    
+    .nav-container .stSelectbox {
+        width: 200px !important;
     }
 }
 
@@ -699,9 +871,8 @@ input::placeholder {
     
     .welcome-fixed {
         padding: 15px !important;
-        margin: 0 10px 20px 10px !important;
+        margin: 0 0 20px 0 !important;
         font-size: 1.1rem !important;
-        max-width: 95% !important;
     }
     
     .welcome-fixed h3 {
@@ -727,12 +898,25 @@ input::placeholder {
         height: 38px !important;
         padding: 0 10px !important;
     }
+    
+    .custom-card {
+        height: 85px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .custom-card p {
+        font-size: 1.2rem !important;
+    }
+    
+    .nav-container .stSelectbox {
+        width: 180px !important;
+    }
 }
 
 @media only screen and (max-width: 576px) {
     .block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
     
     .welcome-fixed {
@@ -753,13 +937,32 @@ input::placeholder {
     .login-box {
         padding: 20px !important;
         margin-top: 50px !important;
+        width: 95% !important;
+    }
+    
+    .custom-card {
+        height: 80px !important;
+        padding: 10px !important;
+    }
+    
+    .custom-card h4 {
+        font-size: 1rem !important;
+    }
+    
+    .custom-card p {
+        font-size: 1.1rem !important;
+    }
+    
+    .nav-container .stSelectbox {
+        width: 160px !important;
+        font-size: 14px !important;
     }
 }
 
 @media only screen and (max-width: 480px) {
     .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
     }
     
     .welcome-fixed {
@@ -774,53 +977,57 @@ input::placeholder {
         font-size: 11px !important;
         height: 32px !important;
     }
-}
-
-/* تنسيق القائمة المنسدلة للتنقل */
-.navigation-selectbox {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border-radius: 10px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    font-weight: bold !important;
-    padding: 8px !important;
-}
-
-.navigation-selectbox option {
-    background: rgba(255, 255, 255, 0.95) !important;
-    color: #333 !important;
-    padding: 10px !important;
-}
-
-/* تنسيق حاوية التنقل */
-.nav-container {
-    margin-bottom: 20px !important;
-    text-align: right !important;
-}
-
-.nav-container .stSelectbox {
-    width: 250px !important;
-    float: right !important;
-}
-
-@media only screen and (max-width: 768px) {
-    .nav-container .stSelectbox {
-        width: 200px !important;
+    
+    .custom-card {
+        height: 75px !important;
     }
-}
-
-@media only screen and (max-width: 576px) {
-    .nav-container .stSelectbox {
-        width: 180px !important;
-        font-size: 14px !important;
+    
+    .custom-card p {
+        font-size: 1rem !important;
     }
-}
-
-@media only screen and (max-width: 480px) {
+    
     .nav-container .stSelectbox {
-        width: 160px !important;
+        width: 140px !important;
         font-size: 13px !important;
     }
+}
+
+/* ============================================= */
+/* ADDITIONAL EXPANSIONS FOR BETTER LAYOUT */
+/* ============================================= */
+
+/* توسيع الـ selectbox للتاريخ */
+div[data-testid="stSelectbox"] {
+    width: 100% !important;
+}
+
+/* توسيع الـ expander */
+.streamlit-expanderHeader {
+    width: 100% !important;
+}
+
+.streamlit-expanderContent {
+    width: 100% !important;
+}
+
+/* توسيع الـ containers */
+.stContainer {
+    width: 100% !important;
+}
+
+/* توسيع الـ markdown containers */
+div[data-testid="stMarkdownContainer"] {
+    width: 100% !important;
+}
+
+/* توسيع الجداول */
+.stDataFrame {
+    width: 100% !important;
+}
+
+/* توسيع الـ alerts */
+.stAlert {
+    width: 100% !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1327,22 +1534,24 @@ else:
     if st.session_state.current_page == "dashboard":
         st.subheader("📊 Daily Sales Dashboard")
         
+        # استخدام كامل العرض للـ columns
         col1, col2, col3 = st.columns(3)
+        
         with col1:
-            st.markdown("""
+            st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">📅 Today</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">{date}</p>
+                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">📅 Today</h4>
+                <p style="font-size: 1.5rem; margin: 0; color: white; font-weight: bold;">{date.today().strftime('%d %b')}</p>
             </div>
-            """.format(date=date.today().strftime('%d %b')), unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
         
         with col2:
-            st.markdown("""
+            st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">👤 Role</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">{role}</p>
+                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">👤 Role</h4>
+                <p style="font-size: 1.5rem; margin: 0; color: white; font-weight: bold;">{st.session_state.user_role}</p>
             </div>
-            """.format(role=st.session_state.user_role), unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
         
         with col3:
             unread_count = get_unread_count(st.session_state.username)
@@ -1351,10 +1560,8 @@ else:
             
             st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0;">🔔 Notifications</h4>
-                <p style="font-size: 1.5rem; margin: 5px 0;">
-                    <span style="color: {badge_color};">{notification_text}</span>
-                </p>
+                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">🔔 Notifications</h4>
+                <p style="font-size: 1.5rem; margin: 0; color: {badge_color}; font-weight: bold;">{notification_text}</p>
             </div>
             """, unsafe_allow_html=True)
         
@@ -1447,6 +1654,7 @@ else:
                         if allowed_files:
                             st.subheader("📥 Your Files")
                             
+                            # استخدام 2 columns للملفات
                             cols = st.columns(2)
                             for idx, file in enumerate(allowed_files):
                                 with cols[idx % 2]:
@@ -1457,6 +1665,7 @@ else:
                                             padding: 15px;
                                             border-radius: 10px;
                                             margin-bottom: 10px;
+                                            width: 100% !important;
                                         ">
                                             <p style="margin: 0;"><strong>📄 {file}</strong></p>
                                         </div>
@@ -1637,6 +1846,7 @@ else:
                 border-left: 5px solid #00c6ff;
                 margin-bottom: 15px;
                 backdrop-filter: blur(10px);
+                width: 100% !important;
             ">
             """, unsafe_allow_html=True)
             
@@ -1672,7 +1882,7 @@ else:
             st.markdown("---")
             
             st.markdown("""
-            <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px;">
+            <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
                 <p style="margin: 0; font-size: 1.1rem; color: white;">
                     🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
                 </p>
@@ -1693,7 +1903,7 @@ if st.session_state.logged_in:
         notification_text = ""
     
     st.markdown(f"""
-    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px;">
+    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px; width: 100% !important;">
         <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
