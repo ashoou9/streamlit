@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import warnings
 import logging
@@ -524,6 +525,64 @@ input::placeholder {
     box-sizing: border-box !important;
 }
 
+/* ============================================= */
+/* NAVIGATION BUTTONS - أزرار التنقل المعدلة */
+/* ============================================= */
+
+/* حاوية الأزرار الرئيسية */
+.nav-buttons-container {
+    display: flex !important;
+    gap: 10px !important;
+    margin-bottom: 25px !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+}
+
+/* الأزرار نفسها */
+.nav-button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+/* تنسيق الأزرار داخل الـ columns */
+.nav-buttons-container .stButton > button {
+    width: 100% !important;
+    border-radius: 10px !important;
+    height: 45px !important;
+    font-size: 14px !important;
+    background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
+    color: white !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+}
+
+.nav-buttons-container .stButton > button:hover {
+    background: linear-gradient(90deg, #0051cc, #0099cc) !important;
+    transform: scale(1.02) !important;
+    box-shadow: 0 5px 15px rgba(0,114,255,0.4) !important;
+}
+
+/* زر الـ Logout بلون مختلف */
+.nav-buttons-container .stButton > button[kind="secondary"] {
+    background: linear-gradient(90deg, #ff416c, #ff4b2b) !important;
+}
+
+.nav-buttons-container .stButton > button[kind="secondary"]:hover {
+    background: linear-gradient(90deg, #e03e5a, #e63c1f) !important;
+}
+
+/* زر Notifications مع badge */
+.notification-button {
+    position: relative !important;
+}
+
 /* BUTTONS - EXPANDED */
 .stButton > button {
     width: 100% !important;
@@ -760,35 +819,6 @@ div[data-testid="stHorizontalBlock"] {
     width: 100% !important;
 }
 
-/* تنسيق القائمة المنسدلة للتنقل */
-.navigation-selectbox {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border-radius: 10px !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    font-weight: bold !important;
-    padding: 8px !important;
-    width: 250px !important;
-}
-
-.navigation-selectbox option {
-    background: rgba(255, 255, 255, 0.95) !important;
-    color: #333 !important;
-    padding: 10px !important;
-}
-
-/* تنسيق حاوية التنقل */
-.nav-container {
-    margin-bottom: 20px !important;
-    text-align: right !important;
-    width: 100% !important;
-}
-
-.nav-container .stSelectbox {
-    width: 250px !important;
-    float: right !important;
-}
-
 /* ============================================= */
 /* RESPONSIVE ADJUSTMENTS للعرض الكامل */
 /* ============================================= */
@@ -805,6 +835,11 @@ div[data-testid="stHorizontalBlock"] {
     
     .custom-card {
         height: 110px !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 13px !important;
+        padding: 0 8px !important;
     }
 }
 
@@ -825,6 +860,11 @@ div[data-testid="stHorizontalBlock"] {
     
     .custom-card p {
         font-size: 1.4rem !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 12px !important;
+        height: 40px !important;
     }
 }
 
@@ -857,8 +897,14 @@ div[data-testid="stHorizontalBlock"] {
         font-size: 1.3rem !important;
     }
     
-    .nav-container .stSelectbox {
-        width: 200px !important;
+    .nav-buttons-container {
+        gap: 8px !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 11px !important;
+        height: 38px !important;
+        padding: 0 6px !important;
     }
 }
 
@@ -908,8 +954,15 @@ div[data-testid="stHorizontalBlock"] {
         font-size: 1.2rem !important;
     }
     
-    .nav-container .stSelectbox {
-        width: 180px !important;
+    .nav-buttons-container {
+        gap: 6px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 10px !important;
+        height: 35px !important;
+        padding: 0 4px !important;
     }
 }
 
@@ -953,9 +1006,16 @@ div[data-testid="stHorizontalBlock"] {
         font-size: 1.1rem !important;
     }
     
-    .nav-container .stSelectbox {
-        width: 160px !important;
-        font-size: 14px !important;
+    .nav-buttons-container {
+        flex-wrap: wrap !important;
+        gap: 5px !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 9px !important;
+        height: 32px !important;
+        padding: 0 3px !important;
+        min-width: 60px !important;
     }
 }
 
@@ -986,9 +1046,15 @@ div[data-testid="stHorizontalBlock"] {
         font-size: 1rem !important;
     }
     
-    .nav-container .stSelectbox {
-        width: 140px !important;
-        font-size: 13px !important;
+    .nav-buttons-container {
+        gap: 4px !important;
+    }
+    
+    .nav-buttons-container .stButton > button {
+        font-size: 8px !important;
+        height: 30px !important;
+        padding: 0 2px !important;
+        min-width: 50px !important;
     }
 }
 
@@ -1265,76 +1331,51 @@ def logout():
     st.session_state.replying_to = None
 
 # ----------------------------
-# Navigation Dropdown (Top-Right) - الحل الجديد المبسط
+# Navigation Buttons (Top-Right) - رجوع للأزرار مع تحسينات
 # ----------------------------
-def top_right_navigation():
-    """Display navigation dropdown at top-right"""
+def top_right_buttons():
+    """Display navigation buttons at top-right - المعدلة للتوسيع"""
     unread_count = 0
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
     
-    # عرض الإشعارات بجانب القائمة
-    notification_badge = ""
-    if unread_count > 0:
-        notification_badge = f" ({unread_count} new)"
+    # حاوية CSS للأزرار
+    st.markdown('<div class="nav-buttons-container">', unsafe_allow_html=True)
     
-    # إنشاء الحاوية للتنقل
-    st.markdown('<div class="nav-container">', unsafe_allow_html=True)
+    # استخدام 5 أعمدة موزعة بالتساوي
+    cols = st.columns(5)
     
-    # خيارات القائمة
-    options = [
-        "📊 Dashboard",
-        "💬 Feedback", 
-        f"🔔 Notifications{notification_badge}",
-        "ℹ️ About",
-        "🚪 Logout"
-    ]
+    with cols[0]:
+        if st.button("📊 Dashboard", key="nav_dashboard", use_container_width=True):
+            st.session_state.current_page = "dashboard"
+            st.rerun()
     
-    # تحديد الخيار الحالي بناءً على الصفحة الحالية
-    current_index = 0
-    if st.session_state.current_page == "feedback":
-        current_index = 1
-    elif st.session_state.current_page == "notifications":
-        current_index = 2
-    elif st.session_state.current_page == "about":
-        current_index = 3
+    with cols[1]:
+        if st.button("💬 Feedback", key="nav_feedback", use_container_width=True):
+            st.session_state.current_page = "feedback"
+            st.rerun()
     
-    # استخدام selectbox للتنقل
-    selected = st.selectbox(
-        "Navigate to:",
-        options,
-        index=current_index,
-        key="navigation_select",
-        label_visibility="collapsed"
-    )
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # معالجة الاختيار
-    if selected:
-        if "Dashboard" in selected:
-            if st.session_state.current_page != "dashboard":
-                st.session_state.current_page = "dashboard"
-                st.rerun()
+    with cols[2]:
+        button_label = "🔔 Notifications"
+        if unread_count > 0:
+            button_label = f"🔔 ({unread_count})"
         
-        elif "Feedback" in selected:
-            if st.session_state.current_page != "feedback":
-                st.session_state.current_page = "feedback"
-                st.rerun()
-        
-        elif "Notifications" in selected:
-            if st.session_state.current_page != "notifications":
-                st.session_state.current_page = "notifications"
-                st.rerun()
-        
-        elif "About" in selected:
-            if st.session_state.current_page != "about":
-                st.session_state.current_page = "about"
-                st.rerun()
-        
-        elif "Logout" in selected:
+        if st.button(button_label, key="nav_notifications", use_container_width=True):
+            st.session_state.current_page = "notifications"
+            st.rerun()
+    
+    with cols[3]:
+        if st.button("ℹ️ About", key="nav_about", use_container_width=True):
+            st.session_state.current_page = "about"
+            st.rerun()
+    
+    with cols[4]:
+        # زر Logout بلون مختلف
+        if st.button("🚪 Logout", key="nav_logout", type="secondary", use_container_width=True):
             logout()
             st.rerun()
+    
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------
 # Welcome Message Component
@@ -1524,8 +1565,8 @@ if not st.session_state.logged_in:
 
 # ---------- DASHBOARD (Logged In) ----------
 else:
-    # Show navigation dropdown (الحل الجديد)
-    top_right_navigation()
+    # Show navigation buttons (رجوع للأزرار)
+    top_right_buttons()
     
     # Show welcome message
     show_welcome_message()
