@@ -11,14 +11,8 @@ import random
 import uuid
 
 # ----------------------------
-# Hide Warnings and Logs
-# ----------------------------
-warnings.filterwarnings("ignore")
-logging.getLogger().setLevel(logging.CRITICAL)
-os.environ["PYTHONWARNINGS"] = "ignore"
-
-# ----------------------------
 # أولاً: إنشاء المجلدات والملفات المطلوبة للويندوز الجديد
+# هذه الزيادة الوحيدة اللي هنضيفها في الأول
 # ----------------------------
 BASE_PATH = "data"
 FEEDBACK_FILE = os.path.join(BASE_PATH, "feedback.csv")
@@ -34,26 +28,32 @@ if not os.path.exists(FEEDBACK_FILE):
     pd.DataFrame(columns=["id", "username", "comment", "datetime", "replied_to", "replied_by", "is_read"]).to_csv(FEEDBACK_FILE, index=False)
 
 # ----------------------------
-# Page Background - نفسها تماماً
+# Hide Warnings and Logs
+# ----------------------------
+warnings.filterwarnings("ignore")
+logging.getLogger().setLevel(logging.CRITICAL)
+os.environ["PYTHONWARNINGS"] = "ignore"
+
+# ----------------------------
+# Page Background - مع تعديل بسيط للتعامل مع الويندوز الجديد
 # ----------------------------
 def set_bg_local(image_file, login_page=True):
     try:
         with open(image_file, "rb") as f:
             img_bytes = f.read()
         b64 = base64.b64encode(img_bytes).decode()
-    except:
-        # إذا الصورة مش موجودة، استخدم خلفية زرقاء بسيطة بدون ما تخلليها تنزل مع السكرول
+    except FileNotFoundError:
+        # إذا الصورة مش موجودة، استخدم خلفية لونية بدون ما تكسر التصميم
+        b64 = ""
         st.markdown("""
         <style>
         .stApp {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            background-attachment: fixed !important;
-            background-size: cover !important;
         }
         </style>
         """, unsafe_allow_html=True)
         return
-    
+
     padding_top = "105px" if login_page else "180px"
 
     page_bg_img = f"""
@@ -67,9 +67,8 @@ def set_bg_local(image_file, login_page=True):
     }}
 
     .stApp {{
-        background: url("data:image/png;base64,{b64}") no-repeat center top fixed !important;
-        background-size: cover !important;
-        background-attachment: fixed !important;
+        background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
+        background-size: cover;
     }}
 
     [data-testid="stAppViewContainer"] {{
@@ -162,7 +161,7 @@ def set_bg_local(image_file, login_page=True):
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
 # ----------------------------
-# Custom Animations Functions - نفسها
+# Custom Animations Functions
 # ----------------------------
 def show_confetti_animation():
     """Show confetti animation effect"""
@@ -969,10 +968,19 @@ def display_feedback_card(row, is_admin=False):
 # ----------------------------
 # Main Application UI
 # ----------------------------
+# استخدام صورة بديلة إذا الصورة الأصلية مش موجودة
+bg_image_path = "data/Untitled.png"
+if not os.path.exists(bg_image_path):
+    # إنشاء صورة بديلة بسيطة
+    from PIL import Image
+    img = Image.new('RGB', (1920, 1080), color=(25, 25, 112))
+    os.makedirs("data", exist_ok=True)
+    img.save(bg_image_path)
+
 if not st.session_state.logged_in:
-    set_bg_local("data/Untitled.png", True)
+    set_bg_local(bg_image_path, True)
 else:
-    set_bg_local("data/Untitled.png", False)
+    set_bg_local(bg_image_path, False)
 
 # ---------- LOGIN PAGE ----------
 if not st.session_state.logged_in:
@@ -1072,13 +1080,12 @@ else:
                         )
                         
                         if uploaded_files and st.button("🚀 Upload Files", type="primary", key="upload_button"):
-                            # تأكد من وجود المجلد
-                            os.makedirs(folder_path, exist_ok=True)
+                            today_folder = os.path.join(BASE_PATH, selected_day)
+                            os.makedirs(today_folder, exist_ok=True)
                             
                             success_count = 0
                             for file in uploaded_files:
-                                file_path = os.path.join(folder_path, file.name)
-                                with open(file_path, "wb") as f:
+                                with open(os.path.join(today_folder, file.name), "wb") as f:
                                     f.write(file.getbuffer())
                                 success_count += 1
                             
