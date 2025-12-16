@@ -548,7 +548,7 @@ input::placeholder {
 /* حاوية الأزرار الرئيسية - مرفوعة لأعلى */
 .nav-buttons-container {
     display: flex !important;
-    gap: 15px !important;
+    gap: 10px !important;
     margin: 5px 0 20px 0 !important;        /* رفع الأزرار لأعلى */
     width: 100% !important;
     justify-content: space-between !important;
@@ -631,7 +631,7 @@ input::placeholder {
 /* LOGIN BUTTON SPECIAL */
 .login-btn {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
-    margin-top: 20px !important;
+    margin-top: 10px !important;
 }
 
 /* DOWNLOAD BUTTON - REDUCED */
