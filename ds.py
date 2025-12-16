@@ -1391,4 +1391,3 @@ if st.session_state.logged_in:
         <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
-    
