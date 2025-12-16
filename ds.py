@@ -1156,7 +1156,7 @@ if "show_welcome" not in st.session_state:
     st.session_state.show_welcome = True
 
 if "animation_shown" not in st.session_state:
-    st.session_state.animation_shown = False
+    st.session_state.animation_shown = True
 
 if "replying_to" not in st.session_state:
     st.session_state.replying_to = None
