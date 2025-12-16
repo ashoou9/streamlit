@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 import warnings
 import logging
@@ -77,14 +76,14 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 
 /* ============================================= */
-/* EXPANDED FULL WIDTH LAYOUT - التوسيع الكامل */
+/* REDUCED WIDTH LAYOUT - تقليل عرض الصفحة */
 /* ============================================= */
 
-/* إزالة الـ padding تماماً من الجوانب */
+/* زيادة الـ padding من الجوانب لتقليل العرض */
 .block-container {
     padding-top: 1rem !important;
-    padding-left: 6rem !important;
-    padding-right: 6rem !important;
+    padding-left: 6rem !important;      /* زود من 2rem لـ 6rem */
+    padding-right: 6rem !important;     /* زود من 2rem لـ 6rem */
     padding-bottom: 100px !important;
     max-width: 100% !important;
     width: 100% !important;
@@ -94,36 +93,36 @@ document.addEventListener('DOMContentLoaded', function() {
 /* تحسين الـ Responsive للعناصر */
 @media (max-width: 1400px) {
     .block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 5rem !important;    /* زود من 2 لـ 5 */
+        padding-right: 5rem !important;   /* زود من 2 لـ 5 */
     }
 }
 
 @media (max-width: 1200px) {
     .block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 4rem !important;    /* زود من 2 لـ 4 */
+        padding-right: 4rem !important;   /* زود من 2 لـ 4 */
     }
 }
 
 @media (max-width: 992px) {
     .block-container {
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 3rem !important;    /* زود من 1.5 لـ 3 */
+        padding-right: 3rem !important;   /* زود من 1.5 لـ 3 */
     }
 }
 
 @media (max-width: 768px) {
     .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 2rem !important;    /* زود من 1 لـ 2 */
+        padding-right: 2rem !important;   /* زود من 1 لـ 2 */
     }
 }
 
 @media (max-width: 576px) {
     .block-container {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+        padding-left: 1.5rem !important;  /* زود من 0.5 لـ 1.5 */
+        padding-right: 1.5rem !important; /* زود من 0.5 لـ 1.5 */
     }
 }
 
@@ -195,8 +194,8 @@ def set_bg_local(image_file, login_page=True):
 
     .block-container {{
         padding-top: 1rem !important;
-        padding-left: 6rem !important;
-        padding-right: 6rem !important;
+        padding-left: 6rem !important;      /* زود من 2rem لـ 6rem */
+        padding-right: 6rem !important;     /* زود من 2rem لـ 6rem */
         padding-bottom: 100px !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -271,8 +270,8 @@ def set_bg_local(image_file, login_page=True):
             padding-top: 140px !important;
         }}
         .block-container {{
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
         }}
     }}
     
@@ -302,11 +301,11 @@ def set_bg_local(image_file, login_page=True):
         margin: 0 0 15px 0 !important;
     }}
     
-    /* توسيع Welcome Message */
+    /* تقليل Welcome Message */
     .welcome-fixed {{
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 0 25px 0 !important;
+        width: 80% !important;               /* قل من 100% لـ 80% */
+        max-width: 80% !important;           /* قل من 100% لـ 80% */
+        margin: 0 auto 25px auto !important; /* مركز */
     }}
     
     /* توسيع الـ Forms */
@@ -379,31 +378,31 @@ def show_loading_animation(text="Loading..."):
     return st.markdown(loading_html, unsafe_allow_html=True)
 
 # ----------------------------
-# Login + Dashboard UI Style - FIXED مع التوسيع
+# Login + Dashboard UI Style - FIXED مع تقليل العرض
 # ----------------------------
 st.markdown("""
 <style>
-/* Welcome Message - Fixed in Dashboard - EXPANDED */
+/* Welcome Message - Fixed in Dashboard - REDUCED */
 .welcome-fixed {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    padding: 20px !important;
+    padding: 18px !important;               /* قل من 20px لـ 18px */
     border-radius: 15px !important;
     text-align: center !important;
-    margin: 0 0 25px 0 !important; /* تغيير الهامش */
+    margin: 0 auto 25px auto !important;    /* مركز */
     color: white !important;
-    font-size: 1.3rem !important;
+    font-size: 1.2rem !important;           /* قل من 1.3rem لـ 1.2rem */
     box-shadow: 0 8px 25px rgba(0,0,0,0.2) !important;
     border: 2px solid rgba(255,255,255,0.3) !important;
     backdrop-filter: blur(10px) !important;
-    max-width: 100% !important; /* تغيير من 600px */
-    width: 100% !important; /* تغيير من 90% */
+    max-width: 80% !important;              /* قل من 100% لـ 80% */
+    width: 80% !important;                  /* قل من 100% لـ 80% */
     box-sizing: border-box !important;
 }
 
 .welcome-fixed h3 {
     color: white !important;
     margin-bottom: 8px !important;
-    font-size: 1.8rem !important;
+    font-size: 1.6rem !important;           /* قل من 1.8rem لـ 1.6rem */
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
 }
@@ -411,7 +410,7 @@ st.markdown("""
 .welcome-fixed p {
     color: rgba(255,255,255,0.9) !important;
     margin-top: 8px !important;
-    font-size: 1rem !important;
+    font-size: 0.95rem !important;          /* قل من 1rem لـ 0.95rem */
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
 }
@@ -425,10 +424,10 @@ st.markdown("""
     animation: pulse 2s infinite !important;
 }
 
-/* Notification Card - FIXED - EXPANDED */
+/* Notification Card - FIXED - REDUCED */
 .notification-card {
     background: rgba(255,255,255,0.15) !important;
-    padding: 20px !important;
+    padding: 18px !important;               /* قل من 20px لـ 18px */
     border-radius: 15px !important;
     margin-bottom: 15px !important;
     border-left: 5px solid #FF9800 !important;
@@ -447,10 +446,10 @@ st.markdown("""
     opacity: 0.8;
 }
 
-/* Comment Display Box - FIXED - EXPANDED */
+/* Comment Display Box - FIXED - REDUCED */
 .comment-box {
     background: rgba(0, 0, 0, 0.25) !important;
-    padding: 15px !important;
+    padding: 14px !important;               /* قل من 15px لـ 14px */
     border-radius: 10px !important;
     margin: 10px 0 !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
@@ -458,7 +457,7 @@ st.markdown("""
     word-break: break-word !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     line-height: 1.6 !important;
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;           /* قل من 0.95rem لـ 0.9rem */
     max-height: 300px !important;
     overflow-y: auto !important;
     color: rgba(255, 255, 255, 0.95) !important;
@@ -470,11 +469,11 @@ st.markdown("""
     color: rgba(255, 255, 255, 0.95) !important;
 }
 
-/* INPUT BOXES - EXPANDED */
+/* INPUT BOXES - REDUCED */
 .stTextInput > div > div > input {
     text-align: left;
-    font-size: 16px;
-    padding: 10px;
+    font-size: 15px !important;             /* قل من 16px لـ 15px */
+    padding: 9px !important;                /* قل من 10px لـ 9px */
     color: black !important;
     border-radius: 8px;
     background: rgba(255,255,255,0.9) !important;
@@ -490,9 +489,10 @@ label[data-baseweb="label"],
 .stDateInput label {
     color: white !important;
     font-weight: bold !important;
+    font-size: 0.95rem !important;          /* قل شوية */
 }
 
-/* SUBHEADERS & TEXT - EXPANDED */
+/* SUBHEADERS & TEXT - REDUCED */
 h1, h2, h3, h4, h5, h6,
 .stSubheader,
 div[data-testid="stMarkdownContainer"] p,
@@ -509,15 +509,15 @@ input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
-/* LOGIN BOX - EXPANDED */
+/* LOGIN BOX - REDUCED */
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
-    width: 100% !important; /* تغيير من 420px */
-    max-width: 500px !important; /* زيادة من 90% */
-    padding: 35px;
+    width: 90% !important;                  /* قل من 100% لـ 90% */
+    max-width: 450px !important;            /* قل من 500px لـ 450px */
+    padding: 30px !important;               /* قل من 35px لـ 30px */
     border-radius: 18px;
     text-align: center;
-    margin: 60px auto 0 auto !important; /* مركز */
+    margin: 60px auto 0 auto !important;
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
@@ -552,15 +552,15 @@ input::placeholder {
 .nav-buttons-container .stButton > button {
     width: 100% !important;
     border-radius: 10px !important;
-    height: 45px !important;
-    font-size: 14px !important;
+    height: 42px !important;                /* قل من 45px لـ 42px */
+    font-size: 13px !important;             /* قل من 14px لـ 13px */
     background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
     color: white !important;
     border: none !important;
     transition: all 0.3s ease !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0 10px !important;
+    padding: 0 8px !important;              /* قل من 10px لـ 8px */
 }
 
 .nav-buttons-container .stButton > button:hover {
@@ -583,12 +583,12 @@ input::placeholder {
     position: relative !important;
 }
 
-/* BUTTONS - EXPANDED */
+/* BUTTONS - REDUCED */
 .stButton > button {
     width: 100% !important;
     border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
+    height: 42px !important;                /* قل من 45px لـ 42px */
+    font-size: 15px !important;             /* قل من 16px لـ 15px */
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     color: white;
     border: none;
@@ -617,13 +617,13 @@ input::placeholder {
     margin-top: 20px !important;
 }
 
-/* DOWNLOAD BUTTON - EXPANDED */
+/* DOWNLOAD BUTTON - REDUCED */
 .stDownloadButton button {
     color: white !important;
     background: linear-gradient(90deg, #0072ff, #00c6ff);
     border-radius: 10px;
-    height: 45px;
-    font-size: 16px;
+    height: 42px !important;                /* قل من 45px لـ 42px */
+    font-size: 15px !important;             /* قل من 16px لـ 15px */
     transition: all 0.3s ease !important;
     min-width: 0 !important;
     width: 100% !important;
@@ -640,10 +640,10 @@ input::placeholder {
     background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
 }
 
-/* CARD STYLING - EXPANDED */
+/* CARD STYLING - REDUCED */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
-    padding: 20px !important;
+    padding: 18px !important;               /* قل من 20px لـ 18px */
     border-radius: 15px !important;
     border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
@@ -651,7 +651,7 @@ input::placeholder {
     box-sizing: border-box !important;
     word-wrap: break-word !important;
     width: 100% !important;
-    height: 120px !important;
+    height: 110px !important;               /* قل من 120px لـ 110px */
     display: flex !important;
     flex-direction: column !important;
     justify-content: center !important;
@@ -659,28 +659,28 @@ input::placeholder {
 
 .custom-card h4 {
     color: #00c6ff !important;
-    margin: 0 0 10px 0 !important;
-    font-size: 1.1rem !important;
+    margin: 0 0 8px 0 !important;           /* قل من 10px لـ 8px */
+    font-size: 1rem !important;             /* قل من 1.1rem لـ 1rem */
 }
 
 .custom-card p {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;           /* قل من 1.5rem لـ 1.4rem */
     margin: 0 !important;
     color: white !important;
     font-weight: bold !important;
 }
 
-/* REPLY CARD - EXPANDED */
+/* REPLY CARD - REDUCED */
 .reply-card {
     background: rgba(0, 198, 255, 0.1) !important;
-    padding: 15px !important;
+    padding: 14px !important;               /* قل من 15px لـ 14px */
     border-radius: 10px !important;
     margin: 10px 0 15px 20px !important;
     border-left: 3px solid #00c6ff !important;
     width: 100% !important;
 }
 
-/* ABOUT PAGE STYLING - EXPANDED */
+/* ABOUT PAGE STYLING - REDUCED */
 .about-section {
     margin-bottom: 25px !important;
     width: 100% !important;
@@ -705,9 +705,9 @@ input::placeholder {
 
 /* FIX for logout button */
 .stButton > button[kind="secondary"] {
-    min-width: 120px !important;
+    min-width: 110px !important;            /* قل من 120px لـ 110px */
     width: auto !important;
-    padding: 0 20px !important;
+    padding: 0 18px !important;             /* قل من 20px لـ 18px */
 }
 
 /* Feedback actions container */
@@ -718,7 +718,7 @@ input::placeholder {
     width: 100% !important;
 }
 
-/* Admin actions - EXPANDED */
+/* Admin actions - REDUCED */
 .admin-actions {
     display: flex !important;
     gap: 10px !important;
@@ -726,11 +726,11 @@ input::placeholder {
     width: 100% !important;
 }
 
-/* NOTIFICATIONS STYLING - EXPANDED */
+/* NOTIFICATIONS STYLING - REDUCED */
 .notification-item {
     background: white;
     border-radius: 10px;
-    padding: 20px;
+    padding: 18px !important;               /* قل من 20px لـ 18px */
     margin: 10px 0;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     box-sizing: border-box !important;
@@ -753,13 +753,13 @@ input::placeholder {
 .notification-title {
     font-weight: bold;
     color: #333;
-    font-size: 16px;
+    font-size: 15px !important;             /* قل من 16px لـ 15px */
     word-wrap: break-word !important;
 }
 
 .notification-time {
     color: #666;
-    font-size: 14px;
+    font-size: 13px !important;             /* قل من 14px لـ 13px */
 }
 
 .new-badge {
@@ -773,11 +773,11 @@ input::placeholder {
 
 .notification-content-box {
     background: #f5f5f5;
-    padding: 15px;
+    padding: 14px !important;               /* قل من 15px لـ 14px */
     border-radius: 8px;
     margin: 10px 0;
     color: #333;
-    font-size: 15px;
+    font-size: 14px !important;             /* قل من 15px لـ 14px */
     word-wrap: break-word !important;
     width: 100% !important;
 }
@@ -820,51 +820,52 @@ div[data-testid="stHorizontalBlock"] {
 }
 
 /* ============================================= */
-/* RESPONSIVE ADJUSTMENTS للعرض الكامل */
+/* RESPONSIVE ADJUSTMENTS للعرض المخفّض */
 /* ============================================= */
 
 @media only screen and (max-width: 1400px) {
     .block-container {
-        padding-left: 6rem !important;
-        padding-right: 6rem !important;
+        padding-left: 5rem !important;
+        padding-right: 5rem !important;
     }
     
     .welcome-fixed {
-        width: 100% !important;
+        width: 85% !important;              /* قل من 100% لـ 85% */
+        max-width: 85% !important;
     }
     
     .custom-card {
-        height: 110px !important;
+        height: 105px !important;           /* قل من 110px لـ 105px */
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 13px !important;
-        padding: 0 8px !important;
+        font-size: 12px !important;         /* قل من 13px لـ 12px */
+        padding: 0 7px !important;          /* قل من 8px لـ 7px */
     }
 }
 
 @media only screen and (max-width: 1200px) {
     .block-container {
-        padding-left: 4.5rem !important;
-        padding-right: 4.5rem !important;
+        padding-left: 4rem !important;
+        padding-right: 4rem !important;
     }
     
     .welcome-fixed h3 {
-        font-size: 1.6rem !important;
+        font-size: 1.5rem !important;       /* قل من 1.6rem لـ 1.5rem */
     }
     
     .custom-card {
-        height: 100px !important;
-        padding: 15px !important;
+        height: 95px !important;            /* قل من 100px لـ 95px */
+        padding: 16px !important;           /* قل من 15px لـ 16px */
     }
     
     .custom-card p {
-        font-size: 1.4rem !important;
+        font-size: 1.3rem !important;       /* قل من 1.4rem لـ 1.3rem */
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 12px !important;
-        height: 40px !important;
+        font-size: 11px !important;         /* قل من 12px لـ 11px */
+        height: 38px !important;            /* قل من 40px لـ 38px */
     }
 }
 
@@ -875,7 +876,7 @@ div[data-testid="stHorizontalBlock"] {
     }
     
     .welcome-fixed {
-        padding: 15px !important;
+        padding: 16px !important;           /* قل من 15px لـ 16px */
         font-size: 1.1rem !important;
     }
     
@@ -885,26 +886,26 @@ div[data-testid="stHorizontalBlock"] {
     
     .stButton > button {
         font-size: 14px !important;
-        height: 40px !important;
+        height: 38px !important;            /* قل من 40px لـ 38px */
     }
     
     .custom-card {
-        height: 90px !important;
-        padding: 12px !important;
+        height: 85px !important;            /* قل من 90px لـ 85px */
+        padding: 14px !important;           /* قل من 12px لـ 14px */
     }
     
     .custom-card p {
-        font-size: 1.3rem !important;
+        font-size: 1.2rem !important;       /* قل من 1.3rem لـ 1.2rem */
     }
     
     .nav-buttons-container {
-        gap: 8px !important;
+        gap: 7px !important;                /* قل من 8px لـ 7px */
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 11px !important;
-        height: 38px !important;
-        padding: 0 6px !important;
+        font-size: 10px !important;         /* قل من 11px لـ 10px */
+        height: 36px !important;            /* قل من 38px لـ 36px */
+        padding: 0 5px !important;          /* قل من 6px لـ 5px */
     }
 }
 
@@ -916,8 +917,8 @@ div[data-testid="stHorizontalBlock"] {
     }
     
     .welcome-fixed {
-        padding: 15px !important;
-        margin: 0 0 20px 0 !important;
+        padding: 14px !important;           /* قل من 15px لـ 14px */
+        margin: 0 auto 20px auto !important;
         font-size: 1.1rem !important;
     }
     
@@ -927,7 +928,7 @@ div[data-testid="stHorizontalBlock"] {
     
     .comment-box {
         padding: 12px !important;
-        font-size: 0.9rem !important;
+        font-size: 0.85rem !important;      /* قل من 0.9rem لـ 0.85rem */
     }
     
     .admin-actions {
@@ -941,40 +942,42 @@ div[data-testid="stHorizontalBlock"] {
     
     .stButton > button {
         font-size: 13px !important;
-        height: 38px !important;
-        padding: 0 10px !important;
+        height: 36px !important;            /* قل من 38px لـ 36px */
+        padding: 0 8px !important;          /* قل من 10px لـ 8px */
     }
     
     .custom-card {
-        height: 85px !important;
+        height: 80px !important;            /* قل من 85px لـ 80px */
         margin-bottom: 10px !important;
     }
     
     .custom-card p {
-        font-size: 1.2rem !important;
+        font-size: 1.1rem !important;       /* قل من 1.2rem لـ 1.1rem */
     }
     
     .nav-buttons-container {
-        gap: 6px !important;
+        gap: 5px !important;                /* قل من 6px لـ 5px */
         margin-bottom: 20px !important;
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 10px !important;
-        height: 35px !important;
-        padding: 0 4px !important;
+        font-size: 9px !important;          /* قل من 10px لـ 9px */
+        height: 32px !important;            /* قل من 35px لـ 32px */
+        padding: 0 3px !important;          /* قل من 4px لـ 3px */
     }
 }
 
 @media only screen and (max-width: 576px) {
     .block-container {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
     }
     
     .welcome-fixed {
         font-size: 1rem !important;
         padding: 12px !important;
+        width: 90% !important;              /* قل من 95% لـ 90% */
+        max-width: 90% !important;
     }
     
     .welcome-fixed h3 {
@@ -983,8 +986,8 @@ div[data-testid="stHorizontalBlock"] {
     
     .stButton > button {
         font-size: 12px !important;
-        height: 35px !important;
-        padding: 0 8px !important;
+        height: 32px !important;            /* قل من 35px لـ 32px */
+        padding: 0 6px !important;          /* قل من 8px لـ 6px */
     }
     
     .login-box {
@@ -994,39 +997,41 @@ div[data-testid="stHorizontalBlock"] {
     }
     
     .custom-card {
-        height: 80px !important;
+        height: 75px !important;            /* قل من 80px لـ 75px */
         padding: 10px !important;
     }
     
     .custom-card h4 {
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;      /* قل من 1rem لـ 0.95rem */
     }
     
     .custom-card p {
-        font-size: 1.1rem !important;
+        font-size: 1rem !important;         /* قل من 1.1rem لـ 1rem */
     }
     
     .nav-buttons-container {
         flex-wrap: wrap !important;
-        gap: 5px !important;
+        gap: 4px !important;                /* قل من 5px لـ 4px */
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 9px !important;
-        height: 32px !important;
-        padding: 0 3px !important;
-        min-width: 60px !important;
+        font-size: 8px !important;          /* قل من 9px لـ 8px */
+        height: 28px !important;            /* قل من 32px لـ 28px */
+        padding: 0 2px !important;          /* قل من 3px لـ 2px */
+        min-width: 55px !important;         /* قل من 60px لـ 55px */
     }
 }
 
 @media only screen and (max-width: 480px) {
     .block-container {
-        padding-left: 0.25rem !important;
-        padding-right: 0.25rem !important;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
     
     .welcome-fixed {
         font-size: 0.9rem !important;
+        width: 95% !important;              /* قل من 100% لـ 95% */
+        max-width: 95% !important;
     }
     
     .welcome-fixed h3 {
@@ -1035,65 +1040,78 @@ div[data-testid="stHorizontalBlock"] {
     
     .stButton > button {
         font-size: 11px !important;
-        height: 32px !important;
+        height: 30px !important;            /* قل من 32px لـ 30px */
     }
     
     .custom-card {
-        height: 75px !important;
+        height: 70px !important;            /* قل من 75px لـ 70px */
     }
     
     .custom-card p {
-        font-size: 1rem !important;
+        font-size: 0.95rem !important;      /* قل من 1rem لـ 0.95rem */
     }
     
     .nav-buttons-container {
-        gap: 4px !important;
+        gap: 3px !important;                /* قل من 4px لـ 3px */
     }
     
     .nav-buttons-container .stButton > button {
-        font-size: 8px !important;
-        height: 30px !important;
-        padding: 0 2px !important;
-        min-width: 50px !important;
+        font-size: 7px !important;          /* قل من 8px لـ 7px */
+        height: 26px !important;            /* قل من 30px لـ 26px */
+        padding: 0 1px !important;          /* قل من 2px لـ 1px */
+        min-width: 45px !important;         /* قل من 50px لـ 45px */
     }
 }
 
 /* ============================================= */
-/* ADDITIONAL EXPANSIONS FOR BETTER LAYOUT */
+/* ADDITIONAL REDUCTIONS */
 /* ============================================= */
 
-/* توسيع الـ selectbox للتاريخ */
+/* تقليل الـ selectbox للتاريخ */
 div[data-testid="stSelectbox"] {
     width: 100% !important;
 }
 
-/* توسيع الـ expander */
+/* تقليل الـ expander */
 .streamlit-expanderHeader {
     width: 100% !important;
+    padding: 12px !important;               /* قل شوية */
 }
 
 .streamlit-expanderContent {
     width: 100% !important;
+    padding: 15px !important;               /* قل شوية */
 }
 
-/* توسيع الـ containers */
+/* تقليل الـ containers */
 .stContainer {
     width: 100% !important;
 }
 
-/* توسيع الـ markdown containers */
+/* تقليل الـ markdown containers */
 div[data-testid="stMarkdownContainer"] {
     width: 100% !important;
 }
 
-/* توسيع الجداول */
+/* تقليل الجداول */
 .stDataFrame {
     width: 100% !important;
 }
 
-/* توسيع الـ alerts */
+/* تقليل الـ alerts */
 .stAlert {
     width: 100% !important;
+    padding: 12px !important;               /* قل من 15px لـ 12px */
+}
+
+/* تقليل الفواصل */
+hr {
+    margin: 20px 0 !important;              /* قل من 25px لـ 20px */
+}
+
+/* تقليل الـ subheaders */
+.stSubheader {
+    margin-bottom: 15px !important;         /* قل من 20px لـ 15px */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -1334,7 +1352,7 @@ def logout():
 # Navigation Buttons (Top-Right) - رجوع للأزرار مع تحسينات
 # ----------------------------
 def top_right_buttons():
-    """Display navigation buttons at top-right - المعدلة للتوسيع"""
+    """Display navigation buttons at top-right - المعدلة لتقليل العرض"""
     unread_count = 0
     if st.session_state.logged_in and st.session_state.current_page != "notifications":
         unread_count = get_unread_count(st.session_state.username)
@@ -1581,16 +1599,16 @@ else:
         with col1:
             st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">📅 Today</h4>
-                <p style="font-size: 1.5rem; margin: 0; color: white; font-weight: bold;">{date.today().strftime('%d %b')}</p>
+                <h4 style="color: #00c6ff; margin: 0 0 8px 0;">📅 Today</h4>
+                <p style="font-size: 1.4rem; margin: 0; color: white; font-weight: bold;">{date.today().strftime('%d %b')}</p>
             </div>
             """, unsafe_allow_html=True)
         
         with col2:
             st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">👤 Role</h4>
-                <p style="font-size: 1.5rem; margin: 0; color: white; font-weight: bold;">{st.session_state.user_role}</p>
+                <h4 style="color: #00c6ff; margin: 0 0 8px 0;">👤 Role</h4>
+                <p style="font-size: 1.4rem; margin: 0; color: white; font-weight: bold;">{st.session_state.user_role}</p>
             </div>
             """, unsafe_allow_html=True)
         
@@ -1601,8 +1619,8 @@ else:
             
             st.markdown(f"""
             <div class="custom-card">
-                <h4 style="color: #00c6ff; margin: 0 0 10px 0;">🔔 Notifications</h4>
-                <p style="font-size: 1.5rem; margin: 0; color: {badge_color}; font-weight: bold;">{notification_text}</p>
+                <h4 style="color: #00c6ff; margin: 0 0 8px 0;">🔔 Notifications</h4>
+                <p style="font-size: 1.4rem; margin: 0; color: {badge_color}; font-weight: bold;">{notification_text}</p>
             </div>
             """, unsafe_allow_html=True)
         
@@ -1703,7 +1721,7 @@ else:
                                         st.markdown(f"""
                                         <div style="
                                             background: rgba(255,255,255,0.1);
-                                            padding: 15px;
+                                            padding: 14px;
                                             border-radius: 10px;
                                             margin-bottom: 10px;
                                             width: 100% !important;
@@ -1765,7 +1783,7 @@ else:
                 comment = st.text_area(
                     "Your feedback:",
                     placeholder="What's on your mind? Suggestions, issues, or comments...",
-                    height=150,
+                    height=140,  # قل من 150 لـ 140
                     key="user_feedback"
                 )
                 
@@ -1882,7 +1900,7 @@ else:
             st.markdown("""
             <div style="
                 background: rgba(255, 255, 255, 0.1);
-                padding: 25px;
+                padding: 22px;
                 border-radius: 15px;
                 border-left: 5px solid #00c6ff;
                 margin-bottom: 15px;
@@ -1923,7 +1941,7 @@ else:
             st.markdown("---")
             
             st.markdown("""
-            <div style="text-align: center; padding: 15px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
+            <div style="text-align: center; padding: 14px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
                 <p style="margin: 0; font-size: 1.1rem; color: white;">
                     🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
                 </p>
@@ -1944,7 +1962,7 @@ if st.session_state.logged_in:
         notification_text = ""
     
     st.markdown(f"""
-    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.9rem; padding: 15px; width: 100% !important;">
+    <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.85rem; padding: 12px; width: 100% !important;">
         <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
