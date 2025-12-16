@@ -548,7 +548,7 @@ input::placeholder {
 /* حاوية الأزرار الرئيسية - مرفوعة لأعلى */
 .nav-buttons-container {
     display: flex !important;
-    gap: 6px !important;
+    gap: 15px !important;
     margin: 5px 0 20px 0 !important;        /* رفع الأزرار لأعلى */
     width: 100% !important;
     justify-content: space-between !important;
