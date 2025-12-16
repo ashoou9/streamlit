@@ -83,11 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
 /* إزالة الـ padding تماماً من الجوانب */
 .block-container {
     padding-top: 1rem !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding-left: 6rem !important;
+    padding-right: 6rem !important;
     padding-bottom: 100px !important;
     max-width: 100% !important;
-    width: 80% !important;
+    width: 100% !important;
     overflow-x: hidden !important;
 }
 
@@ -195,8 +195,8 @@ def set_bg_local(image_file, login_page=True):
 
     .block-container {{
         padding-top: 1rem !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 6rem !important;
+        padding-right: 6rem !important;
         padding-bottom: 100px !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -825,8 +825,8 @@ div[data-testid="stHorizontalBlock"] {
 
 @media only screen and (max-width: 1400px) {
     .block-container {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+        padding-left: 6rem !important;
+        padding-right: 6rem !important;
     }
     
     .welcome-fixed {
@@ -845,8 +845,8 @@ div[data-testid="stHorizontalBlock"] {
 
 @media only screen and (max-width: 1200px) {
     .block-container {
-        padding-left: 1.5rem !important;
-        padding-right: 1.5rem !important;
+        padding-left: 4.5rem !important;
+        padding-right: 4.5rem !important;
     }
     
     .welcome-fixed h3 {
@@ -870,8 +870,8 @@ div[data-testid="stHorizontalBlock"] {
 
 @media only screen and (max-width: 992px) {
     .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
     }
     
     .welcome-fixed {
