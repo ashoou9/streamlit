@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import warnings
 import logging
@@ -168,7 +169,8 @@ def set_bg_local(image_file, login_page=True):
         """, unsafe_allow_html=True)
         return
 
-    padding_top = "105px" if login_page else "180px"
+    # تخفيض الـ padding-top لرفع المحتوى لأعلى
+    padding_top = "90px" if login_page else "150px"  # قللت من 105 و 180
 
     page_bg_img = f"""
     <style>
@@ -180,16 +182,23 @@ def set_bg_local(image_file, login_page=True):
         overflow-x: hidden;
     }}
 
+    /* ثبات تام للخلفية */
     .stApp {{
-        background: url("data:image/png;base64,{b64}") no-repeat center top fixed;
-        background-size: cover;
-        min-height: 100vh;
+        background: url("data:image/png;base64,{b64}") no-repeat center top fixed !important;
+        background-size: cover !important;
+        background-attachment: fixed !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
+        min-height: 100vh !important;
     }}
 
+    /* تأمين الخلفية من التحرك */
     [data-testid="stAppViewContainer"] {{
         padding-top: {padding_top} !important;
         margin: 0 !important;
         overflow-x: hidden !important;
+        background: transparent !important;
+        position: relative !important;
     }}
 
     .block-container {{
@@ -200,6 +209,7 @@ def set_bg_local(image_file, login_page=True):
         max-width: 100% !important;
         width: 100% !important;
         overflow-x: hidden !important;
+        background: transparent !important;
     }}
 
     header, footer {{
@@ -267,7 +277,7 @@ def set_bg_local(image_file, login_page=True):
 
     @media only screen and (max-width: 768px) {{
         [data-testid="stAppViewContainer"] {{
-            padding-top: 140px !important;
+            padding-top: 120px !important;  /* قللت من 140px */
         }}
         .block-container {{
             padding-left: 2rem !important;
@@ -311,6 +321,12 @@ def set_bg_local(image_file, login_page=True):
     /* توسيع الـ Forms */
     .stForm {{
         width: 100% !important;
+    }}
+    
+    /* رفع حاوية الأزرار للأعلى */
+    .nav-buttons-container {{
+        margin-top: -10px !important;        /* رفع الأزرار لأعلى */
+        margin-bottom: 20px !important;
     }}
     </style>
     """
@@ -517,7 +533,7 @@ input::placeholder {
     padding: 30px !important;               /* قل من 35px لـ 30px */
     border-radius: 18px;
     text-align: center;
-    margin: 60px auto 0 auto !important;
+    margin: 40px auto 0 auto !important;    /* رفع الـ login box لأعلى */
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
@@ -529,14 +545,15 @@ input::placeholder {
 /* NAVIGATION BUTTONS - أزرار التنقل المعدلة */
 /* ============================================= */
 
-/* حاوية الأزرار الرئيسية */
+/* حاوية الأزرار الرئيسية - مرفوعة لأعلى */
 .nav-buttons-container {
     display: flex !important;
     gap: 10px !important;
-    margin-bottom: 25px !important;
+    margin: 5px 0 20px 0 !important;        /* رفع الأزرار لأعلى */
     width: 100% !important;
     justify-content: space-between !important;
     flex-wrap: nowrap !important;
+    padding-top: 0 !important;
 }
 
 /* الأزرار نفسها */
@@ -913,7 +930,7 @@ div[data-testid="stHorizontalBlock"] {
     .login-box {
         width: 90% !important;
         padding: 25px !important;
-        margin-top: 60px !important;
+        margin-top: 40px !important;        /* رفع الـ login box */
     }
     
     .welcome-fixed {
@@ -957,7 +974,7 @@ div[data-testid="stHorizontalBlock"] {
     
     .nav-buttons-container {
         gap: 5px !important;                /* قل من 6px لـ 5px */
-        margin-bottom: 20px !important;
+        margin: 3px 0 15px 0 !important;    /* رفع أكثر للشاشات الصغيرة */
     }
     
     .nav-buttons-container .stButton > button {
@@ -992,7 +1009,7 @@ div[data-testid="stHorizontalBlock"] {
     
     .login-box {
         padding: 20px !important;
-        margin-top: 50px !important;
+        margin-top: 30px !important;        /* رفع أكثر */
         width: 95% !important;
     }
     
@@ -1012,6 +1029,7 @@ div[data-testid="stHorizontalBlock"] {
     .nav-buttons-container {
         flex-wrap: wrap !important;
         gap: 4px !important;                /* قل من 5px لـ 4px */
+        margin: 2px 0 12px 0 !important;    /* رفع أكثر */
     }
     
     .nav-buttons-container .stButton > button {
@@ -1053,6 +1071,7 @@ div[data-testid="stHorizontalBlock"] {
     
     .nav-buttons-container {
         gap: 3px !important;                /* قل من 4px لـ 3px */
+        margin: 1px 0 10px 0 !important;    /* رفع نهائي */
     }
     
     .nav-buttons-container .stButton > button {
@@ -1113,6 +1132,11 @@ hr {
 .stSubheader {
     margin-bottom: 15px !important;         /* قل من 20px لـ 15px */
 }
+
+/* رفع الـ subheaders للأعلى */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 5px !important;             /* رفع العناوين */
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1156,7 +1180,7 @@ if "show_welcome" not in st.session_state:
     st.session_state.show_welcome = True
 
 if "animation_shown" not in st.session_state:
-    st.session_state.animation_shown = True
+    st.session_state.animation_shown = False
 
 if "replying_to" not in st.session_state:
     st.session_state.replying_to = None
