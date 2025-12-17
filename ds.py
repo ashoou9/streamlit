@@ -574,7 +574,7 @@ input::placeholder {
     width: 100% !important;
     border-radius: 10px !important;
     height: 42px !important;                /* قل من 45px لـ 42px */
-    font-size: 9px !important;             /* قل من 14px لـ 13px */
+    font-size: 1px !important;             /* قل من 14px لـ 13px */
     background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
     color: white !important;
     border: none !important;
