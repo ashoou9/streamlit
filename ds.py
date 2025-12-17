@@ -664,7 +664,7 @@ input::placeholder {
 /* CARD STYLING - REDUCED */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
-    padding: 13px !important;               /* قل من 20px لـ 18px */
+    padding: 25px !important;               /* قل من 20px لـ 18px */
     border-radius: 15px !important;
     border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
