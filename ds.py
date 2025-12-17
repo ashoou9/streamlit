@@ -174,7 +174,7 @@ def set_bg_local(image_file, login_page=True):
         return
 
     # تخفيض الـ padding-top لرفع المحتوى لأعلى
-    padding_top = "90px" if login_page else "150px"  # قللت من 105 و 180
+    padding_top = "70px" if login_page else "130px"  # قللت من 105 و 180
 
     page_bg_img = f"""
     <style>
