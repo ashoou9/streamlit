@@ -1991,6 +1991,6 @@ if st.session_state.logged_in:
     
     st.markdown(f"""
     <div style="text-align: center; color: rgba(255,255,255,0.6); font-size: 0.85rem; padding: 12px; width: 100% !important;">
-        <p>📊 Sales Dashboard | © 2024 | 🔒 Secure Access {notification_text}</p>
+        <p>📊 Daily Sales Dashboard | © 2026 | 🔒 Secure Access {notification_text}</p>
     </div>
     """, unsafe_allow_html=True)
