@@ -13,7 +13,7 @@ import random
 import uuid
 st.set_page_config(
     page_title="Mash Premiere",
-    page_icon="assets/images.png",
+    page_icon="assets/logo.png",
     layout = "wide"
     
 )
