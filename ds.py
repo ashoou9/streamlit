@@ -571,7 +571,7 @@ input::placeholder {
 
 /* تنسيق الأزرار داخل الـ columns */
 .nav-buttons-container .stButton > button {
-    width: 100% !important;
+    width: 60% !important;
     border-radius: 10px !important;
     height: 42px !important;                /* قل من 45px لـ 42px */
     font-size: 13px !important;             /* قل من 14px لـ 13px */
@@ -581,7 +581,7 @@ input::placeholder {
     transition: all 0.3s ease !important;
     box-sizing: border-box !important;
     margin: 0 !important;
-    padding: 0 8px !important;              /* قل من 10px لـ 8px */
+    padding: 0 6px !important;              /* قل من 10px لـ 8px */
 }
 
 .nav-buttons-container .stButton > button:hover {
