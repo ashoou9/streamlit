@@ -151,76 +151,6 @@ h1, h2, h3, h4, h5, h6, p, span, div {
     overflow-wrap: break-word !important;
 }
 </style>
-<style>
-/* ============================= */
-/* GLOBAL UI SCALE DOWN */
-/* ============================= */
-html, body { font-size: 14px !important; }
-
-.block-container {
-    max-width: 1200px !important;
-    margin: auto !important;
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-}
-
-/* CARDS */
-.custom-card,
-.notification-card,
-.comment-box {
-    max-width: 320px !important;
-    margin: 0 auto 15px auto !important;
-    padding: 12px !important;
-}
-
-/* ROW ALIGNMENT */
-[data-testid="stHorizontalBlock"] {
-    justify-content: center !important;
-    gap: 20px !important;
-}
-
-/* BUTTONS */
-.stButton > button,
-.stDownloadButton > button {
-    width: auto !important;
-    min-width: 130px !important;
-    height: 36px !important;
-    font-size: 13px !important;
-    padding: 6px 14px !important;
-}
-
-/* WELCOME BOX */
-.welcome-fixed {
-    max-width: 900px !important;
-    padding: 18px !important;
-    font-size: 1.1rem !important;
-}
-
-/* BACKGROUND ISOLATION */
-.stApp { background-attachment: fixed !important; }
-
-[data-testid="stAppViewContainer"]::before {
-    content: "";
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%;
-    height: 220px;
-    background: linear-gradient(
-        to bottom,
-        rgba(15,23,32,1),
-        rgba(15,23,32,0.85),
-        rgba(15,23,32,0)
-    );
-    z-index: 0;
-    pointer-events: none;
-}
-
-[data-testid="stAppViewContainer"] > * {
-    position: relative;
-    z-index: 1;
-}
-</style>
-
 """, unsafe_allow_html=True)
 
 # ----------------------------
@@ -1492,6 +1422,7 @@ def top_right_buttons():
             st.rerun()
     
     st.markdown('</div>', unsafe_allow_html=True)
+        
 
 # ----------------------------
 # Welcome Message Component
