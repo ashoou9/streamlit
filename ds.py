@@ -12,8 +12,9 @@ import time
 import random
 import uuid
 st.set_page_config(
-    page_title="Mash Premiere - Daily Sales",
-    page_icon="c:\Users\PC\Desktop\WhatsApp Sticker 2025-12-17 at 2.55.31 PM.31 PM.ᒅǖ"
+    page_title="Mash Premiere",
+    page_icon="assets/images.png",
+    layout = "wide"
     
 )
 # ----------------------------
