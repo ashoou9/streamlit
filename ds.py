@@ -12,7 +12,7 @@ import time
 import random
 import uuid
 st.set_page_config(
-    page_title="Mash Premiere",
+    page_title="Mash Premiere - Daily Sales",
     page_icon="✨"
     
 )
