@@ -207,8 +207,8 @@ def set_bg_local(image_file, login_page=True):
 
     .block-container {{
         padding-top: 1rem !important;
-        padding-left: 6rem !important;      /* زود من 2rem لـ 6rem */
-        padding-right: 6rem !important;     /* زود من 2rem لـ 6rem */
+        padding-left: 2rem !important;      /* زود من 2rem لـ 6rem */
+        padding-right: 2rem !important;     /* زود من 2rem لـ 6rem */
         padding-bottom: 100px !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -532,9 +532,9 @@ input::placeholder {
 /* LOGIN BOX - REDUCED */
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
-    width: 90% !important;                  /* قل من 100% لـ 90% */
+    width: 60% !important;                  /* قل من 100% لـ 90% */
     max-width: 450px !important;            /* قل من 500px لـ 450px */
-    padding: 30px !important;               /* قل من 35px لـ 30px */
+    padding: 20px !important;               /* قل من 35px لـ 30px */
     border-radius: 18px;
     text-align: center;
     margin: 40px auto 0 auto !important;    /* رفع الـ login box لأعلى */
@@ -664,7 +664,7 @@ input::placeholder {
 /* CARD STYLING - REDUCED */
 .custom-card {
     background: rgba(255, 255, 255, 0.1) !important;
-    padding: 18px !important;               /* قل من 20px لـ 18px */
+    padding: 13px !important;               /* قل من 20px لـ 18px */
     border-radius: 15px !important;
     border-left: 5px solid #00c6ff !important;
     margin-bottom: 15px !important;
