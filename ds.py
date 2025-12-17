@@ -188,7 +188,7 @@ def set_bg_local(image_file, login_page=True):
 
     /* ثبات تام للخلفية */
     .stApp {{
-        background: url("data:image/png;base64,{b64}") no-repeat center top fixed !important;
+        background: url("data:image/png;base64,{b64}") no-repeat center top !important;
         background-size: cover !important;
         background-attachment: fixed !important;
         background-position: center center !important;
