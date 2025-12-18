@@ -2011,7 +2011,7 @@ else:
 
             st.markdown("---")
             
-            st.markdown("Commercial Excellence Team")
+            st.markdown("📊 Commercial Excellence Team")
             st.markdown("""
             **Striving for Excellence,**  
 
