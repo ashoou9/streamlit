@@ -2090,13 +2090,13 @@ else:
             
             st.markdown("---")
             
-            st.markdown("""
-            <div style="text-align: center; padding: 14px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
-                <p style="margin: 0; font-size: 1.1rem; color: white;">
-                    🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
+            # st.markdown("""
+            # <div style="text-align: center; padding: 14px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
+            #     <p style="margin: 0; font-size: 1.1rem; color: white;">
+            #         🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
+            #     </p>
+            # </div>
+            # """, unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
             
