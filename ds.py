@@ -2011,9 +2011,9 @@ else:
 
             st.markdown("---")
             
-            st.markdown("####Commercial Excellence  Team")
+            st.markdown("#### Commercial Excellence Team")
+            st.markdown('<span style="color: #00c6ff; font-size: 18px; font-weight: bold;">• Commercial Excellence Director: Dr. Khaled Gamal</span>', unsafe_allow_html=True)
             st.markdown("""
-            • **Commercial Excellnece Director** Dr- Khaled Gamal  <span style="color: #00c6ff; font-weight: bold;">Dr. Khaled Gamal</span> 
             • **CHC** - Healthcare Division  
             • **CNS** - Neuroscience Division  
             • **GIT** - Gastroenterology  
