@@ -1498,19 +1498,19 @@ def show_welcome_message():
     if st.session_state.show_welcome and st.session_state.logged_in:
         team_messages = {
             "Admin": "🎯 Admin Dashboard ",
-            "CHC": "🏥 CHC Team ",
-            "CNS": "🧠 CNS Team ", 
-            "GIT": "🩺 GIT Team ",
-            "Primary Care": "👨‍⚕️ Primary Care ",
-            "CVM": "❤️ CVM Team ",
-            "Power Team": "⚡ Power Team ",
-            "DGU": "🔧 DGU Team ",
-            "DNU": "📊 DNU Team ",
-            "Sildava": "🌟 Sildava Team",
-            "Ortho": "🦴 Ortho Team ",
-            "All": "👁️ All Viewer ",
-            "managers": "👨‍💼 Management View",
-            "khalid": "👨‍💻 Developer View"
+            "CHC": " CHC Team",
+            "CNS": " CNS Team ", 
+            "GIT": " GIT Team ",
+            "Primary Care": " Primary Care ",
+            "CVM": " CVM Team ",
+            "Power Team": " Power Team ",
+            "DGU": " DGU Team ",
+            "DNU": " DNU Team ",
+            "Sildava": " Sildava Team",
+            "Ortho": " Ortho Team ",
+            "All": " All Viewer ",
+            "managers": " Managemers View",
+            "khalid": " Developer View"
         }
         
         username = st.session_state.username
