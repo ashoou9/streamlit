@@ -2014,7 +2014,7 @@ else:
             st.markdown("####Commercial Excellence Team")
             st.markdown("""
             • **Commercial Excellnece Director**
-                                            Dr- Khaled Gamal
+                                                                                                 Dr- Khaled Gamal
                                                    
             • **Commercial Excellnece Manager 
                         
