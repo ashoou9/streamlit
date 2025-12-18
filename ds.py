@@ -532,12 +532,12 @@ input::placeholder {
 /* LOGIN BOX - REDUCED */
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
-    width: 90% !important;                  /* قل من 100% لـ 90% */
-    max-width: 450px !important;            /* قل من 500px لـ 450px */
-    padding: 30px !important;               /* قل من 35px لـ 30px */
+    width: 65% !important;                  /* قل من 100% لـ 90% */
+    max-width: 350px !important;            /* قل من 500px لـ 450px */
+    padding: 20px !important;               /* قل من 35px لـ 30px */
     border-radius: 18px;
     text-align: center;
-    margin: 40px auto 0 auto !important;    /* رفع الـ login box لأعلى */
+    margin: 20px auto 0 auto !important;    /* رفع الـ login box لأعلى */
     backdrop-filter: blur(10px) !important;
     border: 1px solid rgba(255,255,255,0.2) !important;
     box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
