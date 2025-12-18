@@ -1477,8 +1477,8 @@ def top_right_buttons():
             st.rerun()
     
     with cols[3]:
-        if st.button("ℹ️ About", key="nav_about", use_container_width=True):
-            st.session_state.current_page = "about"
+        if st.button("ℹ️ About Us", key="nav_about", use_container_width=True):
+            st.session_state.current_page = "about Us"
             st.rerun()
     
     with cols[4]:
