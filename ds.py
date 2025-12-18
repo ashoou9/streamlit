@@ -282,8 +282,8 @@ def set_bg_local(image_file, login_page=True):
             padding-top: 120px !important;  /* قللت من 140px */
         }}
         .block-container {{
-            padding-left: 2rem !important;
-            padding-right: 2rem !important;
+            padding-left: 6rem !important;
+            padding-right: 6rem !important;
         }}
     }}
     
@@ -297,19 +297,19 @@ def set_bg_local(image_file, login_page=True):
     }}
     
     .row-widget {{
-        width: 80% !important;
+        width: 100% !important;
     }}
     
     /* توسيع العناصر الداخلية */
     div[data-testid="stHorizontalBlock"] {{
-        width: 80% !important;
+        width: 100% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
     }}
     
     /* توسيع الـ Cards */
     .custom-card {{
-        width: 80% !important;
+        width: 100% !important;
         margin: 0 0 15px 0 !important;
     }}
     
