@@ -2013,7 +2013,7 @@ else:
             
             st.markdown("####Commercial Excellence  Team")
             st.markdown("""
-            • **Commercial Excellnece Director** Dr- Khaled Gamal   
+            • **Commercial Excellnece Director** Dr- Khaled Gamal  <span style="color: #00c6ff; font-weight: bold;">Dr. Khaled Gamal</span> 
             • **CHC** - Healthcare Division  
             • **CNS** - Neuroscience Division  
             • **GIT** - Gastroenterology  
