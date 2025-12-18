@@ -1497,18 +1497,18 @@ def show_welcome_message():
     """Display welcome message that stays in dashboard"""
     if st.session_state.show_welcome and st.session_state.logged_in:
         team_messages = {
-            "Admin": "🎯 Admin Dashboard - Full Control",
-            "CHC": "🏥 CHC Team - Healthcare Division",
-            "CNS": "🧠 CNS Team - Neuroscience Division", 
-            "GIT": "🩺 GIT Team - Gastroenterology",
-            "Primary Care": "👨‍⚕️ Primary Care - General Medicine",
-            "CVM": "❤️ CVM Team - Cardiology",
-            "Power Team": "⚡ Power Team - Special Operations",
-            "DGU": "🔧 DGU Team - Technical Division",
-            "DNU": "📊 DNU Team - Data Analysis",
+            "Admin": "🎯 Admin Dashboard ",
+            "CHC": "🏥 CHC Team ",
+            "CNS": "🧠 CNS Team ", 
+            "GIT": "🩺 GIT Team ",
+            "Primary Care": "👨‍⚕️ Primary Care ",
+            "CVM": "❤️ CVM Team ",
+            "Power Team": "⚡ Power Team ",
+            "DGU": "🔧 DGU Team ",
+            "DNU": "📊 DNU Team ",
             "Sildava": "🌟 Sildava Team",
-            "Ortho": "🦴 Ortho Team - Orthopedics",
-            "All": "👁️ All Viewer - Full Access",
+            "Ortho": "🦴 Ortho Team ",
+            "All": "👁️ All Viewer ",
             "managers": "👨‍💼 Management View",
             "khalid": "👨‍💻 Developer View"
         }
