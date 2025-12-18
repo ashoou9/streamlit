@@ -297,19 +297,19 @@ def set_bg_local(image_file, login_page=True):
     }}
     
     .row-widget {{
-        width: 100% !important;
+        width: 80% !important;
     }}
     
     /* توسيع العناصر الداخلية */
     div[data-testid="stHorizontalBlock"] {{
-        width: 100% !important;
+        width: 80% !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
     }}
     
     /* توسيع الـ Cards */
     .custom-card {{
-        width: 100% !important;
+        width: 80% !important;
         margin: 0 0 15px 0 !important;
     }}
     
