@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import warnings
 import logging
@@ -492,8 +490,8 @@ st.markdown("""
 /* INPUT BOXES - REDUCED */
 .stTextInput > div > div > input {
     text-align: left;
-    font-size: 12px !important;             /* قل من 16px لـ 15px */
-    padding: 7px 10px !important;                /* قل من 10px لـ 9px */
+    font-size: 15px !important;             /* قل من 16px لـ 15px */
+    padding: 9px !important;                /* قل من 10px لـ 9px */
     color: black !important;
     border-radius: 8px;
     background: rgba(255,255,255,0.9) !important;
@@ -529,20 +527,87 @@ input::placeholder {
     color: rgba(0,0,0,0.6) !important;
 }
 
-/* LOGIN BOX - REDUCED */
+/* ----- LOGIN BOX أصغر بالكامل ----- */
 .login-box {
     background: rgba(255, 255, 255, 0.1) !important;
-    width: 65% !important;                  /* قل من 100% لـ 90% */
-    max-width: 350px !important;            /* قل من 500px لـ 450px */
-    padding: 20px !important;               /* قل من 35px لـ 30px */
-    border-radius: 18px;
+    width: 75% !important;                  /* قلل من 90% لـ 75% */
+    max-width: 350px !important;            /* قلل من 450px لـ 350px */
+    padding: 20px !important;               /* قلل من 30px لـ 20px */
+    border-radius: 12px !important;         /* قلل الزوايا شوية */
     text-align: center;
-    margin: 20px auto 0 auto !important;    /* رفع الـ login box لأعلى */
-    backdrop-filter: blur(10px) !important;
+    margin: 20px auto 0 auto !important;    /* رفع لأعلى أكثر */
+    backdrop-filter: blur(8px) !important;  /* قلل blur */
     border: 1px solid rgba(255,255,255,0.2) !important;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
     animation: fadeInUp 0.8s ease-out !important;
     box-sizing: border-box !important;
+}
+
+/* العنوان داخل الـ box */
+.login-box h2 {
+    color: white !important;
+    margin-bottom: 5px !important;
+    font-size: 1.4rem !important;           /* أصغر */
+}
+
+.login-box p {
+    color: rgba(255,255,255,0.8) !important;
+    margin-bottom: 15px !important;
+    font-size: 0.85rem !important;          /* أصغر */
+}
+
+/* الحقول نفسها - أصغر */
+.stApp .login-box .stTextInput > div > div > input {
+    font-size: 14px !important;
+    padding: 7px 10px !important;           /* أصغر padding */
+    height: 38px !important;                /* ارتفاع أقل */
+    border-radius: 6px !important;          /* زوايا أقل */
+    margin: 0 auto 10px auto !important;    /* مسافة بين الحقول أقل */
+    width: 90% !important;                  /* عرض أقل داخل الـ box */
+    max-width: 280px !important;
+    display: block !important;
+}
+
+/* زر الـ Login - أصغر */
+.stApp .login-box .stButton > button {
+    width: 90% !important;                  /* عرض أقل */
+    max-width: 280px !important;
+    height: 36px !important;                /* ارتفاع أقل */
+    font-size: 13px !important;             /* خط أصغر */
+    border-radius: 6px !important;          /* زوايا أقل */
+    margin: 5px auto 0 auto !important;
+    background: linear-gradient(90deg, #0072ff, #00c6ff) !important;
+    transition: all 0.2s ease !important;
+    display: block !important;
+}
+
+.stApp .login-box .stButton > button:hover {
+    transform: scale(1.02) !important;
+}
+
+/* للموبايل - تكييف أكثر */
+@media (max-width: 768px) {
+    .login-box {
+        width: 85% !important;
+        max-width: 300px !important;
+        padding: 18px !important;
+        margin: 15px auto 0 auto !important;
+    }
+    
+    .login-box h2 {
+        font-size: 1.3rem !important;
+    }
+    
+    .stApp .login-box .stTextInput > div > div > input {
+        font-size: 13px !important;
+        padding: 6px 8px !important;
+        height: 36px !important;
+    }
+    
+    .stApp .login-box .stButton > button {
+        height: 34px !important;
+        font-size: 12px !important;
+    }
 }
 
 /* ============================================= */
@@ -932,7 +997,7 @@ div[data-testid="stHorizontalBlock"] {
 
 @media only screen and (max-width: 768px) {
     .login-box {
-        width: 65% !important;
+        width: 90% !important;
         padding: 25px !important;
         margin-top: 40px !important;        /* رفع الـ login box */
     }
@@ -1014,7 +1079,7 @@ div[data-testid="stHorizontalBlock"] {
     .login-box {
         padding: 20px !important;
         margin-top: 30px !important;        /* رفع أكثر */
-        width: 65% !important;
+        width: 95% !important;
     }
     
     .custom-card {
@@ -1351,6 +1416,7 @@ def show_login_animation(username):
     
     st.session_state.animation_shown = True
     time.sleep(1)
+
 
 # ----------------------------
 # Login / Logout Logic
