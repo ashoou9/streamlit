@@ -1722,16 +1722,21 @@ else:
         folders = get_current_month_folders()
         
         if folders:
-            selected_day = st.selectbox(
-                "📅 Select Date:",
-                folders,
-                format_func=lambda x: f"📅 {x}",
-                index=0,
-                key="date_selector"
-            )
+            selected_day = folders[0]  # التاريخ الأحدث
+            folder_path = os.path.join(BASE_PATH, selected_day)
             
-            if selected_day:
-                folder_path = os.path.join(BASE_PATH, selected_day)
+            # كارد للتاريخ
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.markdown(f"""
+                <div class="custom-card">
+                    <h4 style="color: #00c6ff; margin: 0 0 8px 0;">📅 Displaying</h4>
+                    <p style="font-size: 1.3rem; margin: 0; color: white; font-weight: bold;">{selected_day}</p>
+                </div>
+                """, unsafe_allow_html=True)
+    
+    # باقي الكود...
                 
                 if st.session_state.user_role == "Admin":
                     st.markdown("---")
