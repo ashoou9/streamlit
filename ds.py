@@ -2011,17 +2011,71 @@ else:
 
             st.markdown("---")
             
-            st.markdown("#### Commercial Excellence Team")
-            st.markdown('<span style="color: #00c6ff; font-size: 18px; font-weight: bold;">• Commercial Excellence Director: Dr. Khaled Gamal</span>', unsafe_allow_html=True)
+                        # Commercial Excellence Team Section - Grid Layout
+            st.markdown("#### 👥 Commercial Excellence Team")
+            
             st.markdown("""
-            • **CHC** - Healthcare Division  
-            • **CNS** - Neuroscience Division  
-            • **GIT** - Gastroenterology  
-            • **Primary Care** - General Medicine  
-            • **CVM** - Cardiology Division  
-            • **Power Team** - Special Operations  
-            • **All Teams** - Comprehensive access
-            """)
+            <div style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin: 20px 0;
+            ">
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Commercial Excellence Director</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Dr. Khaled Gamal
+                    </p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Commercial Excellence Manager</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Ms. Nahla Hassan
+                    </p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Data Analyst</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Eng. David Ayman
+                    </p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Data Analyst</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Dr. Ali Mostafa
+                    </p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Data Analyst</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Eng. Ahmed Mahmoud
+                    </p>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
+                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                        <strong>Data Analyst</strong>
+                    </p>
+                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                        Eng. Aseel Tarek
+                    </p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
             st.markdown("#### ✨ Features")
             st.markdown("""
