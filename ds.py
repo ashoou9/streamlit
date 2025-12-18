@@ -2011,58 +2011,19 @@ else:
 
             st.markdown("---")
             
-            st.markdown("#### Commercial Excellence Team")
-
-            col1, col2 = st.columns([1, 1])
-
-            with col1:
-                st.markdown("""
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Commercial Excellence Director</strong></p>
-                    <p class="team-name">Dr. Khaled Gamal</p>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Commercial Excellence Manager</strong></p>
-                    <p class="team-name">Ms. Nahla Hassan</p>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Data Analyst</strong></p>
-                    <p class="team-name">Eng. David Ayman</p>
-                </div>
-                """, unsafe_allow_html=True)
-
-            with col2:
-                st.markdown("""
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Data Analyst</strong></p>
-                    <p class="team-name">Dr. Ali Mostafa</p>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Data Analyst</strong></p>
-                    <p class="team-name">Eng. Ahmed Mahmoud</p>
-                </div>
-
-                <div style="margin-bottom: 15px;">
-                    <p class="team-role"><strong>Data Analyst</strong></p>
-                    <p class="team-name">Eng. Aseel Tarek</p>
-                </div>
-                """, unsafe_allow_html=True)
-
-            st.markdown("---")
-
-            
-            # st.markdown("""
-            # <div style="text-align: center; padding: 14px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
-            #     <p style="margin: 0; font-size: 1.1rem; color: white;">
-            #         🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
-            #     </p>
-            # </div>
-            # """, unsafe_allow_html=True)
-            
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("####Commercial Excellence Team")
+            st.markdown("""
+            • **Commercial Excellnece Director** 
+                                                Dr- Khaled Gamal   
+            • **Commercial Excellnece Manager** 
+                                                Ms- Nahla Hassan  
+            • **CNS** - Neuroscience Division  
+            • **GIT** - Gastroenterology  
+            • **Primary Care** - General Medicine  
+            • **CVM** - Cardiology Division  
+            • **Power Team** - Special Operations  
+            • **All Teams** - Comprehensive access
+            """)
             
             st.markdown("#### ✨ Features")
             st.markdown("""
