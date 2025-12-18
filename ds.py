@@ -2021,7 +2021,7 @@ else:
                     <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Commercial Excellence Director</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
+                    <p style="color: #1e88e5 !important; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Dr. Khaled Gamal
                     </p>
                 </div>
