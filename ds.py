@@ -2014,9 +2014,11 @@ else:
             st.markdown("####Commercial Excellence Team")
             st.markdown("""
             • **Commercial Excellnece Director 
+                        
                                             Dr- Khaled Gamal** 
                                                    
             • **Commercial Excellnece Manager 
+                        
                                                 Ms- Nahla Hassan**  
             • **CNS** - Neuroscience Division  
             • **GIT** - Gastroenterology  
