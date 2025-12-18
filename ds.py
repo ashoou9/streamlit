@@ -13,9 +13,8 @@ import random
 import uuid
 st.set_page_config(
     page_title="Mash Premiere",
-    page_icon="💊"
-    
-    
+    page_icon="assets/clipboard.ico",
+    layout="wide"
 )
 # ----------------------------
 # أولاً: إنشاء المجلدات والملفات المطلوبة للويندوز الجديد
