@@ -1988,8 +1988,8 @@ else:
             st.rerun()
     
     # ----- ABOUT PAGE -----
-    elif st.session_state.current_page == "about":
-        st.subheader("ℹ️ About This Dashboard")
+    elif st.session_state.current_page == "about Us":
+        st.subheader("ℹ️ About Us")
         
         with st.container():
             st.markdown("""
