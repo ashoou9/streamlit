@@ -2011,71 +2011,94 @@ else:
 
             st.markdown("---")
             
-                        # Commercial Excellence Team Section - Grid Layout
-            st.markdown("#### 👥 Commercial Excellence Team")
+            st.markdown("#### Commercial Excellence Team")
+            col1, col2 = st.columns([1, 1])
             
-            st.markdown("""
-            <div style="
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-                margin: 20px 0;
-            ">
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+            with col1:
+                # Director
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Commercial Excellence Director</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Dr. Khaled Gamal
                     </p>
                 </div>
+                """, unsafe_allow_html=True)
                 
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                # Manager
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Commercial Excellence Manager</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Ms. Nahla Hassan
                     </p>
                 </div>
+                """, unsafe_allow_html=True)
                 
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                # Data Analyst 1
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Data Analyst</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Eng. David Ayman
                     </p>
                 </div>
-                
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                """, unsafe_allow_html=True)
+            
+            with col2:
+                # Data Analyst 2
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Data Analyst</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Dr. Ali Mostafa
                     </p>
                 </div>
+                """, unsafe_allow_html=True)
                 
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                # Data Analyst 3
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Data Analyst</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Eng. Ahmed Mahmoud
                     </p>
                 </div>
+                """, unsafe_allow_html=True)
                 
-                <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #1e88e5;">
-                    <p style="color: white; margin: 0 0 5px 0; font-size: 0.95rem;">
+                # Data Analyst 4
+                st.markdown("""
+                <div style="margin-bottom: 15px;">
+                    <p style="color: white; margin-bottom: 5px; font-size: 1rem;">
                         <strong>Data Analyst</strong>
                     </p>
-                    <p style="color: #1e88e5; margin: 0; font-size: 1rem; font-weight: bold;">
+                    <p style="color: #1e88e5; margin: 0; font-size: 1.05rem; font-weight: bold;">
                         Eng. Aseel Tarek
                     </p>
                 </div>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            st.markdown("""
+            <div style="text-align: center; padding: 14px; background: rgba(0,198,255,0.1); border-radius: 10px; margin-top: 20px; width: 100% !important;">
+                <p style="margin: 0; font-size: 1.1rem; color: white;">
+                    🚀 <strong>Sales Dashboard | Secure & Efficient</strong>
+                </p>
             </div>
             """, unsafe_allow_html=True)
+            
+            st.markdown('</div>', unsafe_allow_html=True)
             
             st.markdown("#### ✨ Features")
             st.markdown("""
