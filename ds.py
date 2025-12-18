@@ -282,8 +282,8 @@ def set_bg_local(image_file, login_page=True):
             padding-top: 120px !important;  /* قللت من 140px */
         }}
         .block-container {{
-            padding-left: 6rem !important;
-            padding-right: 6rem !important;
+            padding-left: 2rem !important;
+            padding-right: 2rem !important;
         }}
     }}
     
