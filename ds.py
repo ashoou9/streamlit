@@ -492,8 +492,8 @@ st.markdown("""
 /* INPUT BOXES - REDUCED */
 .stTextInput > div > div > input {
     text-align: left;
-    font-size: 15px !important;             /* قل من 16px لـ 15px */
-    padding: 9px !important;                /* قل من 10px لـ 9px */
+    font-size: 12px !important;             /* قل من 16px لـ 15px */
+    padding: 7px 10px !important;                /* قل من 10px لـ 9px */
     color: black !important;
     border-radius: 8px;
     background: rgba(255,255,255,0.9) !important;
@@ -932,7 +932,7 @@ div[data-testid="stHorizontalBlock"] {
 
 @media only screen and (max-width: 768px) {
     .login-box {
-        width: 90% !important;
+        width: 65% !important;
         padding: 25px !important;
         margin-top: 40px !important;        /* رفع الـ login box */
     }
@@ -1014,7 +1014,7 @@ div[data-testid="stHorizontalBlock"] {
     .login-box {
         padding: 20px !important;
         margin-top: 30px !important;        /* رفع أكثر */
-        width: 95% !important;
+        width: 65% !important;
     }
     
     .custom-card {
