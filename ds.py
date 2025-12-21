@@ -1515,21 +1515,21 @@ def show_welcome_message():
         
         username = st.session_state.username
         message = team_messages.get(username.split()[0] if ' ' in username else username, 
-                                   f"👋 Welcome {username.capitalize()} Team!")
+                                   f"👋 Welcome {username.capitalize()}!")
         
         team_emojis = {
-            "Admin": "👑",
-            "CHC": "🏥",
-            "CNS": "🧠", 
-            "GIT": "🩺",
-            "Primary": "👨‍⚕️",
-            "CVM": "❤️",
-            "Power": "⚡",
-            "DGU": "🔧",
-            "DNU": "📊",
-            "Sildava": "🌟",
-            "Ortho": "🦴",
-            "khalid": "👨‍💻"
+            "Admin": "",
+            "CHC": "",
+            "CNS": "", 
+            "GIT": "",
+            "Primary": "",
+            "CVM": "",
+            "Power": "",
+            "DGU": "",
+            "DNU": "",
+            "Sildava": "",
+            "Ortho": "",
+            "khalid": ""
         }
         
         emoji = team_emojis.get(username.split()[0] if ' ' in username else username, "👋")
