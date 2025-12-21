@@ -2022,13 +2022,13 @@ else:
 
             **Building the Future Together.**  
 
-            **The Commercial Excellence Department, founded by Dr. Khaled Gamal in 2018,**  
+            **The Commercial Excellence Department, founded by Dr. "Khaled Gamal" in 2018,**  
             combines strategic process optimization with a culture of innovation.  
 
-            **Alongside the steadfast support of Nahla Hassan,**  
-            our team was energized in 2025 by the addition of iOS developer David,  
-            medical field expert Ali Mustafa,  
-            and computer science engineers Ahmed Attia and Asil.  
+            **Alongside the steadfast support of Miss. "Nahla Hassan",**  
+            our team was energized in 2025 by the addition of iOS developer "David",  
+            medical field expert "Ali Mustafa",  
+            and computer science engineers "Ahmed Attia" and "Asil".  
 
             They have integrated with remarkable speed,  
             imprinting the team with fresh creativity that heralds a highly promising 2026.  
