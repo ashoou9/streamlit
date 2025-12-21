@@ -1412,7 +1412,7 @@ def show_login_animation(username):
     time.sleep(1.5)
     loading_placeholder.empty()
     
-    st.success(f"✅ Login successful! Welcome {username} Team! 👋")
+    st.success(f"✅ Login successful! Welcome {username}! 👋")
     
     st.session_state.animation_shown = True
     time.sleep(1)
