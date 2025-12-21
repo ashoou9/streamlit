@@ -1407,7 +1407,7 @@ def delete_all_feedback():
 def show_login_animation(username):
     """Show animation during login"""
     loading_placeholder = st.empty()
-    loading_placeholder.markdown(show_loading_animation(f"Welcome {username} Team! 🚀"), unsafe_allow_html=True)
+    loading_placeholder.markdown(show_loading_animation(f"Welcome {username}! 🚀"), unsafe_allow_html=True)
     
     time.sleep(1.5)
     loading_placeholder.empty()
@@ -1542,7 +1542,7 @@ def show_welcome_message():
         st.markdown(f"""
         <div class="welcome-container">
             <div class="welcome-fixed">
-                <h3>{emoji} Hello {username.capitalize()} Team! {notification_badge}</h3>
+                <h3>{emoji} Hello {username.capitalize()}! {notification_badge}</h3>
                 <p>{message}</p>
                 <div style="margin-top: 10px; font-size: 1.2rem;">
                     📅 {date.today().strftime('%B %d, %Y')}
