@@ -1214,7 +1214,7 @@ h1, h2, h3, h4, h5, h6 {
 # ----------------------------
 users = {
     "admin": {"password": "1001", "role": "Admin"},
-    "CHC New": {"password": "1000", "role": "User"},
+    "CHC New": {"password": "1023", "role": "User"},
     "CNS 1": {"password": "0123", "role": "User"},
     "CNS 2": {"password": "9990", "role": "User"},
     "CNS 3": {"password": "6537", "role": "User"},
@@ -1228,10 +1228,10 @@ users = {
     "CVM 2": {"password": "7211", "role": "User"},
     "DERMA": {"password": "1619", "role": "User"},
     "Gyna": {"password": "2938", "role": "User"},
-    "Oxaleptal": {"password": "1000", "role": "User"},
+    "Oxaleptal": {"password": "1300", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
     "All": {"password": "9021", "role": "AllViewer"},
-    "managers": {"password": "9021", "role": "AllViewer"},
+    "managers": {"password": "9721", "role": "AllViewer"},
     "khalid": {"password": "9090", "role": "AllViewer"}
 }
 
