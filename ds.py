@@ -1228,7 +1228,7 @@ users = {
     "CVM 2": {"password": "7211", "role": "User"},
     "DERMA": {"password": "1619", "role": "User"},
     "Gyna": {"password": "2938", "role": "User"},
-    "Oxaleptal-Atten": {"password": "1000", "role": "User"},
+    "Oxaleptal": {"password": "1000", "role": "User"},
     "Ortho": {"password": "4090", "role": "User"},
     "All": {"password": "9021", "role": "AllViewer"},
     "managers": {"password": "9021", "role": "AllViewer"},
